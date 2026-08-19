@@ -1,0 +1,24 @@
+[Main]
+name = "Example Configuration"
+backwards = true
+max_num_sources = 4000
+max_num_field_reqs = 4000
+max_num_field_output_groups = 100
+absolute_or_relative = "Absolute"
+fixed_met = false
+flat_earth = false
+random_seed = "Random (Parallel)"
+
+[Output]
+folder = "some/random/path"
+seconds = false
+
+[Restart]
+cases_between_writes = 100
+delete_old_files = true
+write_on_suspend = true
+
+["Coordinate Systems"]
+horizontal = "Lat-Long"
+vertical = ["m agl", "m asl"]
+

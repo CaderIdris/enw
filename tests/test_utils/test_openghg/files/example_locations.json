@@ -1,0 +1,54 @@
+{
+  "A": {
+    "1": {
+      "height_station_masl": 230.0,
+      "latitude": 40.05,
+      "long_name": "Airborne Aerosol Observatory, Bondville, Illinois, United States",
+      "longitude": -88.37
+        }
+    },
+  "B": {
+    "1": {
+      "height_station_masl": 1.0,
+      "latitude": -12.77,
+      "long_name": "Arembepe, Bahia, Brazil",
+      "longitude": -38.17
+    }
+  },
+  "C": {
+    "1": {
+      "latitude": 49.0114,
+      "longitude": -122.3353,
+      "height_station_masl": 60.0,
+      "long_name": "Abbotsford, British Columbia, Canada",
+      "height": ["33m"],
+      "height_name": ["33magl"]
+    }
+  },
+  "D": {
+    "1": {
+      "height_station_masl": 6.0,
+      "latitude": 57.7366,
+      "long_name": "Alaska Coast Guard, United States",
+      "longitude": -152.5042
+    }
+  },
+  "E": {
+    "1": {
+      "height": ["10m"],
+      "height_name": ["10magl"],
+      "height_station_masl": 10,
+      "latitude": 51.7,
+      "long_name": "Adrigole, Ireland",
+      "longitude": -9.72
+    },
+    "2": {
+      "height": ["10m"],
+      "height_name": ["10magl"],
+      "height_station_masl": 10,
+      "latitude": 51.7,
+      "long_name": "Adrigole, Ireland",
+      "longitude": -9.72
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{%- set default_dict = {} -%}
+{%- for k, v in used_keys.items() -%}
+{%- set _ = default_dict.update( {k: ',' if v else '' } ) -%} 
+{%- endfor -%}
+NWP Flow Module Instances:
+Name{{ ',Met Module' if used_keys['met_module'] }}{{ ',Met' if used_keys['met'] }}{{ ',Domain' if used_keys['domain'] }}{{ ',Ancillary Met Module Instances' if used_keys['ancillary_met_module_instances'] }}{{ ',Radar Met Module Instances' if used_keys['radar_met_module_instances'] }}{{ ',Update on Demand?' if used_keys['update_on_demand'] }}{{ ',Urban Canopy?' if used_keys['urban_canopy'] }}{{ ',Varying Free Trop Turb?' if used_keys['varying_free_trop_turb'] }}
+{%- for row in rows %}
+{{ row['name'] }}{{ ',' ~ row['met_module'] if row['met_module'] is not none else default_dict['met_module'] }}{{ ',' ~ row['met'] if row['met'] is not none else default_dict['met'] }}{{ ',' ~ row['domain'] if row['domain'] is not none else default_dict['domain'] }}{{ ',' ~ row['ancillary_met_module_instances'] if row['ancillary_met_module_instances'] is not none else default_dict['ancillary_met_module_instances'] }}{{ ',' ~ row['radar_met_module_instances'] if row['radar_met_module_instances'] is not none else default_dict['radar_met_module_instances'] }}{{ ',' ~ row['update_on_demand'] if row['update_on_demand'] is not none else default_dict['update_on_demand'] }}{{ ',' ~ row['urban_canopy'] if row['urban_canopy'] is not none else default_dict['urban_canopy'] }}{{ ',' ~ row['varying_free_trop_turb'] if row['varying_free_trop_turb'] is not none else default_dict['varying_free_trop_turb'] }}
+{%- endfor %}

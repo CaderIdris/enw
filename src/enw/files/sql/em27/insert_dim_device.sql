@@ -1,0 +1,5 @@
+INSERT INTO
+    dim_device
+VALUES
+    (?, ?)
+ON CONFLICT DO NOTHING;

@@ -1,0 +1,9 @@
+{%- set default_dict = {} -%}
+{%- for k, v in used_keys.items() -%}
+{%- set _ = default_dict.update( {k: ',' if v else '' } ) -%} 
+{%- endfor -%}
+Temporal Grids:
+Name{{ ',nT' if used_keys['t_num'] }}{{ ',dT' if used_keys['t_spacing'] }}{{ ',T0' if used_keys['t_min'] }}{{ ',T-Array' if used_keys['t_array'] }}
+{%- for row in rows %}
+{{ row['name'] }}{{ ',' ~ row['t_num'] if row['t_num'] is not none else default_dict['t_num'] }}{{ ',' ~ row['t_spacing'] if row['t_spacing'] is not none else default_dict['t_spacing'] }}{{ ',' ~ row['t_min'] if row['t_min'] is not none else default_dict['t_min'] }}{{ ',' ~ row['t_array'] if row['t_array'] is not none else default_dict['t_array'] }}
+{%- endfor %}

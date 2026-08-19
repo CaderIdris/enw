@@ -1,0 +1,47 @@
+{
+	"A": {
+		"alt": ["A1", "A2", "A3"],
+		"group": "Group A",
+		"name": "A",
+		"long_name": "Test A",
+		"mol_mass": 3.01,
+		"print_string": "Test$_{A}$",
+		"units": "UnitA"
+	},
+	"B": {
+		"alt": ["B1"],
+		"group": "Group B",
+		"name": "B",
+		"long_name": "Test B",
+		"mol_mass": 2.01,
+		"print_string": "Test$_{B}$",
+		"units": "UnitB"
+	},
+	"C": {
+		"alt": ["C1", "C2", "C3", "C4"],
+		"group": "Group C",
+		"name": "C",
+		"long_name": "Test C",
+		"mol_mass": 3.31,
+		"print_string": "Test$_{C}$",
+		"units": "UnitC"
+	},
+	"D": {
+		"alt": [],
+		"group": "Group D",
+		"name": "D",
+		"long_name": "Test D",
+		"mol_mass": 1.01,
+		"print_string": "Test$_{D}$",
+		"units": "UnitD"
+	},
+	"E": {
+		"alt": ["E1", "E2"],
+		"group": "Group E",
+		"name": "E",
+		"long_name": "Test E",
+		"mol_mass": 5.5,
+		"print_string": "Test$_{E}$",
+		"units": "UnitE"
+	}
+}

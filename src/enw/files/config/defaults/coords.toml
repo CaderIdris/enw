@@ -1,0 +1,5 @@
+horizontal = "Lat-Long"
+vertical = [
+	"m agl",
+	"m asl"
+]

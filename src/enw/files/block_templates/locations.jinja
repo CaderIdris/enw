@@ -1,0 +1,5 @@
+Locations: {{ block_name }}
+Name,H-Coord,X,Y
+{%- for row in rows %}
+{{ row.name }},{{ row.hcoord }},{{ row.x }},{{ row.y }}
+{%- endfor %}

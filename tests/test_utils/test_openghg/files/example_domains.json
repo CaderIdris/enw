@@ -1,0 +1,22 @@
+{
+	"A": {
+		"latitude_file": "domain/A_latitude.dat",
+		"longitude_file": "domain/A_longitude.dat"
+	},
+	"B": {
+		"latitude_file": "domain/B_latitude.dat",
+		"longitude_file": "domain/B_longitude.dat"
+	},
+	"C": {
+		"latitude_file": "domain/C_latitude.dat",
+		"longitude_file": "domain/C_longitude.dat"
+	},
+	"D": {
+		"latitude_file": "domain/D_latitude.dat",
+		"longitude_file": "domain/D_longitude.dat"
+	},
+	"E": {
+		"latitude_file": "domain/E_latitude.dat",
+		"longitude_file": "domain/E_longitude.dat"
+	}
+}

@@ -1,0 +1,13 @@
+{%- if comments is none -%}
+{%- set vals = values -%}
+{%- else -%}
+{%- set vals = [] -%}
+{%- for _ in values -%}
+{%- set _ = vals.append(values[loop.index0] ~ ',' ~ comments[loop.index0]) -%}
+{%- endfor -%}
+{%- endif -%}
+Array: {{ name }}
+Array Values{{ ', ! ' ~ comments_name if comments_name is not none }}
+{%- for row in vals %}
+{{ row }}
+{%- endfor %}

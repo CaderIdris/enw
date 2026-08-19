@@ -1,0 +1,5 @@
+INSERT INTO
+    dim_site
+VALUES
+    (?, ?)
+ON CONFLICT DO NOTHING;

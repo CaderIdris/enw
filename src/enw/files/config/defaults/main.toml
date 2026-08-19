@@ -1,0 +1,9 @@
+#TODO: Discuss defaults
+backwards = true
+max_num_sources = 4000
+max_num_field_reqs = 4000
+max_num_field_output_groups = 100
+absolute_or_relative = "Absolute"
+fixed_met = false
+flat_earth = false
+random_seed = "Random (Parallel)"

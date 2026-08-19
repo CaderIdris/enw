@@ -1,0 +1,166 @@
+[project]
+name = "enw"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = [
+    "duckdb>=1.5.5",
+    "jinja2>=3.1.6",
+    "openghg-defs",
+]
+
+[dependency-groups]
+dev = [
+    "enw",
+    "pytest>=9.0.3",
+    "pytest-cov>=7.1.0",
+    "pytest-html>=4.2.0",
+    "ruff>=0.15.15",
+    "tomli-w>=1.2.0",
+    "ty>=0.0.42",
+    "netcdf4>=1.7.4",
+]
+docs = [
+    "mkdocstrings-python>=2.0.3",
+    "zensical>=0.0.43",
+]
+notebook = [
+    "marimo>=0.23.14",
+]
+
+[build-system]
+requires = ["setuptools>=42.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-data]
+"enw.files.config.defaults" = ["*.toml"]
+"enw.files.config.presets" = ["*.toml"]
+"enw.files.block_templates" = ["*.jinja"]
+"enw.files.sql" = ["**/*.sql"]
+
+[tool.pytest.ini_options]
+testpaths = [
+	"tests"
+]
+
+markers = [
+	"block",
+	"block_base",
+	"block_flow",
+	"block_met",
+	"block_misc",
+	"block_output",
+	"block_run",
+	"block_source",
+	"block_spatial",
+	"block_temporal",
+	"config",
+	"config_check",
+	"config_load",
+	"custom",
+	"custom_em27",
+	"custom_em27_sql",
+	"utils",
+	"utils_config",
+	"utils_conversion",
+	"utils_misc",
+	"utils_openghg_presets",
+	"utils_type_check"
+]
+
+addopts = [
+	"--html=reports/tests/index.html",
+	"--self-contained-html",
+	"--cov-fail-under=99",
+	"--cov-report=html:reports/coverage",
+	"--cov-report=term-missing",
+	"--cov=enw"
+]
+
+[tool.tox]
+requires = ["tox>=4.20"]
+env_list = ["py314", "ruff", "ty"]
+
+[tool.tox.env_run_base]
+runner = "uv-venv-lock-runner"
+description = "Run test under {base_python}"
+commands = [["pytest", "--basetemp={envtmpdir}"]]
+
+[tool.tox.env.ruff]
+description = "Run ruff linting and static tests"
+commands = [["ruff", "check", "src", "tests"]]
+
+[tool.tox.env.ty]
+description = "Run ty static tests"
+commands = [["ty", "check", "src"]]
+
+[tool.tox.gh.python]
+"3.14" = ["3.14", "ruff", "ty"]
+
+[tool.pyright]
+venvPath = ""
+venv = ".venv"
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.lint]
+select = [
+	"F",  # pyflakes: General
+	"E",  # pycodestyle: General errors
+	"W",  # pycodestyle: General warnings
+	"C90",  # mccabe: Name complexity
+	"N",  # pep8-naming: Use proper names
+	"D",  # pydocstyle: Docstring linting
+	"UP",  # pyupgrade:  Don't use old code standards
+	"YTT",  # flake8-2020: Extra flake8 rules
+	"ANN",  # flake8-annotations: Used for type hinting
+	"S",  # flake8-bandit: Security linting
+	"BLE",  # flake8-blind-except: Don't accept raw exceptions
+	"FBT",  # flake8-boolean-trap: Avoid the boolean trap
+	"B",  # flake8-bugbear: Useful hints
+	"A",  # flake8-builtins: Don't use keywords reserved by Python
+	"C4",  # flake8-comprehensions: Useful hints about comprehensions
+	"EM",  # flake8-errmsg: Useful hints when raising exceptions
+	"ISC",  # flake8-implicit-str-concat: Warns against bad string concatenation 
+	"ICN",  # flake8-import-conventions: Use common import names
+	"G",  # flake8-logging-format: Format logging calls properly
+	"PIE",  # flake8-pie: misc lints
+	"T20",  # flake8-print: No print statements, use logging!
+	"PT",  # flake8-pytest-style: Lint pytest files
+	"Q",  # flake8-quotes: Quote linting
+	"RET",  # flake8-return: Lint return values from functions
+	"SLF",  # flake8-self: Don't use a classes private member
+	"SIM",  # flake8-simplify: Simplify your code to make it more readable
+	"TCH",  # flake8-type-checking: Remove overhead from type checking
+	"ARG",  # flake8-unused-arguments: Check for unused arguments
+	"PTH",  # flake8-use-pathlib: Use pathlib wherever possible!
+	"PD",  # pandas-vet: Pandas specific linting
+	"PGH",  # pygrep-hooks: Don't allow coverall noqa ignore comments
+	"TRY",  # tryceratops: Lint try-except blocks
+	"NPY",  # Numpy-specific-rules: Numpy linting
+	"PERF",  # perflint: Improve performance
+	"LOG",  # flake8-logging: Logging specific linting
+	"RUF",  # Ruff-specific-rules: Extra rules
+]
+ignore = [
+	"D203",
+	"D213"
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = [
+	"D",
+	"ARG",
+	"ANN",
+	"S",
+	"T201"
+]
+
+[tool.uv.workspace]
+members = [
+    ".",
+]
+
+[tool.uv.sources]
+enw = { workspace = true }
+openghg-defs = { git = "https://github.com/openghg/openghg_defs" }

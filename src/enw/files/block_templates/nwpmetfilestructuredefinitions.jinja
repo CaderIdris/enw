@@ -1,0 +1,9 @@
+{%- set default_dict = {} -%}
+{%- for k, v in used_keys.items() -%}
+{%- set _ = default_dict.update( {k: ',' if v else '' } ) -%} 
+{%- endfor -%}
+NWP Met File Structure Definition: {{ name }}
+Field Name{{ ',Lowest Level' if used_keys['lowest_level'] }}{{ ',Highest Level' if used_keys['highest_level'] }}{{ ',Field Code' if used_keys['field_code'] }}{{ ',3-d?' if used_keys['three_d'] }}{{ ',Field Qualifiers' if used_keys['field_qualifiers'] }}{{ ',NC Field Name' if used_keys['nc_field_name'] }}
+{%- for row in rows %}
+{{ row['field_name'] }}{{ ',' ~ row['lowest_level'] if row['lowest_level'] is not none else default_dict['lowest_level'] }}{{ ',' ~ row['highest_level'] if row['highest_level'] is not none else default_dict['highest_level'] }}{{ ',' ~ row['field_code'] if row['field_code'] is not none else default_dict['field_code'] }}{{ ',' ~ row['three_d'] if row['three_d'] is not none else default_dict['three_d'] }}{{ ',' ~ row['field_qualifiers'] if row['field_qualifiers'] is not none else default_dict['field_qualifiers'] }}{{ ',' ~ row['nc_field_name'] if row['nc_field_name'] is not none else default_dict['nc_field_name'] }}
+{%- endfor %}
