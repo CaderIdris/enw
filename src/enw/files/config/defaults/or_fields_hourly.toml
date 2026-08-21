@@ -1,0 +1,10 @@
+quantity = "Mixing Ratio"
+bl_average = false
+t_av_or_int = "Int"
+av_time = "744:00"
+num_av_times = 14880
+sync = false
+output_route = "D"
+across = "TZ"
+separate_file = "T"
+output_format = "IA2"

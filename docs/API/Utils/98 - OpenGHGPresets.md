@@ -1,6 +1,7 @@
 ---
 title: OpenGHG Presets
 description: Functions that pull in data from openghg_defs
+icon: lucide/factory
 date: 2026-06-08
 author: Idris Hayward
 tags:

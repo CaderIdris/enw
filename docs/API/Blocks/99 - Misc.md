@@ -1,6 +1,7 @@
 ---
 title: Miscellaneous Configuration Objects
 description: API for dataclasses related to miscellaneous configuration.
+icon: lucide/ellipsis
 date: 2026-06-08
 author: Idris Hayward
 tags:

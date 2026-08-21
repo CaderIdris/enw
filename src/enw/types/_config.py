@@ -43,6 +43,7 @@ class MainExtraConfig(TypedDict):
     fixed_met: bool
     flat_earth: bool
     random_seed: str
+    use_ukv: bool
 
 
 class OutputConfig(TypedDict):
@@ -199,12 +200,6 @@ class DomainConfig(TypedDict):
     t: DomainTDimension
 
 
-class TemporalGridConfig(TypedDict):
-    """"""
-    num: int
-    spacing: str
-    min: dt.datetime
-
 class SpeciesConfig(TypedDict):
     """"""
 
@@ -218,6 +213,71 @@ class SpeciesConfig(TypedDict):
     on_particles: bool
     on_fields: bool
     advect_fields: bool
+
+class OutputRequirementsConfig(TypedDict):
+    """"""
+    fields: dict[str, ORFields]
+    ppinfo: dict[str, ORPPInfo]
+
+class ORFields(TypedDict):
+    """"""
+    quantity: str
+    species: NotRequired[str]
+    source: NotRequired[str]
+    h_grid: NotRequired[str]
+    z_grid: NotRequired[str]
+    t_grid: str
+    bl_average: NotRequired[bool]
+    t_av_or_int: str
+    av_time: NotRequired[str]
+    num_av_times: NotRequired[int]
+    sync: bool
+    across: NotRequired[str]
+    separate_file: NotRequired[str]
+    output_format: str
+    output_route: str
+    output_group: str
+
+class ORPPInfo(TypedDict):
+    """"""
+    particles: bool
+    puffs: bool
+    met: bool
+    mass: bool
+    plume_rise: bool
+    dispersion_scheme: bool
+    puff_family: bool
+    fate_info: bool
+    h_coord: str
+    z_coord: str
+    sync: bool
+    output_route: str
+
+
+class DispersionOptionsConfig(TypedDict):
+    """"""
+    max_num_particles: int
+    max_num_full_particles: int
+    max_num_puffs: int
+    max_num_original_puffs: int
+    skew_time: str
+    velocity_memory_time: str
+    inhomogeneous_time: str
+    mesoscale_velocity_memory_time: str
+    puff_time: str
+    sync_time: str
+    computational_domain: str
+    puff_interval: str
+    delta_opt: str
+    time_of_fixed_met: dt.datetime
+    deep_convection: str
+    radioactive_decay: bool
+    agent_decay: bool
+    dry_deposition: bool
+    wet_deposition: bool
+    mesoscale_motions: bool
+    chemistry: bool
+    turbulence: bool
 
 
 class EnwConfig(TypedDict):
@@ -239,9 +299,10 @@ class EnwConfig(TypedDict):
     Locations: dict[str, LocationConfig]
     HorizontalGrid: HorizontalGridsConfig
     VerticalGrid: VerticalGridsConfig
-    TemporalGrid: TemporalGridConfig
     Domain: dict[str, DomainConfig]
     Species: dict[str, SpeciesConfig]
+    OutputRequirements: OutputRequirementsConfig
+    SetsOfDispersionOptions: DispersionOptionsConfig
 
 
 class DomainTimeBlock(TypedDict):

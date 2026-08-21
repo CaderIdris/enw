@@ -289,7 +289,7 @@ def insert_height_vars(
             ak = nc.variables[_av_kernels[species][0]][i,j].ravel().data[0]
             if _av_kernels[species][1] is not None:
                 ak_alt = nc.variables[
-                    _av_kernels[species][1]
+                    cast("str", _av_kernels[species][1])
                 ][i,j].ravel().data[0]
             else:
                 ak_alt = None

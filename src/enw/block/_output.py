@@ -1133,7 +1133,6 @@ class PPInfoRow:
     t_grid: NotImplementedType | None = None #str | None
     sync: Switch
     output_format: NotImplementedType | None = None
-    #OutputFormatStringPP | None
     output_route: OutputRouteStringPP
 
     @classmethod

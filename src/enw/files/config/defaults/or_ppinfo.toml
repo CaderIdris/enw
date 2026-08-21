@@ -1,0 +1,13 @@
+["Particles"]
+particles = true
+puffs = false
+fate_info = true
+met = false
+mass = false
+plume_rise = false
+dispersion_scheme = false
+puff_family = false
+h_coord = "Lat-Long"
+z_coord = "m agl"
+sync = true
+output_route = "D"

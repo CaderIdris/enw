@@ -615,7 +615,9 @@ def test_insert_height_vars_two_sites_good(
     species: str
 ):
     """"""
-    db_file = db_path / f"test_insert_height_vars_two_sites_good_{species}.db"
+    db_file = (
+        db_path / f"test_insert_height_vars_two_sites_good_{species}.db"
+    )
 
     tests = {}
     conn = db.connect(db_file)
@@ -674,7 +676,9 @@ def test_insert_height_vars_two_devices_good(
     species: str
 ):
     """"""
-    db_file = db_path / f"test_insert_height_vars_two_devices_good_{species}.db"
+    db_file = (
+        db_path / f"test_insert_height_vars_two_devices_good_{species}.db"
+    )
 
     tests = {}
     conn = db.connect(db_file)

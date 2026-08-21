@@ -154,9 +154,7 @@ date: 2026-06-08
     * [x] Defaults
     * [x] Tests
 * [ ] Temporal Grids
-    * [x] TypedDict
     * [ ] Build off from main options (start and end time)
-    * [ ] Tests
 * [x] Hcoord
     * [x] TypedDict
     * Currently only accepts single value
@@ -170,13 +168,14 @@ date: 2026-06-08
 * [ ] Multiple Case
     * [x] TypedDict
     * [ ] Toml
-    * [ ] Defaults
+    * [x] Defaults
     * [ ] Tests
 * [ ] Locations
     * [x] TypedDict
     * [x] OpenGHG Defs loader (Sites)
         * [x] Tests
     * [ ] Toml
+        * [ ] Overrides
     * [ ] Tests
 * [ ] Domains
     * [x] TypedDict
@@ -205,34 +204,25 @@ date: 2026-06-08
         * [ ] Overrides
     * [ ] Tests
 * [ ] Output Requirements
-    * [ ] TypedDict
-        * [ ] Fields
-        * [ ] Sets of Particle/Puff Information
+    * [x] TypedDict
+        * [x] Fields
+        * [x] Sets of Particle/Puff Information
     * [ ] Toml
         * [ ] Fields
         * [ ] Sets of Particle/Puff Information
-    * [ ] Defaults
-        * [ ] Fields
-        * [ ] Sets of Particle/Puff Information
+    * [x] Defaults
+        * [x] Fields
+        * [x] Sets of Particle/Puff Information
     * [ ] Tests
         * [ ] Fields
         * [ ] Sets of Particle/Puff Information
 * [ ] Sets of Dispersion Options
-    * [ ] TypedDict
+    * [x] TypedDict
     * [ ] Toml
-    * [ ] Defaults
+    * [x] Defaults
     * [ ] Tests
-<!-- INFO: Actually, isn't sources built from all others, not configured directly? -->
-<!-- * [ ] Sources -->
-<!--     * [ ] TypedDict -->
-<!--     * [ ] Built From -->
-<!--         * [ ] Domain -->
-<!--         * [ ] H-Coord -->
-<!--         * [ ] Z-Coord -->
-<!--         * [ ] Locations -->
-<!--         * [ ] Main Options -->
-<!--             * [ ] Time -->
-
+* [ ] Sources
+    * [ ] Build off from main options (start and end time)
 
 * [ ] All the met and flow stuff AAAAAAAAAAAAAAAA
 

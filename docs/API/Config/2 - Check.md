@@ -1,6 +1,7 @@
 ---
 title: Check
 description: Check and validate the configuration files.
+icon: lucide/search-alert
 date: 2026-06-08
 author: Idris Hayward
 tags:

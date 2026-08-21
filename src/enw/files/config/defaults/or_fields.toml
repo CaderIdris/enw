@@ -1,0 +1,7 @@
+["Count of particles"]
+quantity = "# Particles"
+t_av_or_int = "No"
+sync = true
+output_route = "D"
+output_format = "AF"
+output_group = "Numbers"
