@@ -617,25 +617,6 @@ def test_multiple_case_bad_type(
 
 
 @no_type_check
-def test_multiple_case_name_blank(
-    multiple_case_config: MultipleCaseConfig
-):
-    """Does the MultipleCase class error with a bad type?"""
-    tests = {}
-    config = multiple_case_config | {"name": None}
-
-    multiple_cases = MultipleCase.setup(**config)
-    tests["name is string"] = isinstance(multiple_cases.name, str)
-    tests["name is blank string"] = multiple_cases.name == ""
-
-    for test, result in tests.items():
-        if not result:
-            print(test)
-
-    assert all(tests.values())
-
-
-@no_type_check
 @pytest.fixture
 def openmp_config() -> OpenMPConfig:
     return {

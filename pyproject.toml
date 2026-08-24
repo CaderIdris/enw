@@ -59,11 +59,13 @@ markers = [
 	"custom",
 	"custom_em27",
 	"custom_em27_sql",
+	"custom_em27_func",
 	"utils",
 	"utils_config",
 	"utils_conversion",
 	"utils_misc",
-	"utils_openghg_presets",
+	"utils_openghg",
+	"utils_openghg_defs",
 	"utils_type_check"
 ]
 

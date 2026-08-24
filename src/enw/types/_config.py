@@ -85,8 +85,8 @@ class MultipleCaseConfig(TypedDict):
     """
 
     name: NotRequired[str]
-    dispersion_options_ensemble_size: NotRequired[int]
-    met_ensemble_size: NotRequired[int]
+    dispersion_options_ensemble_size: int
+    met_ensemble_size: int
 
 
 class OpenMPConfig(TypedDict):
@@ -119,6 +119,7 @@ class CoordinateSystemsConfig(TypedDict):
 
     horizontal: list[str]
     vertical: list[str]
+
 
 class LocationConfig(TypedDict):
     """Configuration variables for the Locations input blocks.
@@ -171,26 +172,31 @@ class VerticalGridsConfig(TypedDict):
 
 
 class DomainHDimension(TypedDict):
-    """"""
+    """Horizontal subdict for Domain input blocks."""
 
     num: int
     min: float
     max: float
 
 class DomainVDimension(TypedDict):
-    """"""
+    """Vertical subdict for Domain input blocks."""
 
     max: int
 
 class DomainTDimension(TypedDict):
-    """"""
+    """Temporal subdict for Domain input blocks."""
 
     unbounded: bool
     max_travel_time: str
 
 
 class DomainConfig(TypedDict):
-    """"""
+    """Configuration variables for the Domains input blocks.
+
+    This TypedDict represents all the configuration variables for the
+    `Domains` block in the NAME III Input Header files, using pure
+    Python types.
+    """
 
     hcoord: str
     zcoord: str
@@ -201,7 +207,12 @@ class DomainConfig(TypedDict):
 
 
 class SpeciesConfig(TypedDict):
-    """"""
+    """Configuration variables for the Species input block.
+
+    This TypedDict represents all the configuration variables for the
+    `Species` block in the NAME III Input Header files, using pure
+    Python types.
+    """
 
     category: str
     molecular_weight: float
@@ -314,6 +325,13 @@ class DomainTimeBlock(TypedDict):
     duration: TimeInterval | None
     max_travel_time: TimeInterval
 
+class OpenGHGPresets(TypedDict):
+    """Return type for preset locations, species and domains from OpenGHG."""
+
+    Locations: dict[str, LocationConfig]
+    Species: dict[str, SpeciesConfig]
+    Domains: dict[str, DomainConfig]
+
 OptionBlock = Literal[
     "main",
     "output",
@@ -324,7 +342,7 @@ OptionBlock = Literal[
 ]
 """A camel case set of all NAME III config blocks with defaults in enw.
 
-This is used for tyoe hinting during development, to minimise bugs.
+This is used for type hinting during development, to minimise bugs.
 This will likely not be required if you are using enw as a base to
 build your own tool.
 """

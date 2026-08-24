@@ -166,7 +166,7 @@ def test_get_location_info_subset(
 
     expected = {
         "name": (
-            "Adrigole, Ireland"
+            "Adrigole, Ireland, 2"
         ),
         "x": -9.72,
         "y": 51.7,

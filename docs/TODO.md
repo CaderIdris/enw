@@ -165,25 +165,24 @@ date: 2026-06-08
     * Currently only accepts two values
     * [x] Defaults
     * [x] Tests
-* [ ] Multiple Case
+* [x] Multiple Case
     * [x] TypedDict
-    * [ ] Toml
+    * [x] Check
     * [x] Defaults
-    * [ ] Tests
-* [ ] Locations
+* [x] Locations
     * [x] TypedDict
     * [x] OpenGHG Defs loader (Sites)
         * [x] Tests
-    * [ ] Toml
-        * [ ] Overrides
-    * [ ] Tests
-* [ ] Domains
+    * [x] Toml
+        * [x] Overrides
+    * [x] Tests
+* [x] Domains
     * [x] TypedDict
     * [x] OpenGHG Defs loader (Domains)
         * [x] Tests
-    * [ ] Toml
-        * [ ] Overrides
-    * [ ] Tests
+    * [x] Toml
+        * [x] Overrides
+    * [x] Tests
 * [ ] Horizontal Grids
     * [x] TypedDict
     * [x] OpenGHG Defs loader (Domains)
@@ -196,13 +195,13 @@ date: 2026-06-08
         * [x] Tests
     * [ ] Toml
     * [ ] Tests
-* [ ] Species
+* [x] Species
     * [x] TypedDict
     * [x] OpenGHG Defs loader (Species)
         * [x] Tests
-    * [ ] Toml
-        * [ ] Overrides
-    * [ ] Tests
+    * [x] Toml
+        * [x] Overrides
+    * [x] Tests
 * [ ] Output Requirements
     * [x] TypedDict
         * [x] Fields

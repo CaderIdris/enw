@@ -3,6 +3,12 @@ import logging
 import tomllib
 from typing import Any, cast, TYPE_CHECKING
 
+from enw.utils.openghg import (
+    get_location_info,
+    get_domain_info,
+    get_species_info,
+)
+
 from ._check import (
     check_coord_options,
     check_main_options,
@@ -12,7 +18,11 @@ from ._check import (
 )
 
 if TYPE_CHECKING:
-    from enw.types import EnwConfig, OptionBlock
+    from enw.types import (
+        EnwConfig,
+        OpenGHGPresets,
+        OptionBlock,
+    )
     from pathlib import Path
 
 
@@ -131,4 +141,48 @@ def load_defaults(
     with as_file(default_path) as default_toml:
         defaults = load_toml(default_toml)
     return defaults | configured_vals
+
+
+def load_openghg(
+    config: dict[str, Any]
+) -> OpenGHGPresets:
+    """Load OpenGHG preset locations, species and domains.
+
+    Parameters
+    ----------
+    config : dict[str, Any]
+        OpenGHG presets within the config.
+
+    Returns
+    -------
+    OpenGHGPresets
+        Preset OpenGHG values
+
+    """
+    presets = {}
+
+    if "Locations" in config:
+        presets["Locations"] = {}
+        for loc, overrides in config["Locations"].items():
+            presets["Locations"][loc] = (
+                get_location_info(loc, overrides.get("subset")) | overrides
+            )
+            if "subset" in presets["Locations"][loc]:
+                presets["Locations"][loc].pop("subset")
+
+    if "Species" in config:
+        presets["Species"] = {}
+        for loc, overrides in config["Species"].items():
+            presets["Species"][loc] = (
+                get_species_info(loc) | overrides
+            )
+
+    if "Domains" in config:
+        presets["Domains"] = {}
+        for loc, overrides in config["Domains"].items():
+            presets["Domains"][loc] = (
+                get_domain_info(loc) | overrides
+            )
+
+    return cast("OpenGHGPresets", presets)
 

@@ -682,7 +682,7 @@ class MultipleCase(NAMEIIIHeaderInputBlock):
         this within the config will result in an error.
     """
 
-    name: str
+    name: str | None
     dispersion_options_ensemble_size: int
     met_ensemble_size: int
 
@@ -709,9 +709,8 @@ class MultipleCase(NAMEIIIHeaderInputBlock):
             The number of met cases in the ensemble.
 
         """
-        if name is None:
-            name = ""
-        check_type("name", name, str)
+        if name is not None:
+            check_type("name", name, str)
         check_type(
             "dispersion_options_ensemble_size",
             dispersion_options_ensemble_size,

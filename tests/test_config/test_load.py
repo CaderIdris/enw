@@ -5,14 +5,17 @@ from pathlib import Path
 import tomllib
 from typing import no_type_check
 
+import openghg_defs
 import pytest
 import tomli_w
 
 from enw.config import (
     load_config,
+    load_openghg,
     load_toml,
     load_defaults,
 )
+import enw.utils.openghg._defs as _defs
 
 pytestmark = [
     pytest.mark.config,
@@ -265,3 +268,312 @@ def test_load_config_no_coords_warning(
             print(test)
 
     assert all(tests.values())
+
+@pytest.mark.parametrize("domains", [True, False])
+@pytest.mark.parametrize("locations", [True, False])
+@pytest.mark.parametrize("species", [True, False])
+def test_load_openghg_single_vals_good(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    domains: bool,
+    locations: bool,
+    species: bool
+):
+    """"""
+    tests = {}
+    monkeypatch.setattr(
+        openghg_defs,
+        "domain_info_file",
+        Path("tests/test_utils/test_openghg/files/example_domains.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "site_info_file",
+        Path("tests/test_utils/test_openghg/files/example_locations.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "species_info_file",
+        Path("tests/test_utils/test_openghg/files/example_species.json")
+    )
+    monkeypatch.setattr(
+        _defs,
+        "openghg_defs_data",
+        Path("tests/test_utils/test_openghg/files/")
+    )
+
+    test_config = {}
+    expected = {}
+
+    if domains:
+        test_config["Domains"] = {"C": {}}
+        expected["Domains"] = {
+            "C": {
+                "name": "C",
+                "x": {
+                    "min": -77.9000015258789,
+                    "max": -76.8453140258789,
+                    "num": 4
+                },
+                "y": {
+                    "min": 56.093746185302734,
+                    "max": 57.499996185302734,
+                    "num": 7
+                }
+            }
+        }
+
+    if locations:
+        test_config["Locations"] = {"D": {}}
+        expected["Locations"] = {
+            "D": {
+                "name": "Alaska Coast Guard, United States",
+                "x": -152.5042,
+                "y": 57.7366,
+                "inlet_height": 6.0,
+                "heights": None,
+                "heights_units": None,
+                "hcoord": "Lat-Long"
+            }
+        }
+
+    if species:
+        test_config["Species"] = {"E2": {}}
+        expected["Species"] = {
+            "E2": {
+                "name": "Test E",
+                "category": "Group E",
+                "molecular_weight": 5.5,
+                "deposition_velocity": 0,
+                "material_unit": "g",
+                "uv_loss_rate": 0,
+                "half_life": "Stable",
+                "surface_resistance": None
+            }
+        }
+
+    actual = load_openghg(test_config)
+    tests["Expected presets"] = expected == actual
+
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())
+
+
+@pytest.mark.parametrize("domains", [True, False])
+@pytest.mark.parametrize("locations", [True, False])
+@pytest.mark.parametrize("species", [True, False])
+def test_load_openghg_multiple_vals_good(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    domains: bool,
+    locations: bool,
+    species: bool
+):
+    """"""
+    tests = {}
+    monkeypatch.setattr(
+        openghg_defs,
+        "domain_info_file",
+        Path("tests/test_utils/test_openghg/files/example_domains.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "site_info_file",
+        Path("tests/test_utils/test_openghg/files/example_locations.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "species_info_file",
+        Path("tests/test_utils/test_openghg/files/example_species.json")
+    )
+    monkeypatch.setattr(
+        _defs,
+        "openghg_defs_data",
+        Path("tests/test_utils/test_openghg/files/")
+    )
+
+    test_config = {}
+    expected = {}
+
+    if domains:
+        test_config["Domains"] = {"C": {}, "D": {}}
+        expected["Domains"] = {
+            "C": {
+                "name": "C",
+                "x": {
+                    "min": -77.9000015258789,
+                    "max": -76.8453140258789,
+                    "num": 4
+                },
+                "y": {
+                    "min": 56.093746185302734,
+                    "max": 57.499996185302734,
+                    "num": 7
+                }
+            },
+            "D": {
+                "name": "D",
+                "x": {
+                    "min": -67.9000015258789,
+                    "max": -66.8453140258789,
+                    "num": 4
+                },
+                "y": {
+                    "min": 66.093746185302734,
+                    "max": 67.499996185302734,
+                    "num": 7
+                }
+            },
+        }
+
+    if locations:
+        test_config["Locations"] = {"C": {}, "D": {}}
+        expected["Locations"] = {
+            "C": {
+                "name": "Abbotsford, British Columbia, Canada",
+                "x": -122.3353,
+                "y": 49.0114,
+                "inlet_height": 60.0,
+                "heights": ["33m"],
+                "heights_units": ["33magl"],
+                "hcoord": "Lat-Long"
+            },
+            "D": {
+                "name": "Alaska Coast Guard, United States",
+                "x": -152.5042,
+                "y": 57.7366,
+                "inlet_height": 6.0,
+                "heights": None,
+                "heights_units": None,
+                "hcoord": "Lat-Long"
+            }
+        }
+
+    if species:
+        test_config["Species"] = {"D": {}, "E2": {}}
+        expected["Species"] = {
+            "D": {
+                "name": "Test D",
+                "category": "Group D",
+                "molecular_weight": 1.01,
+                "deposition_velocity": 0,
+                "material_unit": "g",
+                "uv_loss_rate": 0,
+                "half_life": "Stable",
+                "surface_resistance": None
+            },
+            "E2": {
+                "name": "Test E",
+                "category": "Group E",
+                "molecular_weight": 5.5,
+                "deposition_velocity": 0,
+                "material_unit": "g",
+                "uv_loss_rate": 0,
+                "half_life": "Stable",
+                "surface_resistance": None
+            }
+        }
+
+    actual = load_openghg(test_config)
+    tests["Expected presets"] = expected == actual
+
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())
+
+
+@pytest.mark.parametrize("subset", ["1", "2"])
+def test_load_openghg_subsets_vals_good(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    subset: str,
+):
+    """"""
+    tests = {}
+    monkeypatch.setattr(
+        openghg_defs,
+        "domain_info_file",
+        Path("tests/test_utils/test_openghg/files/example_domains.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "site_info_file",
+        Path("tests/test_utils/test_openghg/files/example_locations.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "species_info_file",
+        Path("tests/test_utils/test_openghg/files/example_species.json")
+    )
+    monkeypatch.setattr(
+        _defs,
+        "openghg_defs_data",
+        Path("tests/test_utils/test_openghg/files/")
+    )
+
+    test_config = {}
+    expected = {}
+
+    test_config["Locations"] = {"E": {"subset": subset}}
+    expected["Locations"] = {
+        "E": {
+            "name": f"Adrigole, Ireland, {subset}",
+            "x": -9.72,
+            "y": 51.7,
+            "inlet_height": 10,
+            "heights": ["10m"],
+            "heights_units": ["10magl"],
+            "hcoord": "Lat-Long"
+        }
+    }
+
+    test_config["Species"] = {"E2": {}}
+    expected["Species"] = {
+        "E2": {
+            "name": "Test E",
+            "category": "Group E",
+            "molecular_weight": 5.5,
+            "deposition_velocity": 0,
+            "material_unit": "g",
+            "uv_loss_rate": 0,
+            "half_life": "Stable",
+            "surface_resistance": None
+        }
+    }
+
+    test_config["Domains"] = {"C": {}}
+    expected["Domains"] = {
+        "C": {
+            "name": "C",
+            "x": {
+                "min": -77.9000015258789,
+                "max": -76.8453140258789,
+                "num": 4
+            },
+            "y": {
+                "min": 56.093746185302734,
+                "max": 57.499996185302734,
+                "num": 7
+            }
+        }
+    }
+
+    actual = load_openghg(test_config)
+
+    print(expected)
+    print(actual)
+
+    tests["Expected presets"] = expected == actual
+
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())
+
+

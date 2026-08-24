@@ -39,7 +39,7 @@
       "height_name": ["10magl"],
       "height_station_masl": 10,
       "latitude": 51.7,
-      "long_name": "Adrigole, Ireland",
+      "long_name": "Adrigole, Ireland, 1",
       "longitude": -9.72
     },
     "2": {
@@ -47,7 +47,7 @@
       "height_name": ["10magl"],
       "height_station_masl": 10,
       "latitude": 51.7,
-      "long_name": "Adrigole, Ireland",
+      "long_name": "Adrigole, Ireland, 2",
       "longitude": -9.72
     }
   }

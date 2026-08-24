@@ -5,7 +5,7 @@ from enw.types import (
     AbsOrRelOpts,
     RandomSeedOpts,
     HorizontalCoordSystems,
-    VerticalCoordSystems,
+    VerticalCoordSystems, MultipleCaseConfig,
 )
 from enw.utils import (
     check_pos_int,
@@ -406,3 +406,68 @@ def check_coord_options(config: dict[str, Any]) -> CoordinateSystemsConfig:
         "horizontal": hcoords,
         "vertical": vcoords
     }
+
+def check_multiple_case_options(
+    config: dict[str, Any],
+) -> MultipleCaseConfig: # pragma: no cover
+    """Check the multiple case options portion of the config file.
+
+    !!! warning
+        Not currently implemented!
+
+    Parameters
+    ----------
+    config : dict[str, Any]
+        The "Coordinate Systems" section of the config.
+
+    Returns
+    -------
+    MultipleCaseConfig
+        The MultipleCaseConfig options, after setting defaults and type
+        checking.
+
+    """
+    expected_keys = {
+        "dispersion_options_ensemble_size",
+        "met_ensemble_size"
+    }
+    check_keys(
+        set(config.keys()),
+        expected_keys,
+        "MultipleCaseConfig"
+    )
+    check_type(
+        "dispersion_options_ensemble_size",
+        config.get("dispersion_options_ensemble_size"),
+        int
+    )
+    check_type(
+        "met_ensemble_size",
+        config.get("met_ensemble_size"),
+        int
+    )
+    check_pos_int(
+        "dispersion_options_ensemble_size",
+        cast("int", config.get("dispersion_options_ensemble_size")),
+    )
+    check_pos_int(
+        "met_ensemble_size",
+        cast("int", config.get("met_ensemble_size")),
+    )
+    checked: MultipleCaseConfig = {
+        "dispersion_options_ensemble_size": cast(
+            "int",
+            config.get(
+                "dispersion_options_ensemble_size"
+            )
+        ),
+        "met_ensemble_size": cast(
+            "int",
+            config.get("met_ensemble_size")
+        )
+    }
+    if config.get("name") is not None:
+        check_type("name", config.get("name"), str)
+        checked["name"] = str(config.get("name"))
+
+    return checked
