@@ -64,12 +64,23 @@ def test_get_domain_info(
             "min": -97.9000015258789,
             "max": -96.8453140258789,
             "num": 4,
+            "unbounded": False
         },
         "y": {
             "min": 36.093746185302734,
             "max": 37.499996185302734,
             "num": 7,
-        }
+            "unbounded": False
+        },
+        "z": {
+            "max": 20000,
+            "unbounded": False
+        },
+        "t": {
+            "unbounded": True
+        },
+        "hcoord": "Lat-Long",
+        "zcoord": "m agl"
     }
     actual = get_domain_info("A")
 
@@ -138,8 +149,6 @@ def test_get_location_info_single_val(
         "x": -88.37,
         "y": 40.05,
         "inlet_height": 230.0,
-        "heights": None,
-        "heights_units": None,
         "hcoord": "Lat-Long",
         "subset": "1"
     }
@@ -171,8 +180,6 @@ def test_get_location_info_subset(
         "x": -9.72,
         "y": 51.7,
         "inlet_height": 10,
-        "heights": ["10m"],
-        "heights_units": ["10magl"],
         "hcoord": "Lat-Long",
         "subset": "2"
     }
@@ -336,6 +343,9 @@ def test_get_species_info(
         "uv_loss_rate": 0,
         "half_life": "Stable",
         "surface_resistance": None,
+        "on_particles": True,
+        "on_fields": False,
+        "advect_fields": False,
     }
     actual = get_species_info(species)
     print(expected)

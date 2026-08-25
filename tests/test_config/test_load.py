@@ -313,13 +313,24 @@ def test_load_openghg_single_vals_good(
                 "x": {
                     "min": -77.9000015258789,
                     "max": -76.8453140258789,
-                    "num": 4
+                    "num": 4,
+                    "unbounded": False
                 },
                 "y": {
                     "min": 56.093746185302734,
                     "max": 57.499996185302734,
-                    "num": 7
-                }
+                    "num": 7,
+                    "unbounded": False
+                },
+                "z": {
+                    "max": 20000,
+                    "unbounded": False
+                },
+                "t": {
+                    "unbounded": True
+                },
+                "hcoord": "Lat-Long",
+                "zcoord": "m agl"
             }
         }
 
@@ -331,8 +342,6 @@ def test_load_openghg_single_vals_good(
                 "x": -152.5042,
                 "y": 57.7366,
                 "inlet_height": 6.0,
-                "heights": None,
-                "heights_units": None,
                 "hcoord": "Lat-Long"
             }
         }
@@ -348,7 +357,10 @@ def test_load_openghg_single_vals_good(
                 "material_unit": "g",
                 "uv_loss_rate": 0,
                 "half_life": "Stable",
-                "surface_resistance": None
+                "surface_resistance": None,
+                "on_particles": True,
+                "on_fields": False,
+                "advect_fields": False,
             }
         }
 
@@ -406,26 +418,48 @@ def test_load_openghg_multiple_vals_good(
                 "x": {
                     "min": -77.9000015258789,
                     "max": -76.8453140258789,
-                    "num": 4
+                    "num": 4,
+                    "unbounded": False
                 },
                 "y": {
                     "min": 56.093746185302734,
                     "max": 57.499996185302734,
-                    "num": 7
-                }
+                    "num": 7,
+                    "unbounded": False
+                },
+                "z": {
+                    "max": 20000,
+                    "unbounded": False
+                },
+                "t": {
+                    "unbounded": True
+                },
+                "hcoord": "Lat-Long",
+                "zcoord": "m agl"
             },
             "D": {
                 "name": "D",
                 "x": {
                     "min": -67.9000015258789,
                     "max": -66.8453140258789,
-                    "num": 4
+                    "num": 4,
+                    "unbounded": False
                 },
                 "y": {
                     "min": 66.093746185302734,
                     "max": 67.499996185302734,
-                    "num": 7
-                }
+                    "num": 7,
+                    "unbounded": False
+                },
+                "z": {
+                    "max": 20000,
+                    "unbounded": False
+                },
+                "t": {
+                    "unbounded": True
+                },
+                "hcoord": "Lat-Long",
+                "zcoord": "m agl"
             },
         }
 
@@ -437,8 +471,6 @@ def test_load_openghg_multiple_vals_good(
                 "x": -122.3353,
                 "y": 49.0114,
                 "inlet_height": 60.0,
-                "heights": ["33m"],
-                "heights_units": ["33magl"],
                 "hcoord": "Lat-Long"
             },
             "D": {
@@ -446,8 +478,6 @@ def test_load_openghg_multiple_vals_good(
                 "x": -152.5042,
                 "y": 57.7366,
                 "inlet_height": 6.0,
-                "heights": None,
-                "heights_units": None,
                 "hcoord": "Lat-Long"
             }
         }
@@ -463,7 +493,11 @@ def test_load_openghg_multiple_vals_good(
                 "material_unit": "g",
                 "uv_loss_rate": 0,
                 "half_life": "Stable",
-                "surface_resistance": None
+                "surface_resistance": None,
+                "on_particles": True,
+                "on_fields": False,
+                "advect_fields": False,
+
             },
             "E2": {
                 "name": "Test E",
@@ -473,7 +507,11 @@ def test_load_openghg_multiple_vals_good(
                 "material_unit": "g",
                 "uv_loss_rate": 0,
                 "half_life": "Stable",
-                "surface_resistance": None
+                "surface_resistance": None,
+                "on_particles": True,
+                "on_fields": False,
+                "advect_fields": False,
+
             }
         }
 
@@ -526,8 +564,6 @@ def test_load_openghg_subsets_vals_good(
             "x": -9.72,
             "y": 51.7,
             "inlet_height": 10,
-            "heights": ["10m"],
-            "heights_units": ["10magl"],
             "hcoord": "Lat-Long"
         }
     }
@@ -542,7 +578,11 @@ def test_load_openghg_subsets_vals_good(
             "material_unit": "g",
             "uv_loss_rate": 0,
             "half_life": "Stable",
-            "surface_resistance": None
+            "surface_resistance": None,
+            "on_particles": True,
+            "on_fields": False,
+            "advect_fields": False,
+
         }
     }
 
@@ -553,13 +593,24 @@ def test_load_openghg_subsets_vals_good(
             "x": {
                 "min": -77.9000015258789,
                 "max": -76.8453140258789,
-                "num": 4
+                "num": 4,
+                "unbounded": False
             },
             "y": {
                 "min": 56.093746185302734,
                 "max": 57.499996185302734,
-                "num": 7
-            }
+                "num": 7,
+                "unbounded": False
+            },
+            "z": {
+                "max": 20000,
+                "unbounded": False
+            },
+            "t": {
+                "unbounded": True
+            },
+            "hcoord": "Lat-Long",
+            "zcoord": "m agl"
         }
     }
 

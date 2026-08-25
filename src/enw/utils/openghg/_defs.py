@@ -68,8 +68,6 @@ def get_location_info(
         "x": info.get("longitude"),
         "y": info.get("latitude"),
         "inlet_height": info.get("height_station_masl"),
-        "heights": info.get("height"),
-        "heights_units": info.get("height_name"),
         "hcoord": "Lat-Long",
         "subset": subset
     }
@@ -140,12 +138,23 @@ def get_domain_info(key: str) -> dict[str, str | dict[str, float]]:
             "min": vals["x_min"],
             "max": vals["x_max"],
             "num": vals["x_num"],
+            "unbounded": False
         },
         "y": {
             "min": vals["y_min"],
             "max": vals["y_max"],
-            "num": vals["y_num"]
+            "num": vals["y_num"],
+            "unbounded": False
         },
+        "z": {
+            "max": 20000,
+            "unbounded": False
+        },
+        "t": {
+            "unbounded": True
+        },
+        "hcoord": "Lat-Long",
+        "zcoord": "m agl"
     }
 
 
@@ -231,5 +240,8 @@ def get_species_info(key: str) -> dict[str, str | float]:
         "uv_loss_rate": all_info.get("uv_loss_rate", 0),
         "half_life": all_info.get("half_life", "Stable"),
         "surface_resistance": all_info.get("surface_resistance"),
+        "on_particles": True,
+        "on_fields": False,
+        "advect_fields": False
     }
 

@@ -226,9 +226,9 @@ date: 2026-06-08
 * [ ] All the met and flow stuff AAAAAAAAAAAAAAAA
 
 * [x] Set hcoord to lat-long when using openghg default (location)
-* [ ] Set hcoord to lat-long when using openghg default (domain)
+* [x] Set hcoord to lat-long when using openghg default (domain)
 * [ ] Raise error if openghg defaults used when lat-long not set
-* [ ] OpenGHG Locations: IGNORE:, heights, heights_units. subset
+* [x] OpenGHG Locations: IGNORE:, heights, heights_units. subset
 * [ ] Main domain title should default to "Dispersion Domain"
-* [ ] Add on_particles, on_fields, advect_fields to species return, default TFF
+* [x] Add on_particles, on_fields, advect_fields to species return, default TFF
 
