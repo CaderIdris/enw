@@ -231,4 +231,5 @@ date: 2026-06-08
 * [x] OpenGHG Locations: IGNORE:, heights, heights_units. subset
 * [ ] Main domain title should default to "Dispersion Domain"
 * [x] Add on_particles, on_fields, advect_fields to species return, default TFF
-
+* [ ] Break up load function
+* [ ] Main not present should raise error

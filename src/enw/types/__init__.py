@@ -2,7 +2,9 @@
 from ._config import (
     CoordinateSystemsConfig,
     DomainTimeBlock,
+    DomainConfig,
     EnwConfig,
+    LocationConfig,
     MainConfig,
     MultipleCaseConfig,
     OpenMPConfig,
@@ -10,6 +12,7 @@ from ._config import (
     OptionBlock,
     OutputConfig,
     RestartConfig,
+    SpeciesConfig
 )
 from ._options import (
     AbsOrRelOpts,
@@ -48,12 +51,14 @@ __all__ = [
     "DateTime",
     "DeepConvectionOpts",
     "DescriptiveTimeInterval",
+    "DomainConfig",
     "DomainTimeBlock",
     "EnwConfig",
     "FieldQualifierOpts",
     "FileTypeOpts",
     "FlowAttributeOpts",
     "HorizontalCoordSystems",
+    "LocationConfig",
     "MainConfig",
     "MultipleCaseConfig",
     "NonDescriptiveTimeInterval",
@@ -71,6 +76,7 @@ __all__ = [
     "SeparateFileString",
     "SourceShapeOpts",
     "SourceStrength",
+    "SpeciesConfig",
     "Switch",
     "TAvOrIntOpts",
     "TimeInterval",

@@ -13,3 +13,5 @@ reports/*
 .coverage
 
 site/
+
+*.local

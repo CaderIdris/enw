@@ -11,10 +11,13 @@ from enw.utils.openghg import (
 
 from ._check import (
     check_coord_options,
+    check_domain_options,
+    check_location_options,
     check_main_options,
     check_openmp_options,
     check_output_options,
-    check_restart_options
+    check_restart_options,
+    check_species_options,
 )
 
 if TYPE_CHECKING:
@@ -28,6 +31,7 @@ if TYPE_CHECKING:
 
 _logger = logging.getLogger("_enw")
 
+#TODO: Need to separate this into individual blocks.
 def load_config(path: Path) -> EnwConfig:
     """Load the config file, with error checking.
 
@@ -47,6 +51,7 @@ def load_config(path: Path) -> EnwConfig:
 
     #INFO: Check Main
     #TODO: Sort out whether main should be mandatory or not
+    #BUG: Some of the main arguments aren't default now. Raise an error.
     if "Main" not in raw_config:
         _logger.warning("Main config not present, using defaults.")
     config_main = load_defaults(raw_config.get("Main", {}), "main")
@@ -83,6 +88,32 @@ def load_config(path: Path) -> EnwConfig:
         "coords"
     )
     config["CoordinateSystems"] = check_coord_options(config_coords)
+    #INFO: Import OpenGHG presets and test, along with any custom values
+    openghg_presets = load_openghg(raw_config.get("OpenGHG Presets", {}))
+    config["Locations"] = (
+        check_location_options(openghg_presets["Locations"])
+        if "Locations" in openghg_presets else {}
+    )
+    config["Locations"] = config["Locations"] | (
+        check_location_options(raw_config.get("Locations", {}))
+    )
+
+    config["Domains"] = (
+        check_domain_options(openghg_presets["Domains"])
+        if "Domains" in openghg_presets else {}
+    )
+    config["Domains"] = config["Domains"] | (
+        check_domain_options(raw_config.get("Domains", {}))
+    )
+
+    config["Species"] = (
+        check_species_options(openghg_presets["Species"])
+        if "Species" in openghg_presets else {}
+    )
+    config["Species"] = config["Species"] | (
+        check_species_options(raw_config.get("Species", {}))
+    )
+    
     return cast("EnwConfig", config)
 
 

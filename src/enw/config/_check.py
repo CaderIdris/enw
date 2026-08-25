@@ -1,3 +1,4 @@
+from types import NoneType, UnionType
 import logging
 from typing import Any, cast, TYPE_CHECKING
 
@@ -20,6 +21,9 @@ _logger = logging.getLogger("_enw")
 
 if TYPE_CHECKING:
     from enw.types import (
+        LocationConfig,
+        SpeciesConfig,
+        DomainConfig,
         CoordinateSystemsConfig,
         MainConfig,
         OutputConfig,
@@ -471,3 +475,154 @@ def check_multiple_case_options(
         checked["name"] = str(config.get("name"))
 
     return checked
+
+def check_location_options(
+    config: dict[str, Any]
+) -> LocationConfig:
+    """"""
+    expected_keys = {
+        "name",
+        "x",
+        "y",
+        "inlet_height",
+        "hcoord",
+        "subset"
+    }
+    vals = (
+        ("name", str),
+        ("x", float),
+        ("y", float),
+        ("inlet_height", float),
+        ("subset", str),
+    )
+    literals = (
+        ("hcoord", "HorizontalCoordSystems", HorizontalCoordSystems),
+    )
+    for loc, loc_config in config.items():
+        check_keys(
+            set(loc_config.keys()),
+            expected_keys,
+            f"Locations ({loc}, OpenGHG)"
+        )
+        for val, expected_type in vals:
+            check_type(f"{loc}.{val}", loc_config.get(val), expected_type)
+        for val, literal_name, literal_type in literals:
+            check_literal(
+                f"{loc}.{val}",
+                loc_config.get(val),
+                literal_name,
+                literal_type
+            )
+
+    return cast("LocationConfig", config)
+
+
+def check_species_options(
+    config: dict[str, Any]
+) -> SpeciesConfig:
+    """"""
+    expected_keys = {
+        "name",
+        "category",
+        "molecular_weight",
+        "deposition_velocity",
+        "material_unit",
+        "uv_loss_rate",
+        "half_life",
+        "surface_resistance"
+        "on_particles",
+        "on_fields",
+        "advect_fields"
+    }
+    vals = (
+        ("name", str),
+        ("category", str),
+        ("molecular_weight", float | int),
+        ("deposition_velocity", float | int),
+        ("material_unit", str),
+        ("uv_loss_rate", float | int),
+        ("half_life", float | int | str),
+        ("surface_resistance", int | float | NoneType),
+        ("on_particles", bool),
+        ("on_fields", bool),
+        ("advect_fields", bool)
+    )
+    for spc, spc_config in config.items():
+        check_keys(
+            set(spc_config.keys()),
+            expected_keys,
+            f"Species ({spc}, OpenGHG)"
+        )
+        for val, expected_type in vals:
+            check_type(f"{spc}.{val}", spc_config.get(val), expected_type)
+
+    return cast("SpeciesConfig", config)
+
+def check_domain_options(
+    config: dict[str, Any]
+) -> DomainConfig:
+    """"""
+    expected_keys: dict[str, set[str]] = {
+        "root": {"name", "hcoord", "zcoord", "x", "y", "z", "t"},
+        "x": {"min", "max", "num", "unbounded"},
+        "y": {"min", "max", "num", "unbounded"},
+        "z": {"max", "unbounded"},
+        "t": {"unbounded"}
+    }
+    vals: dict[str, tuple[tuple[str, type | UnionType], ...]] = {
+        "root": (
+            ("name", str),
+        ),
+        "x": (
+            ("min", float | int),
+            ("max", float | int),
+            ("num", int),
+            ("unbounded", bool)
+        ),
+        "y": (
+            ("min", float | int),
+            ("max", float | int),
+            ("num", int),
+            ("unbounded", bool)
+        ),
+        "z": (
+            ("max", float | int),
+            ("unbounded", bool)
+        ),
+        "t": (
+            ("unbounded", bool),
+        ),
+    }
+    literals = (
+        ("hcoord", "HorizontalCoordSystems", HorizontalCoordSystems),
+        ("zcoord", "VerticalCoordSystems", VerticalCoordSystems),
+    )
+    for dom, dom_config in config.items():
+        check_keys(
+            set(dom_config.keys()),
+            expected_keys["root"],
+            f"Domains ({dom}, OpenGHG)"
+        )
+        for val, expected_type in vals["root"]:
+            check_type(f"{dom}.{val}", dom_config.get(val), expected_type)
+        for sub in ["x", "y", "z", "t"]:
+            check_keys(
+                set(dom_config[sub].keys()),
+                expected_keys[sub],
+                f"Domains ({dom}, {sub}, OpenGHG)"
+            )
+            for val, expected_type in vals[sub]:
+                check_type(
+                    f"{dom}.{sub}.{val}",
+                    dom_config[sub].get(val),
+                    expected_type
+                )
+        for val, literal_name, literal_type in literals:
+            check_literal(
+                f"{dom}.{val}",
+                dom_config.get(val),
+                literal_name,
+                literal_type
+            )
+
+    return cast("DomainConfig", config)
