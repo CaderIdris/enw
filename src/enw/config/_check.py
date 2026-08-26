@@ -623,7 +623,7 @@ def check_domain_options(
         ("zcoord", "VerticalCoordSystems", VerticalCoordSystems),
     )
     for dom, dom_config in config.items():
-        dom_config = cast("dict", dom_config)
+        dom_config = cast("dict[str, object | dict[str, object]]", dom_config)
         check_keys(
             set(dom_config.keys()),
             expected_keys["root"],
@@ -633,20 +633,20 @@ def check_domain_options(
             check_type(f"{dom}.{val}", dom_config.get(val), expected_type)
         for sub in ["x", "y", "z", "t"]:
             check_keys(
-                set(dom_config[sub].keys()),
+                set(cast("dict[str, object]", dom_config[sub]).keys()),
                 expected_keys[sub],
                 f"Domains ({dom}, {sub}, OpenGHG)"
             )
             for val, expected_type in vals[sub]:
                 check_type(
                     f"{dom}.{sub}.{val}",
-                    dom_config[sub].get(val),
+                    cast("dict[str, object]", dom_config[sub]).get(val),
                     expected_type
                 )
         for val, literal_name, literal_type in literals:
             check_literal(
                 f"{dom}.{val}",
-                dom_config.get(val, "MISSING"),
+                cast("str", dom_config.get(val, "MISSING")),
                 literal_name,
                 literal_type
             )

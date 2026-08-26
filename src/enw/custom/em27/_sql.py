@@ -282,6 +282,7 @@ def insert_height_vars(
     vals = []
     site_hash = get_hash(site)
     device_hash = get_hash(device)
+    last_rowid = None
     for i, time in enumerate(nc.variables["time"][:]):
         for j, height in enumerate(nc.variables["height_grid"][:-1]):
             height_hash = get_hash(f"{site_hash}{device_hash}{height}")
@@ -297,8 +298,9 @@ def insert_height_vars(
                 (height_var_hash, height_hash, int(time), species, ak, ak_alt)
             )
         result = conn.executemany(pressure_insert_stmt, vals)
+        last_rowid = result.lastrowid
         conn.commit()
-    return result.lastrowid
+    return last_rowid
 
 
 def insert_surface_vars(
@@ -443,7 +445,7 @@ def select_all_meta_processed_files(conn: Connection) -> set[str]:
         select_stmt = sql_file.read()
     cursor = conn.cursor()
     result = cursor.execute(select_stmt)
-    p_files = {f[0] for f in result.fetchall()}
+    p_files: set[str] = {f[0] for f in result.fetchall()}
     cursor.close()
 
     return p_files

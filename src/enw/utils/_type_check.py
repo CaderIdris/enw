@@ -291,9 +291,9 @@ def check_literal(
 
 def check_mutually_exclusive(
     first_name: str,
-    first_val: str | bool | int | float | dict | None,  #noqa: FBT001
+    first_val: str | bool | int | float | dict[str, float | None] | None,  #noqa: FBT001
     second_name: str,
-    second_val: str | bool | int | float | dict | None  #noqa: FBT001
+    second_val: str | bool | int | float | dict[str, float | None] | None  #noqa: FBT001
 ) -> None:
     """Check two arguments, raise an error if both are set.
 
@@ -306,11 +306,11 @@ def check_mutually_exclusive(
     ----------
     first_name : str
         The name of the first argument.
-    first_val : str | bool | int | float | None
+    first_val : str | bool | int | float | dict[str, object | None] | None
         The first value.
     second_name : str
         The name of the second argument.
-    second_val : str | bool | int | float | None
+    second_val : str | bool | int | float | dict[str, object | None] | None
         The second value.
 
 

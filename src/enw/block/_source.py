@@ -420,11 +420,10 @@ class SpeciesRow:
                 msg = "daughter must be specified with half_life."
                 raise ValueError(msg)
             check_type(f"{name}.half_life", half_life, str)
-            if half_life != "Stable":
-                check_time_interval(f"{name}.half_life", half_life)
-                half_life_transformed: TimeInterval = make_time_interval(
-                    half_life
-                )
+            check_time_interval(f"{name}.half_life", half_life)
+            half_life_transformed: TimeInterval = make_time_interval(
+                half_life
+            )
         #INFO: Check daughter
         if daughter is not None:
             if half_life is None or half_life == "Stable":

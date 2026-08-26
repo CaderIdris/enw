@@ -61,7 +61,7 @@ def get_location_info(
         msg = f"{subset} is not valid for {key}."
         raise KeyError(msg)
     if len(all_info) == 1:
-        subset = next(iter(all_info.keys()))
+        subset = str(next(iter(all_info.keys())))
     info = all_info[subset]
     return {
         "name": info.get("long_name", f"{key} - No long name"),
@@ -176,7 +176,7 @@ def get_species_key_bridge() -> dict[str, str]:
     """
     with defs.species_info_file.open("rb") as species:
         species_info = json.load(species)
-    bridge = {}
+    bridge: dict[str, str] = {}
     for k, v in species_info.items():
         bridge[k] = k
         for alt in v.get("alt", []):

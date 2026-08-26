@@ -667,7 +667,7 @@ class NWPMetFileStructureDefinitionsRow:
         return cls(
             field_name=field_name,
             lowest_level=lowest_level,
-            highest_level=highest_level,
+            highest_level=cast("Literal['Top'] | int", highest_level),
             field_code=field_code,
             three_d=switches["three_d"],
             field_qualifiers=literals["field_qualifiers"],
