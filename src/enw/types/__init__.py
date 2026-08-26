@@ -1,6 +1,7 @@
 """Custom types used in enw."""
 from ._config import (
     CoordinateSystemsConfig,
+    DispersionOptionsConfig,
     DomainTimeBlock,
     DomainConfig,
     EnwConfig,
@@ -51,6 +52,7 @@ __all__ = [
     "DateTime",
     "DeepConvectionOpts",
     "DescriptiveTimeInterval",
+    "DispersionOptionsConfig",
     "DomainConfig",
     "DomainTimeBlock",
     "EnwConfig",

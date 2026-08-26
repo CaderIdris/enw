@@ -12,7 +12,8 @@ from enw.config import (
     check_openmp_options,
     check_location_options,
     check_species_options,
-    check_domain_options
+    check_domain_options,
+    check_set_of_dispersion_options
 )
 
 pytestmark = [
@@ -805,3 +806,153 @@ def test_domains_options_bad_literal(
     }
     with pytest.raises(TypeError, match=r"Got: BAD VALUE"):
         _ = check_domain_options(bad_config)
+
+
+@pytest.fixture
+def example_set_of_dispersion_config() -> dict[str, dict[str, object]]:
+    """An example config for the set_of_dispersions block."""
+    return {
+        "max_num_particles": 10,
+        "max_num_full_particles": 1,
+        "max_num_puffs": 2,
+        "max_num_original_puffs": 3,
+        "skew_time": "15:00",
+        "velocity_memory_time": "10:00",
+        "mesoscale_velocity_memory_time": "30:00",
+        "inhomogeneous_time": "00:00",
+        "delta_opt": "1",
+        "puff_time": "12:00",
+        "sync_time": "12:00",
+        "puff_interval": "14:00",
+        "deep_convection": True,
+        "radioactive_decay": False,
+        "agent_decay": True,
+        "dry_deposition": False,
+        "wet_deposition": True,
+        "turbulence": False,
+        "mesoscale_motions": True,
+        "chemistry": True,
+    }
+
+
+def test_check_set_of_dispersion_options_good(
+    example_set_of_dispersion_config: dict[str, Any],
+):
+    """Test if a good set_of_dispersion config doesn't error."""
+    tests = {}
+    output = check_set_of_dispersion_options(example_set_of_dispersion_config)
+
+    tests["Is dict"] = isinstance(output, dict)
+    tests["Has keys"] = len(output)
+
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())
+
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"delta_opt": 0},
+    ]
+)
+def test_set_of_dispersion_options_bad_str(
+    example_set_of_dispersion_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+):
+    """Test if bad coords error."""
+    bad_config = example_set_of_dispersion_config | bad_options
+
+    with pytest.raises(TypeError, match=r"is not.*str.*int"):
+        _ = check_set_of_dispersion_options(bad_config)
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"max_num_particles": "BAD"},
+        {"max_num_full_particles": "BAD"},
+        {"max_num_puffs": "BAD"},
+        {"max_num_original_puffs": "BAD"},
+    ]
+)
+def test_set_of_dispersion_options_bad_num(
+    example_set_of_dispersion_config: dict[str, dict[str, object]],
+    bad_options: dict[str, object],
+):
+    """Test if bad coords error."""
+    bad_config = example_set_of_dispersion_config | bad_options
+
+    with pytest.raises(TypeError, match=r"is not.*int.*str"):
+        _ = check_set_of_dispersion_options(bad_config)
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"max_num_particles": -1},
+        {"max_num_full_particles": -1},
+        {"max_num_puffs": -1},
+        {"max_num_original_puffs": -1},
+    ]
+)
+def test_set_of_dispersion_options_bad_neg_int(
+    example_set_of_dispersion_config: dict[str, dict[str, object]],
+    bad_options: dict[str, object],
+):
+    """Test if bad coords error."""
+    bad_config = example_set_of_dispersion_config | bad_options
+
+    with pytest.raises(
+        TypeError,
+        match=r"Expected \+ve integer value for.*Got -1 instead\."
+    ):
+        _ = check_set_of_dispersion_options(bad_config)
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"deep_convection": "BAD"},
+        {"radioactive_decay": "BAD"},
+        {"agent_decay": "BAD"},
+        {"dry_deposition": "BAD"},
+        {"wet_deposition": "BAD"},
+        {"turbulence": "BAD"},
+        {"mesoscale_motions": "BAD"},
+        {"chemistry": "BAD"},
+    ]
+)
+def test_set_of_dispersion_options_bad_bool(
+    example_set_of_dispersion_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+):
+    """Test if bad coords error."""
+    bad_config = example_set_of_dispersion_config | bad_options
+
+    with pytest.raises(TypeError, match=r"is not.*bool.*str"):
+        _ = check_set_of_dispersion_options(bad_config)
+
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"skew_time": "BAD VALUE"},
+        {"velocity_memory_time": "BAD VALUE"},
+        {"mesoscale_velocity_memory_time": "BAD VALUE"},
+        {"inhomogeneous_time": "BAD VALUE"},
+        {"puff_time": "BAD VALUE"},
+        {"sync_time": "BAD VALUE"},
+        {"puff_interval": "BAD VALUE"},
+    ]
+)
+def test_set_of_dispersions_options_bad_timestamp(
+    example_set_of_dispersion_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+):
+    """Test if bad coords error."""
+    bad_config = example_set_of_dispersion_config | bad_options
+    with pytest.raises(
+        ValueError,
+        match=r"is not a valid time interval recognised by NAME\."
+    ):
+        _ = check_set_of_dispersion_options(bad_config)

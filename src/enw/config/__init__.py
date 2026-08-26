@@ -8,7 +8,8 @@ from ._check import (
     check_output_options,
     check_restart_options,
     check_species_options,
-    check_openmp_options
+    check_openmp_options,
+    check_set_of_dispersion_options
 )
 from ._load import (
     load_config,

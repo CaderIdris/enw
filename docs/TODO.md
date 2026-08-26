@@ -216,11 +216,11 @@ date: 2026-06-08
         * ❌ Fields
         * ❌ Sets of Particle/Puff Information
     - ==Going to make it default for now, output both NAME III and NetCDF==
-* [ ] Sets of Dispersion Options
+* [x] Sets of Dispersion Options
     * [x] TypedDict
-    * [ ] Toml
+    * [x] Toml
     * [x] Defaults
-    * [ ] Tests
+    * [x] Tests
 * [ ] Sources
     * [ ] Build off from main options (start and end time)
 

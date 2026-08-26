@@ -33,6 +33,7 @@ if TYPE_CHECKING:
         OutputConfig,
         RestartConfig,
         OpenMPConfig,
+        DispersionOptionsConfig
     )
 
 
@@ -650,3 +651,80 @@ def check_domain_options(
             )
 
     return cast("DomainConfig", config)
+
+def check_set_of_dispersion_options(
+    config: dict[str, object]
+) -> DispersionOptionsConfig:
+    """"""
+    expected_keys = {
+        "max_num_particles",
+        "max_num_full_particles",
+        "max_num_puffs",
+        "max_num_original_puffs",
+        "skew_time",
+        "velocity_memory_time",
+        "mesoscale_velocity_memory_time",
+        "inhomogeneous_time",
+        "delta_opt",
+        "puff_time",
+        "sync_time",
+        "puff_interval",
+        "deep_convection",
+        "radioactive_decay",
+        "agent_decay",
+        "dry_deposition",
+        "wet_deposition",
+        "turbulence",
+        "mesoscale_motions",
+        "chemistry"
+    }
+    vals = (
+        ("max_num_particles", int),
+        ("max_num_full_particles", int),
+        ("max_num_puffs", int),
+        ("max_num_original_puffs", int),
+        ("skew_time", str),
+        ("velocity_memory_time", str),
+        ("mesoscale_velocity_memory_time", str),
+        ("inhomogeneous_time", str),
+        ("delta_opt", str),
+        ("puff_time", str),
+        ("sync_time", str),
+        ("puff_interval", str),
+        ("deep_convection", bool),
+        ("radioactive_decay", bool),
+        ("agent_decay", bool),
+        ("dry_deposition", bool),
+        ("wet_deposition", bool),
+        ("turbulence", bool),
+        ("mesoscale_motions", bool),
+        ("chemistry", bool),
+    )
+    pos_ints = (
+        "max_num_particles",
+        "max_num_full_particles",
+        "max_num_puffs",
+        "max_num_original_puffs",
+    )
+    time_intervals = (
+        "skew_time",
+        "velocity_memory_time",
+        "mesoscale_velocity_memory_time",
+        "inhomogeneous_time",
+        "puff_time",
+        "sync_time",
+        "puff_interval",
+    )
+    check_keys(
+        set(config.keys()),
+        expected_keys,
+        "Dispersion Options"
+    )
+    for val, expected_type in vals:
+        check_type(val, config.get(val), expected_type)
+    for val in pos_ints:
+        check_pos_int(val, cast("int", config.get(val)))
+    for interval in time_intervals:
+        check_time_interval(interval, cast("str", config.get(interval)))
+
+    return cast("DispersionOptionsConfig", config)
