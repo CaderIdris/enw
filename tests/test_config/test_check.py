@@ -13,7 +13,8 @@ from enw.config import (
     check_location_options,
     check_species_options,
     check_domain_options,
-    check_set_of_dispersion_options
+    check_set_of_dispersion_options,
+    check_vertical_grids_options
 )
 
 pytestmark = [
@@ -809,7 +810,7 @@ def test_domains_options_bad_literal(
 
 
 @pytest.fixture
-def example_set_of_dispersion_config() -> dict[str, dict[str, object]]:
+def example_set_of_dispersion_config() -> dict[str, object]:
     """An example config for the set_of_dispersions block."""
     return {
         "max_num_particles": 10,
@@ -956,3 +957,85 @@ def test_set_of_dispersions_options_bad_timestamp(
         match=r"is not a valid time interval recognised by NAME\."
     ):
         _ = check_set_of_dispersion_options(bad_config)
+
+
+@pytest.fixture
+def example_vertical_grids_config() -> dict[str, object]:
+    """An example config for the vertical_gridss block."""
+    return {
+        "zcoord": "m asl",
+        "num": 10,
+        "min": 12.0,
+        "spacing": 7.9
+    }
+
+
+def test_check_vertical_grids_options_good(
+    example_vertical_grids_config: dict[str, Any],
+):
+    """Test if a good vertical_grids config doesn't error."""
+    tests = {}
+    output = check_vertical_grids_options(example_vertical_grids_config)
+
+    tests["Is dict"] = isinstance(output, dict)
+    tests["Has keys"] = len(output)
+
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())
+
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"zcoord": "BAD"},
+    ]
+)
+def test_vertical_grids_options_bad_literal(
+    example_vertical_grids_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+):
+    """Test if bad coords error."""
+    bad_config = example_vertical_grids_config | bad_options
+
+    with pytest.raises(TypeError, match=r"is not a member of.*Got: BAD"):
+        _ = check_vertical_grids_options(bad_config)
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"num": "BAD"},
+        {"min": "BAD"},
+        {"spacing": "BAD"},
+    ]
+)
+def test_vertical_grids_options_bad_num(
+    example_vertical_grids_config: dict[str, dict[str, object]],
+    bad_options: dict[str, object],
+):
+    """Test if bad coords error."""
+    bad_config = example_vertical_grids_config | bad_options
+
+    with pytest.raises(TypeError, match=r"is not.*int.*str"):
+        _ = check_vertical_grids_options(bad_config)
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"num": -1},
+    ]
+)
+def test_vertical_grids_options_bad_neg_int(
+    example_vertical_grids_config: dict[str, dict[str, object]],
+    bad_options: dict[str, object],
+):
+    """Test if bad coords error."""
+    bad_config = example_vertical_grids_config | bad_options
+
+    with pytest.raises(
+        TypeError,
+        match=r"Expected \+ve integer value for.*Got -1 instead\."
+    ):
+        _ = check_vertical_grids_options(bad_config)

@@ -72,7 +72,7 @@ markers = [
 addopts = [
 	"--html=reports/tests/index.html",
 	"--self-contained-html",
-	"--cov-fail-under=99",
+	"--cov-fail-under=100",
 	"--cov-report=html:reports/coverage",
 	"--cov-report=term-missing",
 	"--cov=enw"

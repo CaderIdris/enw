@@ -183,17 +183,17 @@ date: 2026-06-08
     * [x] Toml
         * [x] Overrides
     * [x] Tests
-* [ ] Horizontal Grids
+* [x] Horizontal Grids
     * [x] TypedDict
     * [x] OpenGHG Defs loader (Domains)
         * [x] Tests
-    * [ ] Toml
-    * [ ] Tests
+    * [x] Toml
+    * [x] Tests
 * [ ] Vertical Grids
     * [x] TypedDict
     * [x] OpenGHG Defs loader (Locations)
         * [x] Tests
-    * [ ] Toml
+    * [x] Toml
     * [ ] Tests
 * [x] Species
     * [x] TypedDict
@@ -202,7 +202,7 @@ date: 2026-06-08
     * [x] Toml
         * [x] Overrides
     * [x] Tests
-* [ ] Output Requirements
+* 🤷 Output Requirements
     * [x] TypedDict
         * [x] Fields
         * [x] Sets of Particle/Puff Information
@@ -235,3 +235,4 @@ date: 2026-06-08
 * [ ] Break up load function
 * [ ] Main not present should raise error
 * [ ] Output both NAME III and NetCDF for both particles and mixing ratio 
+* [ ] Domains is HGrid ± (step size / 2)

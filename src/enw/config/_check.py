@@ -33,7 +33,8 @@ if TYPE_CHECKING:
         OutputConfig,
         RestartConfig,
         OpenMPConfig,
-        DispersionOptionsConfig
+        DispersionOptionsConfig,
+        VerticalGridsConfig
     )
 
 
@@ -728,3 +729,43 @@ def check_set_of_dispersion_options(
         check_time_interval(interval, cast("str", config.get(interval)))
 
     return cast("DispersionOptionsConfig", config)
+
+
+def check_vertical_grids_options(
+    config: dict[str, object]
+) -> VerticalGridsConfig:
+    """"""
+    expected_keys: set[str] = {
+        "zcoord",
+        "num",
+        "min",
+        "spacing",
+    }
+    vals: tuple[tuple[str, type | UnionType], ...] = (
+        ("num", int),
+        ("min", int | float),
+        ("spacing", int | float),
+    )
+    pos_ints: tuple[str, ...] = (
+        "num",
+    )
+    literals: tuple[tuple[str, str, _LiteralGenericAlias], ...] = (
+        ("zcoord", "VerticalCoordSystems", VerticalCoordSystems),
+    )
+    check_keys(
+        set(config.keys()),
+        expected_keys,
+        "Vertical Grids"
+    )
+    for val, expected_type in vals:
+        check_type(val, config.get(val), expected_type)
+    for val in pos_ints:
+        check_pos_int(val, cast("int", config.get(val)))
+    for val, literal_name, literal_type in literals:
+        check_literal(
+            val,
+            cast("str", config.get(val, "MISSING")),
+            literal_name,
+            literal_type
+        )
+    return cast("VerticalGridsConfig", config)

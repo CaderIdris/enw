@@ -13,7 +13,8 @@ from ._config import (
     OptionBlock,
     OutputConfig,
     RestartConfig,
-    SpeciesConfig
+    SpeciesConfig,
+    VerticalGridsConfig
 )
 from ._options import (
     AbsOrRelOpts,
@@ -83,4 +84,5 @@ __all__ = [
     "TAvOrIntOpts",
     "TimeInterval",
     "VerticalCoordSystems",
+    "VerticalGridsConfig"
 ]
