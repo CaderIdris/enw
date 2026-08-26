@@ -206,15 +206,16 @@ date: 2026-06-08
     * [x] TypedDict
         * [x] Fields
         * [x] Sets of Particle/Puff Information
-    * [ ] Toml
-        * [ ] Fields
-        * [ ] Sets of Particle/Puff Information
+    * ❌ Toml
+        * ❌ Fields
+        * ❌ Sets of Particle/Puff Information
     * [x] Defaults
         * [x] Fields
         * [x] Sets of Particle/Puff Information
-    * [ ] Tests
-        * [ ] Fields
-        * [ ] Sets of Particle/Puff Information
+    * ❌ Tests
+        * ❌ Fields
+        * ❌ Sets of Particle/Puff Information
+    - ==Going to make it default for now, output both NAME III and NetCDF==
 * [ ] Sets of Dispersion Options
     * [x] TypedDict
     * [ ] Toml
@@ -233,3 +234,4 @@ date: 2026-06-08
 * [x] Add on_particles, on_fields, advect_fields to species return, default TFF
 * [ ] Break up load function
 * [ ] Main not present should raise error
+* [ ] Output both NAME III and NetCDF for both particles and mixing ratio 

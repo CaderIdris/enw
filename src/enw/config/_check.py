@@ -1,6 +1,10 @@
 from types import NoneType, UnionType
 import logging
-from typing import Any, cast, TYPE_CHECKING
+from typing import (
+    _LiteralGenericAlias, #type: ignore[ty:unresolved-import]
+    cast,
+    TYPE_CHECKING,
+)
 
 from enw.types import (
     AbsOrRelOpts,
@@ -61,12 +65,12 @@ def check_keys(actual: set[str], expected: set[str], block: str) -> None:
     #     raise ValueError(msg)
 
 
-def check_main_options(config: dict[str, Any]) -> MainConfig:
+def check_main_options(config: dict[str, object]) -> MainConfig:
     """Check the main options portion of the config file.
 
     Parameters
     ----------
-    config : dict[str, Any]
+    config : dict[str, object]
         The "Main" section of the config.
 
     Returns
@@ -107,7 +111,7 @@ def check_main_options(config: dict[str, Any]) -> MainConfig:
     )
     check_pos_int(
         "Main.max_num_sources",
-        config["max_num_sources"]
+        cast("int", config["max_num_sources"])
     )
     #INFO: Check max_num_field_reqs
     check_type(
@@ -117,7 +121,7 @@ def check_main_options(config: dict[str, Any]) -> MainConfig:
     )
     check_pos_int(
         "Main.max_num_field_reqs",
-        config["max_num_field_reqs"]
+        cast("int", config["max_num_field_reqs"])
     )
     #INFO: Check max_num_field_output_groups
     check_type(
@@ -127,7 +131,7 @@ def check_main_options(config: dict[str, Any]) -> MainConfig:
     )
     check_pos_int(
         "Main.max_num_field_output_groups",
-        config["max_num_field_output_groups"]
+        cast("int", config["max_num_field_output_groups"])
     )
     #INFO: Check backwards
     check_type("Main.backwards", config["backwards"], bool)
@@ -138,14 +142,14 @@ def check_main_options(config: dict[str, Any]) -> MainConfig:
     #INFO: Check absolute_or_relative
     check_literal(
         "Main.absolute_or_relative",
-        config["absolute_or_relative"],
+        cast("str", config["absolute_or_relative"]),
         "AbsOrRelOpts",
         AbsOrRelOpts
     )
     #INFO: Check random_seed
     check_literal(
         "Main.random_seed",
-        config["random_seed"],
+        cast("str", config["random_seed"]),
         "RandomSeedOpts",
         RandomSeedOpts
     )
@@ -164,12 +168,12 @@ def check_main_options(config: dict[str, Any]) -> MainConfig:
     return cast("MainConfig", config)
 
 
-def check_output_options(config: dict[str, Any]) -> OutputConfig:
+def check_output_options(config: dict[str, object]) -> OutputConfig:
     """Check the output options portion of the config file.
 
     Parameters
     ----------
-    config : dict[str, Any]
+    config : dict[str, object]
         The "output" section of the config.
 
     Returns
@@ -194,7 +198,10 @@ def check_output_options(config: dict[str, Any]) -> OutputConfig:
         msg = "Missing mandatory variable 'folder' in 'Output'."
         raise ValueError(msg)
     check_type("Output.folder", config["folder"], str)
-    check_path_like("Output.folder", config["folder"])
+    check_path_like(
+        "Output.folder",
+        cast("str", config["folder"]),
+    )
     #INFO: Check seconds
     check_type("Output.seconds", config["seconds"], bool)
     #WARN: Check time_decimal_places
@@ -208,12 +215,12 @@ def check_output_options(config: dict[str, Any]) -> OutputConfig:
     return cast("OutputConfig", config)
 
 
-def check_restart_options(config: dict[str, Any]) -> RestartConfig:
+def check_restart_options(config: dict[str, object]) -> RestartConfig:
     """Check the restart options portion of the config file.
 
     Parameters
     ----------
-    config : dict[str, Any]
+    config : dict[str, object]
         The "Restart" section of the config.
 
     Returns
@@ -225,9 +232,9 @@ def check_restart_options(config: dict[str, Any]) -> RestartConfig:
     #INFO: Check only one of cases_between_writes or time_between_writes
     check_mutually_exclusive(
         "Restart.cases_between_writes",
-        config.get("cases_between_writes"),
+        cast("str", config.get("cases_between_writes")),
         "Restart.time_between_writes",
-        config.get("time_between_writes")
+        cast("str", config.get("time_between_writes")),
     )
     #INFO: Check cases_between_writes
     if "cases_between_writes" in config:
@@ -249,7 +256,7 @@ def check_restart_options(config: dict[str, Any]) -> RestartConfig:
         )
         check_time_interval(
             "Restart.time_between_writes",
-            config.get("time_between_writes", "")
+            cast("str", config.get("time_between_writes", ""))
         )
     #INFO: Check delete_old_files
     if "delete_old_files" in config:
@@ -268,12 +275,12 @@ def check_restart_options(config: dict[str, Any]) -> RestartConfig:
     return cast("RestartConfig", config)
 
 
-def check_openmp_options(config: dict[str, Any]) -> OpenMPConfig:
+def check_openmp_options(config: dict[str, object]) -> OpenMPConfig:
     """Check the openmp options portion of the config file.
 
     Parameters
     ----------
-    config : dict[str, Any]
+    config : dict[str, object]
         The "OpenMP" section of the config.
 
     Returns
@@ -302,11 +309,17 @@ def check_openmp_options(config: dict[str, Any]) -> OpenMPConfig:
     check_type("OpenMP.use_openmp", config["use_openmp"], bool)
     #INFO: Check threads in config
     check_type("OpenMP.threads", config["threads"], int)
-    check_pos_int("OpenMP.threads", config["threads"])
+    check_pos_int(
+        "OpenMP.threads",
+        cast("int", config["threads"]),
+    )
     #INFO: Check particle_threads
     if "particle_threads" in config:
         check_type("OpenMP.particle_threads", config["particle_threads"], int)
-        check_pos_int("OpenMP.particle_threads", config["particle_threads"])
+        check_pos_int(
+            "OpenMP.particle_threads",
+            cast("int", config["particle_threads"]),
+        )
     #INFO: Check particle_update_threads
     if "particle_update_threads" in config:
         check_type(
@@ -316,7 +329,7 @@ def check_openmp_options(config: dict[str, Any]) -> OpenMPConfig:
         )
         check_pos_int(
             "OpenMP.particle_update_threads",
-            config["particle_update_threads"]
+            cast("int", config["particle_update_threads"]),
         )
     #INFO: Check chemistry_threads
     if "chemistry_threads" in config:
@@ -327,7 +340,7 @@ def check_openmp_options(config: dict[str, Any]) -> OpenMPConfig:
         )
         check_pos_int(
             "OpenMP.chemistry_threads",
-            config["chemistry_threads"]
+            cast("int", config["chemistry_threads"]),
         )
     #INFO: Check output_group_threads
     if "output_group_threads" in config:
@@ -338,7 +351,7 @@ def check_openmp_options(config: dict[str, Any]) -> OpenMPConfig:
         )
         check_pos_int(
             "OpenMP.output_group_threads",
-            config["output_group_threads"]
+            cast("int", config["output_group_threads"]),
         )
     #INFO: Check output_process_threads
     if "output_process_threads" in config:
@@ -349,7 +362,7 @@ def check_openmp_options(config: dict[str, Any]) -> OpenMPConfig:
         )
         check_pos_int(
             "OpenMP.output_process_threads",
-            config["output_process_threads"]
+            cast("int", config["output_process_threads"]),
         )
     #INFO: Check parallel_metread
     if "parallel_metread" in config:
@@ -368,12 +381,14 @@ def check_openmp_options(config: dict[str, Any]) -> OpenMPConfig:
     return cast("OpenMPConfig", config)
 
 
-def check_coord_options(config: dict[str, Any]) -> CoordinateSystemsConfig:
+def check_coord_options(
+    config: dict[str, list[str] | str],
+) -> CoordinateSystemsConfig:
     """Check the openmp options portion of the config file.
 
     Parameters
     ----------
-    config : dict[str, Any]
+    config : dict[str, object]
         The "Coordinate Systems" section of the config.
 
     Returns
@@ -419,7 +434,7 @@ def check_coord_options(config: dict[str, Any]) -> CoordinateSystemsConfig:
     }
 
 def check_multiple_case_options(
-    config: dict[str, Any],
+    config: dict[str, object],
 ) -> MultipleCaseConfig: # pragma: no cover
     """Check the multiple case options portion of the config file.
 
@@ -428,7 +443,7 @@ def check_multiple_case_options(
 
     Parameters
     ----------
-    config : dict[str, Any]
+    config : dict[str, object]
         The "Coordinate Systems" section of the config.
 
     Returns
@@ -484,7 +499,7 @@ def check_multiple_case_options(
     return checked
 
 def check_location_options(
-    config: dict[str, Any]
+    config: dict[str, dict[str, object]] | dict[str, LocationConfig]
 ) -> LocationConfig:
     """"""
     expected_keys = {
@@ -502,7 +517,7 @@ def check_location_options(
         ("inlet_height", float | int),
         ("subset", str),
     )
-    literals = (
+    literals: tuple[tuple[str, str, _LiteralGenericAlias], ...] = (
         ("hcoord", "HorizontalCoordSystems", HorizontalCoordSystems),
     )
     for loc, loc_config in config.items():
@@ -516,7 +531,7 @@ def check_location_options(
         for val, literal_name, literal_type in literals:
             check_literal(
                 f"{loc}.{val}",
-                loc_config.get(val),
+                str(loc_config.get(val, "MISSING")),
                 literal_name,
                 literal_type
             )
@@ -525,7 +540,7 @@ def check_location_options(
 
 
 def check_species_options(
-    config: dict[str, Any]
+    config: dict[str, dict[str, object]] | dict[str, SpeciesConfig]
 ) -> SpeciesConfig:
     """"""
     expected_keys = {
@@ -536,7 +551,7 @@ def check_species_options(
         "material_unit",
         "uv_loss_rate",
         "half_life",
-        "surface_resistance"
+        "surface_resistance",
         "on_particles",
         "on_fields",
         "advect_fields"
@@ -565,8 +580,9 @@ def check_species_options(
 
     return cast("SpeciesConfig", config)
 
+
 def check_domain_options(
-    config: dict[str, Any]
+    config: dict[str, object | dict[str, object]] | dict[str, DomainConfig]
 ) -> DomainConfig:
     """"""
     expected_keys: dict[str, set[str]] = {
@@ -600,11 +616,12 @@ def check_domain_options(
             ("unbounded", bool),
         ),
     }
-    literals = (
+    literals: tuple[tuple[str, str, _LiteralGenericAlias], ...] = (
         ("hcoord", "HorizontalCoordSystems", HorizontalCoordSystems),
         ("zcoord", "VerticalCoordSystems", VerticalCoordSystems),
     )
     for dom, dom_config in config.items():
+        dom_config = cast("dict", dom_config)
         check_keys(
             set(dom_config.keys()),
             expected_keys["root"],
@@ -627,7 +644,7 @@ def check_domain_options(
         for val, literal_name, literal_type in literals:
             check_literal(
                 f"{dom}.{val}",
-                dom_config.get(val),
+                dom_config.get(val, "MISSING"),
                 literal_name,
                 literal_type
             )

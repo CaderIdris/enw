@@ -113,7 +113,7 @@ def load_config(path: Path) -> EnwConfig:
     config["Species"] = config["Species"] | (
         check_species_options(raw_config.get("Species", {}))
     )
-    
+
     return cast("EnwConfig", config)
 
 

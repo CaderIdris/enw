@@ -1514,32 +1514,42 @@ class DispersionOptions(NAMEIIIHeaderInputBlock):
 
             Corresponds to **Turbulence?**
 
-        particle_ceiling : None = None
+        particle_ceiling : None, default=None
             ==Not currently implemented==
 
             Corresponds to **Particle Ceiling**
 
-        particle_factor : None = None
+        particle_factor : None, default=None
             ==Not currently implemented==
 
             Corresponds to **Particle Factor**
 
-        damping : None = None
+        damping : None, default=None
             ==Not currently implemented==
 
             Corresponds to **Damping?**
 
-        a1 : None = None
+        max_deposition_height : None, default=None
+            ==Not currently implemented==
+
+            Corresponds to **Max Deposition Height**
+
+        sedimentation_scheme : None, default=None
+            ==Not currently implemented==
+
+            Corresponds to **Sedimentation Scheme**
+
+        a1 : None, default=None
             ==Not currently implemented==
 
             Corresponds to **A1**
 
-        a5 : None = None
+        a5 : None, default=None
             ==Not currently implemented==
 
             Corresponds to **A5**
 
-        a7 : None = None
+        a7 : None, default=None
             ==Not currently implemented==
 
             Corresponds to **A7**
