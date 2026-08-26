@@ -52,6 +52,13 @@ def check_keys(actual: set[str], expected: set[str], block: str) -> None:
             key,
             block
         )
+    # missing_keys = expected - actual
+    # if missing_keys:
+    #     msg = (
+    #         f"Missing the following keys for {block}: "
+    #         f"{", ".join(missing_keys)}"
+    #     )
+    #     raise ValueError(msg)
 
 
 def check_main_options(config: dict[str, Any]) -> MainConfig:
@@ -490,9 +497,9 @@ def check_location_options(
     }
     vals = (
         ("name", str),
-        ("x", float),
-        ("y", float),
-        ("inlet_height", float),
+        ("x", float | int),
+        ("y", float | int),
+        ("inlet_height", float | int),
         ("subset", str),
     )
     literals = (

@@ -9,7 +9,10 @@ from enw.config import (
     check_main_options,
     check_output_options,
     check_restart_options,
-    check_openmp_options
+    check_openmp_options,
+    check_location_options,
+    check_species_options,
+    check_domain_options
 )
 
 pytestmark = [
@@ -467,3 +470,338 @@ def test_check_coords_options_bad(bad_options: dict[str, str | list[str]]):
     with pytest.raises(TypeError, match=r"Got: BAD"):
         _ = check_coord_options(bad_config)
 
+
+@pytest.fixture
+def example_location_config() -> dict[str, dict[str, object]]:
+    """An example config for the Locations block."""
+    return {
+        "TLoc": {
+            "name": "Test Location",
+            "x": 1.23,
+            "y": -4.56,
+            "inlet_height": 78,
+            "hcoord": "Lat-Long",
+            "subset": "Test Subset",
+        }
+    }
+
+
+def test_check_locations_options_good(example_location_config: dict[str, Any]):
+    """Test if a good location config doesn't error."""
+    tests = {}
+    output = check_location_options(example_location_config)
+
+    tests["Is dict"] = isinstance(output, dict)
+    tests["Has keys"] = len(output)
+
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())
+
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {
+            "name": 0,
+        },
+        {
+            "subset": 0,
+        }
+    ]
+)
+def test_locations_options_bad_str(
+    example_location_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+):
+    """Test if bad coords error."""
+    bad_config = {
+        "TLoc": example_location_config["TLoc"] | bad_options,
+    }
+    with pytest.raises(TypeError, match=r"TLoc\..*is not.*str.*int"):
+        _ = check_location_options(bad_config)
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {
+            "x": "BAD",
+        },
+        {
+            "y": "BAD",
+        },
+        {
+            "inlet_height": "BAD",
+        },
+    ]
+)
+def test_locations_options_bad_num(
+    example_location_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+):
+    """Test if bad coords error."""
+    bad_config = {
+        "TLoc": example_location_config["TLoc"] | bad_options,
+    }
+    with pytest.raises(TypeError, match=r"TLoc.*is not.*int.*str"):
+        _ = check_location_options(bad_config)
+
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {
+            "hcoord": "BAD VALUE",
+        },
+    ]
+)
+def test_locations_options_bad_literal(
+    example_location_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+):
+    """Test if bad coords error."""
+    bad_config = {
+        "TLoc": example_location_config["TLoc"] | bad_options,
+    }
+    with pytest.raises(TypeError, match=r"Got: BAD VALUE"):
+        _ = check_location_options(bad_config)
+
+
+@pytest.fixture
+def example_species_config() -> dict[str, dict[str, object]]:
+    """An example config for the speciess block."""
+    return {
+        "TSpec": {
+            "name": "Test Species",
+            "category": "Test Category",
+            "molecular_weight": 123,
+            "deposition_velocity": 0,
+            "material_unit": "g",
+            "uv_loss_rate": 0,
+            "half_life": "Stable",
+            "surface_resistance": None,
+            "on_particles": True,
+            "on_fields": False,
+            "advect_fields": False
+        }
+    }
+
+
+def test_check_species_options_good(example_species_config: dict[str, Any]):
+    """Test if a good species config doesn't error."""
+    tests = {}
+    output = check_species_options(example_species_config)
+
+    tests["Is dict"] = isinstance(output, dict)
+    tests["Has keys"] = len(output)
+
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())
+
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"name": 0},
+        {"category": 0},
+        {"material_unit": 0},
+    ]
+)
+def test_species_options_bad_str(
+    example_species_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+):
+    """Test if bad coords error."""
+    bad_config = {
+        "TSpec": example_species_config["TSpec"] | bad_options
+    }
+    with pytest.raises(TypeError, match=r"TSpec\..*is not.*str.*int"):
+        _ = check_species_options(bad_config)
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"molecular_weight": "BAD"},
+        {"deposition_velocity": "BAD"},
+        {"uv_loss_rate": "BAD"},
+        {"surface_resistance": "BAD"},
+        {"half_life": ["BAD"]},
+    ]
+)
+def test_species_options_bad_num(
+    example_species_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+):
+    """Test if bad coords error."""
+    bad_config = {
+        "TSpec": example_species_config["TSpec"] | bad_options,
+    }
+    with pytest.raises(TypeError, match=r"TSpec.*is not.*int.*str"):
+        _ = check_species_options(bad_config)
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"on_particles": "BAD"},
+        {"on_fields": "BAD"},
+        {"advect_fields": "BAD"},
+    ]
+)
+def test_species_options_bad_bool(
+    example_species_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+):
+    """Test if bad coords error."""
+    bad_config = {
+        "TSpec": example_species_config["TSpec"] | bad_options,
+    }
+    with pytest.raises(TypeError, match=r"TSpec.*is not.*bool.*str"):
+        _ = check_species_options(bad_config)
+
+
+@pytest.fixture
+def example_domain_config() -> dict[str, dict[str, object]]:
+    """An example config for the domains block."""
+    return {
+        "TDom": {
+            "name": "Test Domain",
+            "hcoord": "Lat-Long",
+            "zcoord": "m asl",
+            "x": {
+                "min": -1,
+                "max": 1,
+                "num": 10,
+                "unbounded": False
+            },
+            "y": {
+                "min": -1,
+                "max": 1,
+                "num": 10,
+                "unbounded": False
+            },
+            "z": {
+                "max": 1,
+                "unbounded": False
+            },
+            "t": {
+                "unbounded": True
+            },
+        }
+    }
+
+
+def test_check_domain_options_good(example_domain_config: dict[str, Any]):
+    """Test if a good domain config doesn't error."""
+    tests = {}
+    output = check_domain_options(example_domain_config)
+
+    tests["Is dict"] = isinstance(output, dict)
+    tests["Has keys"] = len(output)
+
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())
+
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"name": 0},
+    ]
+)
+def test_domain_options_bad_str(
+    example_domain_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+):
+    """Test if bad coords error."""
+    bad_config = {
+        "TDom": example_domain_config["TDom"] | bad_options
+    }
+    with pytest.raises(TypeError, match=r"TDom\..*is not.*str.*int"):
+        _ = check_domain_options(bad_config)
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"min": "BAD"},
+        {"max": "BAD"},
+        {"num": "BAD"},
+    ]
+)
+@pytest.mark.parametrize("axis", ["x", "y"])
+def test_domain_options_bad_num_h(
+    example_domain_config: dict[str, dict[str, object]],
+    bad_options: dict[str, object],
+    axis: str
+):
+    """Test if bad coords error."""
+    bad_config = example_domain_config
+
+    bad_config["TDom"][axis] = bad_config["TDom"][axis] | bad_options
+
+    with pytest.raises(TypeError, match=r"TDom.*is not.*int.*str"):
+        _ = check_domain_options(bad_config)
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"unbounded": "BAD"},
+    ]
+)
+@pytest.mark.parametrize("axis", ["x", "y", "z", "t"])
+def test_domain_options_bad_bool(
+    example_domain_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+    axis: str
+):
+    """Test if bad coords error."""
+    bad_config = example_domain_config
+
+    bad_config["TDom"][axis] = bad_config["TDom"][axis] | bad_options
+
+    with pytest.raises(TypeError, match=r"TDom.*is not.*bool.*str"):
+        _ = check_domain_options(bad_config)
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"max": "BAD"},
+    ]
+)
+def test_domain_options_bad_num_v(
+    example_domain_config: dict[str, dict[str, object]],
+    bad_options: dict[str, object],
+):
+    """Test if bad coords error."""
+    bad_config = example_domain_config
+
+    bad_config["TDom"]["z"] = bad_config["TDom"]["z"] | bad_options
+
+    with pytest.raises(TypeError, match=r"TDom.*is not.*int.*str"):
+        _ = check_domain_options(bad_config)
+
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"hcoord": "BAD VALUE"},
+        {"zcoord": "BAD VALUE"},
+    ]
+)
+def test_domains_options_bad_literal(
+    example_domain_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+):
+    """Test if bad coords error."""
+    bad_config = {
+        "TDom": example_domain_config["TDom"] | bad_options,
+    }
+    with pytest.raises(TypeError, match=r"Got: BAD VALUE"):
+        _ = check_domain_options(bad_config)
