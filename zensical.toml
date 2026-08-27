@@ -8,7 +8,7 @@ Copyright &copy; 2026 Idris Hayward
 
 [project.theme]
 
-variant = "classic"
+variant = "modern"
 language = "en"
 
 features = [

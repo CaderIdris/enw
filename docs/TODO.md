@@ -189,12 +189,12 @@ date: 2026-06-08
         * [x] Tests
     * [x] Toml
     * [x] Tests
-* [ ] Vertical Grids
+* [x] Vertical Grids
     * [x] TypedDict
     * [x] OpenGHG Defs loader (Locations)
         * [x] Tests
     * [x] Toml
-    * [ ] Tests
+    * [x] Tests
 * [x] Species
     * [x] TypedDict
     * [x] OpenGHG Defs loader (Species)
@@ -236,3 +236,30 @@ date: 2026-06-08
 * [ ] Main not present should raise error
 * [ ] Output both NAME III and NetCDF for both particles and mixing ratio 
 * [ ] Domains is HGrid ± (step size / 2)
+* [ ] Error if ukv selected and domain is not europe
+* [ ] Error if ukv selected and date before July 11 2017
+* [ ] Select Met
+    * 🐊 01/01/2006 -> GLOUM6
+    * 🐊  01/01/2009 -> GLOUM6pp
+    * 🐊  10/11/2009 -> UMG_Mk5
+    * 🐊  09/03/2010 -> UMG_Mk6
+    * 🐊  30/04/2013 -> UMG_Mk7
+    * 🐊  15/07/2014 -> UMG_Mk8
+    * 🐊  25/08/2015 -> UMG_Mk9
+    * 🐊  11/07/2017 -> UMG_Mk10
+    * [ ] 04/05/2022 -> UMG_Mk11
+    * [ ] 21/01/2026 -> UMG_Mk12
+
+```bash
+set -A MetMk             0       1       2       3                  4                    5                           6                             7                             8                             9                            10                                 11                                 12
+set -A MetType           'null'  'null'  'null'  'GLOUM6'           'GLOUM6pp'           'UMG_Mk5'                   'UMG_Mk6PT'                   'UMG_Mk7PT'                   'UMG_Mk8PT'                   'UMG_Mk9PT'                  'UMG_Mk10PT'                       'UMG_Mk11PT'                       'UMG_Mk12PT'
+set -A MetDefnFileName   'null'  'null'  'null'  'MetDefnUM6G.txt'  'MetDefnUM6Gpp.txt'  'MetDefnUMG_Mk5_L52pp.txt'  'MetDefnUMG_Mk6_L59PTpp.txt'  'MetDefnUMG_Mk7_L59PTpp.txt'  'MetDefnUMG_Mk8_L59PTpp.txt'  'MetDefnUMG_Mk9_L59PTpp.txt' 'MetDefnUMG_Mk10_L59PTpp.txt'      'MetDefnUMG_Mk11_L59PTpp.txt'      'MetDefnUMG_Mk12_L59PTpp.txt'
+set -A MetDeclnFileName  'null'  'null'  'null'  'Use_UM6G.txt'     'Use_UM6Gpp.txt'     'Use_UMG_Mk5_L52pp.txt'     'Use_UMG_Mk6_L59PTpp.txt'     'Use_UMG_Mk7_L59PTpp.txt'     'Use_UMG_Mk8_L59PTpp.txt'     'Use_UMG_Mk9_L59PTpp.txt'    'Use_UMG_Mk10_L59PTpp.txt'         'Use_UMG_Mk11_L59PTpp.txt'         'Use_UMG_Mk12_L59PTpp.txt'
+set -A MetPrefix         'null'  'null'  'null'  'HP'               'HP'                 'MO'                        'MO'                          'MO'                          'MO'                          'MO'                         'MO'                               'MO'                               'MO'
+set -A MetSuffix         'null'  'null'  'null'  'GLOUM6'           'GLOUM6.pp'          'UMG_Mk5_L52.pp'            'UMG_Mk6_L59PT*.pp'           'UMG_Mk7_[IM]_L59PT*.pp'      'UMG_Mk8_[IM]_L59PT*.pp'      'UMG_Mk9_[IM]_L59PT*.pp'     'UMG_Mk10_[IM]_L59PT*.pp'          'UMG_Mk11_[IM]_L59PT*.pp'          'UMG_Mk12_[IM]_L59PT*.pp'
+set -A ArchiveMetDir     'null'  'null'  'null'  'Global/GLOUM6'    'Global/GLOUM6pp'    'Global/UMG_Mk5'            'Global/UMG_Mk6PT'            'Global/UMG_Mk7PT'            'Global/UMG_Mk8PT'            'Global/UMG_Mk9PT'           'Global/UMG_Mk10PT'                'Global/UMG_Mk11PT'                'Global/UMG_Mk12PT'
+set -A UMGUKVMetDefnFileName 'null'  'null' 'null'  'null'          'null'               'null'                      'null'                        'null'                        'null'                        'null'                       'MetDefnUMG_Mk10_L59PTpp.txt'      'MetDefnUMG_Mk11_L59PT2569pp.txt'  'MetDefnUMG_Mk12_L59PT2569pp.txt'
+set -A UKVMetDefnFileName 'null'  'null' 'null'  'null'             'null'               'null'                      'null'                        'null'                        'null'                        'null'                       'MetDefnUM1p5km_Mk4_L57PTpp.txt'   'MetDefnUM1p5km_Mk4_L57PTpp.txt'   'MetDefnUM1p5km_Mk4_L57PTpp.txt'
+set -A UKVMetDeclnFileName 'null' 'null' 'null'  'null'             'null'               'null'                      'null'                        'null'                        'null'                        'null'                       'Use_UKV_and_UMG_Mk10_L59PTpp.txt' 'Use_UKV_and_UMG_Mk11_L59PTpp.txt' 'Use_UKV_and_UMG_Mk12_L59PTpp.txt'
+
+```
