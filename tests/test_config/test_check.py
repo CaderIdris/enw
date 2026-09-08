@@ -1,4 +1,5 @@
 from copy import copy
+import datetime as dt
 import logging
 from typing import Any, no_type_check
 
@@ -28,6 +29,9 @@ def example_main_config() -> dict[str, Any]:
     """An example config for the Main Options block."""
     return {
         "name": "Example Fixture",
+        "start_time": dt.datetime(2025, 1, 1),
+        "end_time": dt.datetime(2026, 1, 1),
+        "time_step": "01:00",
         "backwards": False,
         "max_num_sources": 100,
         "max_num_field_reqs": 200,

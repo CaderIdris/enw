@@ -119,12 +119,10 @@ def test_load_config():
 
 
 @no_type_check
-def test_load_config_no_main_warning(
+def test_load_config_no_main_error(
     tmp_path: pytest.TempPathFactory,
-    caplog: pytest.LogCaptureFixture,
 ):
     """Test if a warning is logged when no Main config is present."""
-    tests = {}
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("Main")
     good_config.pop("Multiple Case")
@@ -133,19 +131,8 @@ def test_load_config_no_main_warning(
     with bad_config.open("wb") as toml_file:
         tomli_w.dump(good_config, toml_file)
 
-    with caplog.at_level(logging.WARNING):
-        with suppress(NotImplementedError):
-            no_main = load_config(bad_config)
-            tests["Main defaults used"] = "Main" in no_main
-        warning_text = caplog.text
-
-    tests["Main block warning"] = "Main config not present" in warning_text
-
-    for test, result in tests.items():
-        if not result:
-            print(test)
-
-    assert all(tests.values())
+    with pytest.raises(ValueError, match=r"Mandatory.*'Main'"):
+        _ = load_config(bad_config)
 
 
 @no_type_check
@@ -245,7 +232,7 @@ def test_load_config_no_coords_warning(
     """Test if a warning is logged when no OpenMP config is present."""
     tests = {}
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
-    good_config.pop("CoordinateSystems")
+    good_config.pop("Coordinate Systems")
     good_config.pop("Multiple Case")
 
     bad_config = tmp_path / "no_coords.toml"
@@ -255,7 +242,7 @@ def test_load_config_no_coords_warning(
     with caplog.at_level(logging.WARNING):
         no_openmp = load_config(bad_config)
         tests["Coordinate Systems defaults used"] = (
-            "CoordinateSystems" in no_openmp
+            "Coordinate Systems" in no_openmp
         )
         warning_text = caplog.text
 

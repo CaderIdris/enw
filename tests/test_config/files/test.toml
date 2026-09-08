@@ -1,5 +1,8 @@
 [Main]
 name = "Example Configuration"
+start_time = 2025-01-01 00:00:00
+end_time = 2026-01-01 00:00:00
+time_step = "01:00"
 backwards = true
 max_num_sources = 4000
 max_num_field_reqs = 4000
@@ -8,6 +11,7 @@ absolute_or_relative = "Absolute"
 fixed_met = false
 flat_earth = false
 random_seed = "Random (Parallel)"
+use_ukv = true
 
 [Output]
 folder = "some/random/path"

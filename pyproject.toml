@@ -36,6 +36,8 @@ build-backend = "setuptools.build_meta"
 "enw.files.config.presets" = ["*.toml"]
 "enw.files.block_templates" = ["*.jinja"]
 "enw.files.sql" = ["**/*.sql"]
+#BUG: Get rid of temp eventually
+"enw.files.temp" = ["*.txt"]
 
 [tool.pytest.ini_options]
 testpaths = [

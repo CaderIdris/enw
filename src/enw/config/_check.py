@@ -1,3 +1,4 @@
+import datetime as dt
 from types import NoneType, UnionType
 import logging
 from typing import (
@@ -84,6 +85,10 @@ def check_main_options(config: dict[str, object]) -> MainConfig:
     #INFO: Check for unexpected keys
     expected_keys = {
         "name",
+        "start_time",
+        "end_time",
+        "time_step",
+        "use_ukv",
         "backwards",
         "max_num_sources",
         "max_num_field_reqs",
@@ -95,6 +100,22 @@ def check_main_options(config: dict[str, object]) -> MainConfig:
         "run_to",
         "same_results_with_update_on_demand"
     }
+    _base_types = (
+        ("Main.name", config["name"], str),
+        ("Main.start_time", config["start_time"], dt.datetime),
+        ("Main.end_time", config["end_time"], dt.datetime),
+        ("Main.time_step", config["time_step"], str),
+        ("Main.max_num_sources", config["max_num_sources"], int),
+        ("Main.max_num_field_reqs", config["max_num_field_reqs"], int),
+        (
+            "Main.max_num_field_output_groups",
+            config["max_num_field_output_groups"],
+            int,
+        ),
+        ("Main.backwards", config["backwards"], bool),
+        ("Main.fixed_met", config["fixed_met"], bool),
+        ("Main.flat_earth", config["flat_earth"], bool),
+    )
     check_keys(
         set(config.keys()),
         expected_keys,
@@ -104,43 +125,23 @@ def check_main_options(config: dict[str, object]) -> MainConfig:
     if "name" not in config:
         msg = "Need to implement auto naming"
         raise NotImplementedError(msg)
-    check_type("Main.name", config["name"], str)
+    for key, val, expected_type in _base_types:
+        check_type(key, val, expected_type)
     #INFO: Check max_num_sources
-    check_type(
-        "Main.max_num_sources",
-        config["max_num_sources"],
-        int
-    )
     check_pos_int(
         "Main.max_num_sources",
         cast("int", config["max_num_sources"])
     )
     #INFO: Check max_num_field_reqs
-    check_type(
-        "Main.max_num_field_reqs",
-        config["max_num_field_reqs"],
-        int
-    )
     check_pos_int(
         "Main.max_num_field_reqs",
         cast("int", config["max_num_field_reqs"])
     )
     #INFO: Check max_num_field_output_groups
-    check_type(
-        "Main.max_num_field_output_groups",
-        config["max_num_field_output_groups"],
-        int
-    )
     check_pos_int(
         "Main.max_num_field_output_groups",
         cast("int", config["max_num_field_output_groups"])
     )
-    #INFO: Check backwards
-    check_type("Main.backwards", config["backwards"], bool)
-    #INFO: Check fixed_met
-    check_type("Main.fixed_met", config["fixed_met"], bool)
-    #INFO: Check flat_earth
-    check_type("Main.flat_earth", config["flat_earth"], bool)
     #INFO: Check absolute_or_relative
     check_literal(
         "Main.absolute_or_relative",

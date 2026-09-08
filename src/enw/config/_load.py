@@ -1,3 +1,4 @@
+import datetime as dt
 from importlib.resources import as_file, files
 import logging
 import tomllib
@@ -31,29 +32,28 @@ if TYPE_CHECKING:
 
 _logger = logging.getLogger("_enw")
 
-#TODO: Need to separate this into individual blocks.
-def load_config(path: Path) -> EnwConfig:
-    """Load the config file, with error checking.
-
+def load_config_run(raw_config: dict[str, dict[str, object]]) -> RunConfig:
+    """Load the run relevant items from the config file, with error checking.
+    
     Parameters
     ----------
-    path : Path
-        Path to the toml file.
+    raw_config : dict[str, object | dict[str, object]]
+        The raw config.
 
     Returns
     -------
-    EnwConfig
-        Properly formatted config file.
+    RunConfig
+        The run elements of the config file
 
     """
-    raw_config = load_toml(path)
     config = {}
 
     #INFO: Check Main
     #TODO: Sort out whether main should be mandatory or not
     #BUG: Some of the main arguments aren't default now. Raise an error.
     if "Main" not in raw_config:
-        _logger.warning("Main config not present, using defaults.")
+        msg = "Mandatory section 'Main' not found in config."
+        raise ValueError(msg)
     config_main = load_defaults(raw_config.get("Main", {}), "main")
     config["Main"] = check_main_options(config_main)
     #INFO: Check Output
@@ -78,6 +78,26 @@ def load_config(path: Path) -> EnwConfig:
         _logger.warning("OpenMP config not present, using defaults.")
     config_openmp = load_defaults(raw_config.get("OpenMP", {}), "openmp")
     config["OpenMP"] = check_openmp_options(config_openmp)
+    return config
+
+
+def load_config_spatial(
+    raw_config: dict[str, dict[str, object]],
+) -> SpatialOptions:
+    """Load the run relevant items from the config file, with error checking.
+    
+    Parameters
+    ----------
+    raw_config : dict[str, object | dict[str, object]]
+        The raw config.
+
+    Returns
+    -------
+    RunConfig
+        The run elements of the config file
+
+    """
+    config = {}
     #INFO: Check Coordinate Systems and set default
     if "Coordinate Systems" not in raw_config:
         _logger.warning(
@@ -87,7 +107,7 @@ def load_config(path: Path) -> EnwConfig:
         raw_config.get("Coordinate Systems", {}),
         "coords"
     )
-    config["CoordinateSystems"] = check_coord_options(config_coords)
+    config["Coordinate Systems"] = check_coord_options(config_coords)
     #INFO: Import OpenGHG presets and test, along with any custom values
     openghg_presets = load_openghg(raw_config.get("OpenGHG Presets", {}))
     config["Locations"] = (
@@ -105,7 +125,6 @@ def load_config(path: Path) -> EnwConfig:
     config["Domains"] = config["Domains"] | (
         check_domain_options(raw_config.get("Domains", {}))
     )
-
     config["Species"] = (
         check_species_options(openghg_presets["Species"])
         if "Species" in openghg_presets else {}
@@ -113,6 +132,94 @@ def load_config(path: Path) -> EnwConfig:
     config["Species"] = config["Species"] | (
         check_species_options(raw_config.get("Species", {}))
     )
+    return config
+
+
+def load_config_temp(raw_config: dict[str, dict[str, object]]):
+    """Check the temporary limits on the options.
+
+    Parameters
+    ----------
+    raw_config : dict[str, dict[str, object]]
+        The raw config.
+
+    Raises
+    ------
+    ValueError
+        - If ukv is not selected
+        - If domain is not Europe
+        - Error if date is outside if 04/05/2022 - 20/01/2026
+
+    """
+    config = {}
+    main = raw_config["Main"]
+    start_time: dt.datetime = cast("dt.datetime", main["start_time"])
+    end_time: dt.datetime = cast("dt.datetime", main["end_time"])
+    if any(
+        (
+            start_time > dt.datetime(2026, 1, 20),
+            end_time > dt.datetime(2026, 1, 20),
+            start_time < dt.datetime(2022, 5, 4),
+            end_time < dt.datetime(2022, 5, 4)
+        )
+    ):
+        msg = "Message lying outside of MK11 range."
+        raise ValueError(msg)
+    if not main["use_ukv"]:
+        msg = "UKV should be selected, for now."
+        raise ValueError(msg)
+    if all((
+        "OpenGHG" in raw_config,
+        "Lat-Long" not in cast(
+            "list",
+            raw_config["Coordinate Systems"]["horizontal"]
+        )
+    )):
+        msg = (
+            "Lat-Long must be a selected coordinate system if OpenGHG presets "
+            "are used."
+        )
+        raise ValueError(msg)
+
+    mk4_path = files("enw.files.temp").joinpath("Mk4.txt")
+    with as_file(mk4_path) as mk4, mk4.open("r") as file:
+        config["MK4"] = file.read()
+    mk11_path = files("enw.files.temp").joinpath("Mk11.txt")
+    with as_file(mk11_path) as mk11, mk11.open("r") as file:
+        config["MK11"] = file.read()
+
+    return config
+
+
+def load_config(path: Path) -> EnwConfig:
+    """Load the config file, with error checking.
+
+    Parameters
+    ----------
+    path : Path
+        Path to the toml file.
+
+    Returns
+    -------
+    EnwConfig
+        Properly formatted config file.
+
+    """
+    raw_config = load_toml(path)
+    config = {}
+
+    config = (
+        config |
+        load_config_run(raw_config) |
+        load_config_spatial(raw_config)
+    )
+
+    config = (
+        config |
+        load_config_temp(config)
+    )
+
+
 
     return cast("EnwConfig", config)
 
