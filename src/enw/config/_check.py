@@ -121,10 +121,6 @@ def check_main_options(config: dict[str, object]) -> MainConfig:
         expected_keys,
         "Main"
     )
-    #INFO: Check name
-    if "name" not in config:
-        msg = "Need to implement auto naming"
-        raise NotImplementedError(msg)
     for key, val, expected_type in _base_types:
         check_type(key, val, expected_type)
     #INFO: Check max_num_sources

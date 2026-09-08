@@ -1,7 +1,28 @@
-["Count of particles"]
+["Run"."Count of particles"]
 quantity = "# Particles"
 t_av_or_int = "No"
 sync = true
 output_route = "D"
 output_format = "AF"
 output_group = "Numbers"
+
+["Source"."NAMEIII"]
+quantity = "Mixing Ratio"
+bl_average = false
+t_av_or_int = "Int"
+av_time = "744:00"
+num_av_times = 14880
+sync = false
+output_route = "D"
+across = "TZ"
+separate_file = "T"
+output_format = "IA"
+
+["Source"."NetCDF"]
+quantity = "Mixing Ratio"
+bl_average = false
+t_av_or_int = "Int"
+av_time = "744:00"
+num_av_times = 14880
+sync = false
+output_route = "N"

@@ -4,6 +4,12 @@ author: Idris Hayward
 date: 2026-06-08
 ---
 
+## Key
+
+* [ ] Not Complete
+* [x] Complete
+* [🐊] Later (Alligator)
+
 ## Necessary Blocks:
 
 * [x] Main Options
@@ -229,13 +235,13 @@ date: 2026-06-08
 * [x] Set hcoord to lat-long when using openghg default (domain)
 * [x] Raise error if openghg defaults used when lat-long not set
 * [x] OpenGHG Locations: IGNORE:, heights, heights_units. subset
-* [ ] Main domain title should default to "Dispersion Domain"
 * [x] Add on_particles, on_fields, advect_fields to species return, default TFF
-* [ ] Break up load function
-* [ ] Main not present should raise error
-* [ ] Output both NAME III and NetCDF for both particles and mixing ratio 
-* [ ] Domains is HGrid ± (step size / 2)
+* [x] Break up load function
+* [x] Main not present should raise error
 * [x] Error if ukv not selected
+* [❓] Main domain title should default to "Dispersion Domain"
+* [x] Output both NAME III and NetCDF for both particles and mixing ratio 
+* [ ] Domains is HGrid ± (step size / 2)
 
 * [🐊] Error if date outside of 04/05/2022, until met stuff is properly implemented
     * [🐊]  Error if ukv selected and date before July 11 2017

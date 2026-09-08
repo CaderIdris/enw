@@ -188,3 +188,8 @@ members = [
 [tool.uv.sources]
 enw = { workspace = true }
 openghg-defs = { git = "https://github.com/openghg/openghg_defs" }
+
+[tool.coverage.report]
+exclude_also = [
+	"def load_config_temp"
+]
