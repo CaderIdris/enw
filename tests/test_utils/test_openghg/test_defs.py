@@ -64,12 +64,14 @@ def test_get_domain_info(
             "min": -97.9000015258789,
             "max": -96.8453140258789,
             "num": 4,
+            "step": 0.2,
             "unbounded": False
         },
         "y": {
             "min": 36.093746185302734,
             "max": 37.499996185302734,
             "num": 7,
+            "step": 0.1,
             "unbounded": False
         },
         "z": {

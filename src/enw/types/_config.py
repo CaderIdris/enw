@@ -7,15 +7,16 @@ if TYPE_CHECKING:
     from ._options import Switch
     from ._strings import DateTime, TimeInterval
 
+
 class MainConfig(TypedDict):
     """Configuration variables for the Main Options input block.
 
-    This TypedDict represents all of the configuration variables of the `Main
-    Options` block in the NAME III Input Header files, using pure Python types.
-    In the case of boolean variables, they are cast to `Switch` variables when
-    the `Main` dataclass is set up. In the case of values with a fixed set of
-    options, such as `Absolute or Relative?`, they are cast to their respective
-    Literal type when the `Main` dataclass is set up.
+    This TypedDict represents all of the configuration variables of
+    the `Main Options` block in the NAME III Input Header files, using pure
+    Python types. In the case of boolean variables, they are cast to `Switch`
+    variables when the `Main` dataclass is set up. In the case of values with
+    a fixed set of options, such as `Absolute or Relative?`, they are cast to
+    their respective Literal type when the `Main` dataclass is set up.
     """
 
     name: str
@@ -23,18 +24,6 @@ class MainConfig(TypedDict):
     start_time: dt.datetime
     end_time: dt.datetime
     time_step: str
-
-
-class MainExtraConfig(TypedDict):
-    """Additional configuration variables for the Main Options input block.
-
-    This TypedDict represents all of the additional configuration variables of
-    the `Main Options` block in the NAME III Input Header files, using pure
-    Python types. In the case of boolean variables, they are cast to `Switch`
-    variables when the `Main` dataclass is set up. In the case of values with
-    a fixed set of options, such as `Absolute or Relative?`, they are cast to
-    their respective Literal type when the `Main` dataclass is set up.
-    """
 
     max_num_sources: int
     max_num_field_reqs: int
@@ -290,8 +279,27 @@ class DispersionOptionsConfig(TypedDict):
     chemistry: bool
     turbulence: bool
 
+class RunConfig(TypedDict):
+    """Configuration schema of the run configuration options."""
 
-class EnwConfig(TypedDict):
+    Main: MainConfig
+    Output: OutputConfig
+    Restart: NotRequired[RestartConfig]
+    MultipleCase: MultipleCaseConfig
+    OpenMP: OpenMPConfig
+
+
+class SpatialConfig(TypedDict):
+    """Configuration schema of spatial configuration options."""
+
+    CoordinateSystems: CoordinateSystemsConfig
+    Locations: dict[str, LocationConfig]
+    HorizontalGrid: HorizontalGridsConfig
+    VerticalGrid: VerticalGridsConfig
+    Domain: dict[str, DomainConfig]
+    Species: dict[str, SpeciesConfig]
+
+class EnwConfig(RunConfig, SpatialConfig):
     """Configuration schema of enw.
 
     This TypedDict represents all of the configuration variables of enw, once
@@ -300,18 +308,6 @@ class EnwConfig(TypedDict):
     into its own TypedDict.
     """
 
-    Main: MainConfig
-    MainExtra: MainExtraConfig
-    Output: OutputConfig
-    Restart: NotRequired[RestartConfig]
-    OpenMP: OpenMPConfig
-    MultipleCase: MultipleCaseConfig
-    CoordinateSystems: CoordinateSystemsConfig
-    Locations: dict[str, LocationConfig]
-    HorizontalGrid: HorizontalGridsConfig
-    VerticalGrid: VerticalGridsConfig
-    Domain: dict[str, DomainConfig]
-    Species: dict[str, SpeciesConfig]
     OutputRequirements: OutputRequirementsConfig
     SetsOfDispersionOptions: DispersionOptionsConfig
 

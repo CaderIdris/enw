@@ -13,6 +13,8 @@ from ._config import (
     OptionBlock,
     OutputConfig,
     RestartConfig,
+    RunConfig,
+    SpatialConfig,
     SpeciesConfig,
     VerticalGridsConfig
 )
@@ -76,9 +78,11 @@ __all__ = [
     "QuantityOpts",
     "RandomSeedOpts",
     "RestartConfig",
+    "RunConfig",
     "SeparateFileString",
     "SourceShapeOpts",
     "SourceStrength",
+    "SpatialConfig",
     "SpeciesConfig",
     "Switch",
     "TAvOrIntOpts",

@@ -26,6 +26,8 @@ if TYPE_CHECKING:
         EnwConfig,
         OpenGHGPresets,
         OptionBlock,
+        RunConfig,
+        SpatialConfig
     )
     from pathlib import Path
 
@@ -34,7 +36,7 @@ _logger = logging.getLogger("_enw")
 
 def load_config_run(raw_config: dict[str, dict[str, object]]) -> RunConfig:
     """Load the run relevant items from the config file, with error checking.
-    
+
     Parameters
     ----------
     raw_config : dict[str, object | dict[str, object]]
@@ -78,14 +80,15 @@ def load_config_run(raw_config: dict[str, dict[str, object]]) -> RunConfig:
         _logger.warning("OpenMP config not present, using defaults.")
     config_openmp = load_defaults(raw_config.get("OpenMP", {}), "openmp")
     config["OpenMP"] = check_openmp_options(config_openmp)
-    return config
+
+    return cast("RunConfig", config)
 
 
 def load_config_spatial(
     raw_config: dict[str, dict[str, object]],
-) -> SpatialOptions:
+) -> SpatialConfig:
     """Load the run relevant items from the config file, with error checking.
-    
+
     Parameters
     ----------
     raw_config : dict[str, object | dict[str, object]]
@@ -97,6 +100,7 @@ def load_config_spatial(
         The run elements of the config file
 
     """
+    #BUG: No HGRID OR VGRID 😢
     config = {}
     #INFO: Check Coordinate Systems and set default
     if "Coordinate Systems" not in raw_config:
@@ -115,7 +119,12 @@ def load_config_spatial(
         if "Locations" in openghg_presets else {}
     )
     config["Locations"] = config["Locations"] | (
-        check_location_options(raw_config.get("Locations", {}))
+        check_location_options(
+            cast(
+                "dict[str, dict[str, object]]",
+                raw_config.get("Locations", {})
+            )
+        )
     )
 
     config["Domains"] = (
@@ -130,12 +139,19 @@ def load_config_spatial(
         if "Species" in openghg_presets else {}
     )
     config["Species"] = config["Species"] | (
-        check_species_options(raw_config.get("Species", {}))
+        check_species_options(
+            cast(
+                "dict[str, dict[str, object]]",
+                raw_config.get("Species", {})
+            )
+        )
     )
-    return config
+    return cast("SpatialConfig", config)
 
 
-def load_config_temp(raw_config: dict[str, dict[str, object]]):
+def load_config_temp(
+    raw_config: dict[str, dict[str, object]],
+) -> dict[str, object]:
     """Check the temporary limits on the options.
 
     Parameters
@@ -171,7 +187,7 @@ def load_config_temp(raw_config: dict[str, dict[str, object]]):
     if all((
         "OpenGHG" in raw_config,
         "Lat-Long" not in cast(
-            "list",
+            "list[str]",
             raw_config["Coordinate Systems"]["horizontal"]
         )
     )):
@@ -216,10 +232,10 @@ def load_config(path: Path) -> EnwConfig:
 
     config = (
         config |
-        load_config_temp(config)
+        load_config_temp(
+            cast("dict[str, dict[str, object]]", config)
+        )
     )
-
-
 
     return cast("EnwConfig", config)
 

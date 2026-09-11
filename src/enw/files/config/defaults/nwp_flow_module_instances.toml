@@ -1,0 +1,96 @@
+["UKV_PT2_flow"]
+met_module = "NWP Met"
+met = "UKV_PT2"
+domain = "UM1p5km_Mk4_L57PT2pp Whole"
+update_on_demand = true
+
+["UKV_PT4_flow"]
+met_module = "NWP Met"
+met = "UKV_PT4"
+domain = "UM1p5km_Mk4_L57PT4pp Whole"
+update_on_demand = true
+
+["UKV_PT5_flow"]
+met_module = "NWP Met"
+met = "UKV_PT5"
+domain = "UM1p5km_Mk4_L57PT5pp Whole"
+update_on_demand = true
+
+["UKV_PT6_flow"]
+met_module = "NWP Met"
+met = "UKV_PT6"
+domain = "UM1p5km_Mk4_L57PT6pp Whole"
+update_on_demand = true
+
+["UKV_PT8_flow"]
+met_module = "NWP Met"
+met = "UKV_PT8"
+domain = "UM1p5km_Mk4_L57PT8pp Whole"
+update_on_demand = true
+
+["UKV_PT9_flow"]
+met_module = "NWP Met"
+met = "UKV_PT9"
+domain = "UM1p5km_Mk4_L57PT9pp Whole"
+update_on_demand = true
+
+["UKV_PT10_flow"]
+met_module = "NWP Met"
+met = "UKV_PT10"
+domain = "UM1p5km_Mk4_L57PT10pp Whole"
+update_on_demand = true
+
+["UKV_PT11_flow"]
+met_module = "NWP Met"
+met = "UKV_PT11"
+domain = "UM1p5km_Mk4_L57PT11pp Whole"
+update_on_demand = true
+
+["UKV_PT13_flow"]
+met_module = "NWP Met"
+met = "UKV_PT13"
+domain = "UM1p5km_Mk4_L57PT13pp Whole"
+update_on_demand = true
+
+["UKV_PT14_flow"]
+met_module = "NWP Met"
+met = "UKV_PT14"
+domain = "UM1p5km_Mk4_L57PT14pp Whole"
+update_on_demand = true
+
+["UKV_PT15_flow"]
+met_module = "NWP Met"
+met = "UKV_PT15"
+domain = "UM1p5km_Mk4_L57PT15pp Whole"
+update_on_demand = true
+
+["UKV_PT16_flow"]
+met_module = "NWP Met"
+met = "UKV_PT16"
+domain = "UM1p5km_Mk4_L57PT16pp Whole"
+update_on_demand = true
+
+["Global_PT2_flow"]
+met_module = "NWP Met"
+met = "Global_PT2"
+domain = "UMG_Mk10_L59PT2pp Whole"
+update_on_demand = true
+
+["Global_PT5_flow"]
+met_module = "NWP Met"
+met = "Global_PT5"
+domain = "UMG_Mk10_L59PT5pp Whole"
+update_on_demand = true
+
+["Global_PT6_flow"]
+met_module = "NWP Met"
+met = "Global_PT6"
+domain = "UMG_Mk10_L59PT6pp Whole"
+update_on_demand = true
+
+["Global_PT9_flow"]
+met_module = "NWP Met"
+met = "Global_PT9"
+domain = "UMG_Mk10_L59PT9pp Whole"
+update_on_demand = true
+
