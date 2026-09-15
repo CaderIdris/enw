@@ -26,3 +26,15 @@ write_on_suspend = true
 horizontal = "Lat-Long"
 vertical = ["m agl", "m asl"]
 
+["Vertical Grids"]
+zcoord = "m agl"
+num = 1
+min = 20
+spacing = 40
+
+["OpenGHG Presets"."Domains"."A"]
+
+["OpenGHG Presets"."Locations"."E"]
+subset = "2"
+
+["OpenGHG Presets"."Species"."C3"]

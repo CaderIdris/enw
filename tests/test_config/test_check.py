@@ -15,7 +15,8 @@ from enw.config import (
     check_species_options,
     check_domain_options,
     check_set_of_dispersion_options,
-    check_vertical_grids_options
+    check_vertical_grids_options,
+    check_horizontal_grid_options
 )
 
 pytestmark = [
@@ -512,9 +513,6 @@ def test_check_locations_options_good(example_location_config: dict[str, Any]):
     [
         {
             "name": 0,
-        },
-        {
-            "subset": 0,
         }
     ]
 )
@@ -700,10 +698,17 @@ def example_domain_config() -> dict[str, dict[str, object]]:
         }
     }
 
-
-def test_check_domain_options_good(example_domain_config: dict[str, Any]):
+@pytest.mark.parametrize("add_step", [True, False])
+def test_check_domain_options_good(
+    example_domain_config: dict[str, Any],
+    *,
+    add_step: bool
+):
     """Test if a good domain config doesn't error."""
     tests = {}
+    if add_step:
+        example_domain_config["TDom"]["x"]["step"] = 0.1
+        example_domain_config["TDom"]["y"]["step"] = 0.1
     output = check_domain_options(example_domain_config)
 
     tests["Is dict"] = isinstance(output, dict)
@@ -1043,3 +1048,116 @@ def test_vertical_grids_options_bad_neg_int(
         match=r"Expected \+ve integer value for.*Got -1 instead\."
     ):
         _ = check_vertical_grids_options(bad_config)
+
+
+@pytest.fixture
+def example_hgrid_config() -> dict[str, dict[str, object]]:
+    """An example config for the hgrids block."""
+    return {
+        "THGrid": {
+            "name": "Test Horizontal Grid",
+            "hcoord": "Lat-Long",
+            "x": {
+                "min": -1,
+                "max": 1,
+                "num": 10,
+            },
+            "y": {
+                "min": -1,
+                "max": 1,
+                "num": 10,
+            },
+        }
+    }
+
+@pytest.mark.parametrize("add_step", [True, False])
+@pytest.mark.parametrize("add_unbounded", [True, False])
+def test_check_horizontal_grid_options_good(
+    example_hgrid_config: dict[str, Any],
+    *,
+    add_step: bool,
+    add_unbounded: bool,
+):
+    """Test if a good hgrid config doesn't error."""
+    tests = {}
+    if add_step:
+        example_hgrid_config["THGrid"]["x"]["step"] = 0.1
+        example_hgrid_config["THGrid"]["y"]["step"] = 0.1
+    if add_unbounded:
+        example_hgrid_config["THGrid"]["x"]["unbounded"] = False
+        example_hgrid_config["THGrid"]["y"]["unbounded"] = True
+    output = check_horizontal_grid_options(example_hgrid_config)
+
+    tests["Is dict"] = isinstance(output, dict)
+    tests["Has keys"] = len(output)
+
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())
+
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"name": 0},
+    ]
+)
+def test_hgrid_options_bad_str(
+    example_hgrid_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+):
+    """Test if bad coords error."""
+    bad_config = {
+        "THGrid": example_hgrid_config["THGrid"] | bad_options
+    }
+    with pytest.raises(TypeError, match=r"THGrid\..*is not.*str.*int"):
+        _ = check_horizontal_grid_options(bad_config)
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"min": "BAD"},
+        {"max": "BAD"},
+        {"num": "BAD"},
+        {"step": "BAD"},
+        {"unbounded": "BAD"}
+    ]
+)
+@pytest.mark.parametrize("axis", ["x", "y"])
+def test_hgrid_options_bad_num_h(
+    example_hgrid_config: dict[str, dict[str, object]],
+    bad_options: dict[str, object],
+    axis: str
+):
+    """Test if bad coords error."""
+    bad_config = example_hgrid_config
+
+    bad_config["THGrid"][axis] = bad_config["THGrid"][axis] | bad_options
+
+    with pytest.raises(
+        TypeError,
+        match=r"THGrid.*is not.*int.*str|THGrid.*is not.*bool.*str"
+    ):
+        _ = check_horizontal_grid_options(bad_config)
+
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        {"hcoord": "BAD VALUE"},
+    ]
+)
+def test_hgrids_options_bad_literal(
+    example_hgrid_config: dict[str, dict[str, object]],
+    bad_options: dict[str, str | list[str]],
+):
+    """Test if bad coords error."""
+    bad_config = {
+        "THGrid": example_hgrid_config["THGrid"] | bad_options,
+    }
+    with pytest.raises(TypeError, match=r"Got: BAD VALUE"):
+        _ = check_horizontal_grid_options(bad_config)
+
+

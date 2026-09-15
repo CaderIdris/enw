@@ -13,12 +13,14 @@ from enw.utils.openghg import (
 from ._check import (
     check_coord_options,
     check_domain_options,
+    check_horizontal_grid_options,
     check_location_options,
     check_main_options,
     check_openmp_options,
     check_output_options,
     check_restart_options,
     check_species_options,
+    check_vertical_grids_options
 )
 
 if TYPE_CHECKING:
@@ -100,7 +102,7 @@ def load_config_spatial(
         The run elements of the config file
 
     """
-    #BUG: No HGRID OR VGRID 😢
+    #BUG: No horizontal_grid OR VGRID 😢
     config = {}
     #INFO: Check Coordinate Systems and set default
     if "Coordinate Systems" not in raw_config:
@@ -126,7 +128,9 @@ def load_config_spatial(
             )
         )
     )
-
+    if not openghg_presets.get("Domains") and "Domains" not in raw_config:
+        msg = "Mandatory section 'Domains' not found in config."
+        raise ValueError(msg)
     config["Domains"] = (
         check_domain_options(openghg_presets["Domains"])
         if "Domains" in openghg_presets else {}
@@ -134,6 +138,25 @@ def load_config_spatial(
     config["Domains"] = config["Domains"] | (
         check_domain_options(raw_config.get("Domains", {}))
     )
+    if (
+        not openghg_presets.get("Domains") and
+        "Horizontal Grids" not in raw_config
+    ):
+        msg = "Mandatory section 'Horizontal Grids' not found in config."
+        raise ValueError(msg)
+    config["Horizontal Grids"] = (
+        check_horizontal_grid_options(openghg_presets["Domains"])
+        if "Domains" in openghg_presets else {}
+    )
+    config["Horizontal Grids"] = config["Horizontal Grids"] | (
+        check_horizontal_grid_options(raw_config.get("Horizontal Grids", {}))
+    )
+    if (
+        not openghg_presets.get("Species") and
+        "Species" not in raw_config
+    ):
+        msg = "Mandatory section 'Species' not found in config."
+        raise ValueError(msg)
     config["Species"] = (
         check_species_options(openghg_presets["Species"])
         if "Species" in openghg_presets else {}
@@ -145,6 +168,12 @@ def load_config_spatial(
                 raw_config.get("Species", {})
             )
         )
+    )
+    if "Vertical Grids" not in raw_config:
+        msg = "Mandatory section 'Vertical Grids' not found in config."
+        raise ValueError(msg)
+    config["Vertical Grids"] = (
+        check_vertical_grids_options(raw_config.get("Vertical Grids", {}))
     )
     return cast("SpatialConfig", config)
 

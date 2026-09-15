@@ -79,8 +79,30 @@ def test_set_defaults():
     assert all(tests.values())
 
 
-def test_load_config():
+def test_load_config(
+    monkeypatch: pytest.MonkeyPatch,
+):
     """Test if the example config loads properly."""
+    monkeypatch.setattr(
+        openghg_defs,
+        "domain_info_file",
+        Path("tests/test_utils/test_openghg/files/example_domains.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "site_info_file",
+        Path("tests/test_utils/test_openghg/files/example_locations.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "species_info_file",
+        Path("tests/test_utils/test_openghg/files/example_species.json")
+    )
+    monkeypatch.setattr(
+        _defs,
+        "openghg_defs_data",
+        Path("tests/test_utils/test_openghg/files/")
+    )
     tests = {}
     test_config = load_config(Path("./tests/test_config/files/test.toml"))
 
@@ -120,11 +142,33 @@ def test_load_config():
 @no_type_check
 def test_load_config_no_main_error(
     tmp_path: pytest.TempPathFactory,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """Test if a warning is logged when no Main config is present."""
+    monkeypatch.setattr(
+        openghg_defs,
+        "domain_info_file",
+        Path("tests/test_utils/test_openghg/files/example_domains.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "site_info_file",
+        Path("tests/test_utils/test_openghg/files/example_locations.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "species_info_file",
+        Path("tests/test_utils/test_openghg/files/example_species.json")
+    )
+    monkeypatch.setattr(
+        _defs,
+        "openghg_defs_data",
+        Path("tests/test_utils/test_openghg/files/")
+    )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("Main")
     good_config.pop("Multiple Case")
+    good_config["Species"]["C3"].pop("surface_resistance")
 
     bad_config = tmp_path / "no_main.toml"
     with bad_config.open("wb") as toml_file:
@@ -136,12 +180,34 @@ def test_load_config_no_main_error(
 
 @no_type_check
 def test_load_config_no_output_error(
-    tmp_path: pytest.TempPathFactory
+    tmp_path: pytest.TempPathFactory,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """Test if a error is raised when no Output config is present."""
+    monkeypatch.setattr(
+        openghg_defs,
+        "domain_info_file",
+        Path("tests/test_utils/test_openghg/files/example_domains.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "site_info_file",
+        Path("tests/test_utils/test_openghg/files/example_locations.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "species_info_file",
+        Path("tests/test_utils/test_openghg/files/example_species.json")
+    )
+    monkeypatch.setattr(
+        _defs,
+        "openghg_defs_data",
+        Path("tests/test_utils/test_openghg/files/")
+    )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("Output")
     good_config.pop("Multiple Case")
+    good_config["Species"]["C3"].pop("surface_resistance")
 
     bad_config = tmp_path / "no_output.toml"
     with bad_config.open("wb") as toml_file:
@@ -156,12 +222,34 @@ def test_load_config_no_output_error(
 
 @no_type_check
 def test_load_config_no_restart_fine(
-    tmp_path: pytest.TempPathFactory
+    tmp_path: pytest.TempPathFactory,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """Test if no error raised when no Restart config is present."""
+    monkeypatch.setattr(
+        openghg_defs,
+        "domain_info_file",
+        Path("tests/test_utils/test_openghg/files/example_domains.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "site_info_file",
+        Path("tests/test_utils/test_openghg/files/example_locations.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "species_info_file",
+        Path("tests/test_utils/test_openghg/files/example_species.json")
+    )
+    monkeypatch.setattr(
+        _defs,
+        "openghg_defs_data",
+        Path("tests/test_utils/test_openghg/files/")
+    )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("Restart")
     good_config.pop("Multiple Case")
+    good_config["Species"]["C3"].pop("surface_resistance")
 
     bad_config = tmp_path / "no_restart.toml"
     with bad_config.open("wb") as toml_file:
@@ -172,9 +260,30 @@ def test_load_config_no_restart_fine(
 
 @no_type_check
 def test_load_config_multiple_case_error(
-    tmp_path: pytest.TempPathFactory
+    tmp_path: pytest.TempPathFactory,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """Test if a error is raised when Multiple Case config is present."""
+    monkeypatch.setattr(
+        openghg_defs,
+        "domain_info_file",
+        Path("tests/test_utils/test_openghg/files/example_domains.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "site_info_file",
+        Path("tests/test_utils/test_openghg/files/example_locations.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "species_info_file",
+        Path("tests/test_utils/test_openghg/files/example_species.json")
+    )
+    monkeypatch.setattr(
+        _defs,
+        "openghg_defs_data",
+        Path("tests/test_utils/test_openghg/files/")
+    )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("Multiple Case")
     good_config["Multiple Case"] = {
@@ -182,6 +291,7 @@ def test_load_config_multiple_case_error(
         "dispersion_options_ensemble_size": 2,
         "met_ensemble_size": 2
     }
+    good_config["Species"]["C3"].pop("surface_resistance")
 
     bad_config = tmp_path / "multiple_case.toml"
     with bad_config.open("wb") as toml_file:
@@ -198,12 +308,34 @@ def test_load_config_multiple_case_error(
 def test_load_config_no_openmp_warning(
     tmp_path: pytest.TempPathFactory,
     caplog: pytest.LogCaptureFixture,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """Test if a warning is logged when no OpenMP config is present."""
+    monkeypatch.setattr(
+        openghg_defs,
+        "domain_info_file",
+        Path("tests/test_utils/test_openghg/files/example_domains.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "site_info_file",
+        Path("tests/test_utils/test_openghg/files/example_locations.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "species_info_file",
+        Path("tests/test_utils/test_openghg/files/example_species.json")
+    )
+    monkeypatch.setattr(
+        _defs,
+        "openghg_defs_data",
+        Path("tests/test_utils/test_openghg/files/")
+    )
     tests = {}
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("OpenMP")
     good_config.pop("Multiple Case")
+    good_config["Species"]["C3"].pop("surface_resistance")
 
     bad_config = tmp_path / "no_openmp.toml"
     with bad_config.open("wb") as toml_file:
@@ -227,12 +359,34 @@ def test_load_config_no_openmp_warning(
 def test_load_config_no_coords_warning(
     tmp_path: pytest.TempPathFactory,
     caplog: pytest.LogCaptureFixture,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """Test if a warning is logged when no OpenMP config is present."""
+    monkeypatch.setattr(
+        openghg_defs,
+        "domain_info_file",
+        Path("tests/test_utils/test_openghg/files/example_domains.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "site_info_file",
+        Path("tests/test_utils/test_openghg/files/example_locations.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "species_info_file",
+        Path("tests/test_utils/test_openghg/files/example_species.json")
+    )
+    monkeypatch.setattr(
+        _defs,
+        "openghg_defs_data",
+        Path("tests/test_utils/test_openghg/files/")
+    )
     tests = {}
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("Coordinate Systems")
     good_config.pop("Multiple Case")
+    good_config["Species"]["C3"].pop("surface_resistance")
 
     bad_config = tmp_path / "no_coords.toml"
     with bad_config.open("wb") as toml_file:
@@ -254,6 +408,188 @@ def test_load_config_no_coords_warning(
             print(test)
 
     assert all(tests.values())
+
+
+@no_type_check
+def test_load_config_domain_error(
+    tmp_path: pytest.TempPathFactory,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    """Test if a error is raised when Multiple Case config is present."""
+    monkeypatch.setattr(
+        openghg_defs,
+        "domain_info_file",
+        Path("tests/test_utils/test_openghg/files/example_domains.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "site_info_file",
+        Path("tests/test_utils/test_openghg/files/example_locations.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "species_info_file",
+        Path("tests/test_utils/test_openghg/files/example_species.json")
+    )
+    monkeypatch.setattr(
+        _defs,
+        "openghg_defs_data",
+        Path("tests/test_utils/test_openghg/files/")
+    )
+    good_config = load_config(Path("./tests/test_config/files/test.toml"))
+    good_config.pop("Multiple Case")
+    good_config.pop("Domains")
+    good_config["Species"]["C3"].pop("surface_resistance")
+
+    bad_config = tmp_path / "multiple_case.toml"
+    with bad_config.open("wb") as toml_file:
+        tomli_w.dump(good_config, toml_file)
+
+    with pytest.raises(
+        ValueError,
+        match=r"Mandatory section 'Domains' not found in config."
+    ):
+        _ = load_config(bad_config)
+
+
+@no_type_check
+def test_load_config_horizontal_grids_error(
+    tmp_path: pytest.TempPathFactory,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    """Test if a error is raised when Multiple Case config is present."""
+    monkeypatch.setattr(
+        openghg_defs,
+        "domain_info_file",
+        Path("tests/test_utils/test_openghg/files/example_domains.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "site_info_file",
+        Path("tests/test_utils/test_openghg/files/example_locations.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "species_info_file",
+        Path("tests/test_utils/test_openghg/files/example_species.json")
+    )
+    monkeypatch.setattr(
+        _defs,
+        "openghg_defs_data",
+        Path("tests/test_utils/test_openghg/files/")
+    )
+    good_config = load_config(Path("./tests/test_config/files/test.toml"))
+    good_config.pop("Multiple Case")
+    good_config.pop("Domains")
+    good_config.pop("Horizontal Grids")
+    good_config["Species"]["C3"].pop("surface_resistance")
+    good_config["Domains"] = {
+        "A": {
+            "name": "A",
+            "hcoord": "Lat-Long",
+            "zcoord": "m agl",
+            "x": {"min": 1, "max": 2, "num": 20},
+            "y": {"min": 1, "max": 2, "num": 20},
+            "z": {"max": 100, "unbounded": False},
+            "t": {"unbounded": True},
+            "location_block_name": "BLOCK",
+            "location": "A"
+        }
+    }
+
+    bad_config = tmp_path / "multiple_case.toml"
+    with bad_config.open("wb") as toml_file:
+        tomli_w.dump(good_config, toml_file)
+
+    with pytest.raises(
+        ValueError,
+        match=r"Mandatory section 'Horizontal Grids' not found in config."
+    ):
+        _ = load_config(bad_config)
+
+
+@no_type_check
+def test_load_config_species_error(
+    tmp_path: pytest.TempPathFactory,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    """Test if a error is raised when Multiple Case config is present."""
+    monkeypatch.setattr(
+        openghg_defs,
+        "domain_info_file",
+        Path("tests/test_utils/test_openghg/files/example_domains.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "site_info_file",
+        Path("tests/test_utils/test_openghg/files/example_locations.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "species_info_file",
+        Path("tests/test_utils/test_openghg/files/example_species.json")
+    )
+    monkeypatch.setattr(
+        _defs,
+        "openghg_defs_data",
+        Path("tests/test_utils/test_openghg/files/")
+    )
+    good_config = load_config(Path("./tests/test_config/files/test.toml"))
+    good_config.pop("Multiple Case")
+    good_config.pop("Species")
+
+    bad_config = tmp_path / "multiple_case.toml"
+    with bad_config.open("wb") as toml_file:
+        tomli_w.dump(good_config, toml_file)
+
+    with pytest.raises(
+        ValueError,
+        match=r"Mandatory section 'Species' not found in config."
+    ):
+        _ = load_config(bad_config)
+
+
+@no_type_check
+def test_load_config_vertical_grids_error(
+    tmp_path: pytest.TempPathFactory,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    """Test if a error is raised when Multiple Case config is present."""
+    monkeypatch.setattr(
+        openghg_defs,
+        "domain_info_file",
+        Path("tests/test_utils/test_openghg/files/example_domains.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "site_info_file",
+        Path("tests/test_utils/test_openghg/files/example_locations.json")
+    )
+    monkeypatch.setattr(
+        openghg_defs,
+        "species_info_file",
+        Path("tests/test_utils/test_openghg/files/example_species.json")
+    )
+    monkeypatch.setattr(
+        _defs,
+        "openghg_defs_data",
+        Path("tests/test_utils/test_openghg/files/")
+    )
+    good_config = load_config(Path("./tests/test_config/files/test.toml"))
+    good_config.pop("Multiple Case")
+    good_config.pop("Vertical Grids")
+    good_config["Species"]["C3"].pop("surface_resistance")
+
+    bad_config = tmp_path / "multiple_case.toml"
+    with bad_config.open("wb") as toml_file:
+        tomli_w.dump(good_config, toml_file)
+
+    with pytest.raises(
+        ValueError,
+        match=r"Mandatory section 'Vertical Grids' not found in config."
+    ):
+        _ = load_config(bad_config)
+
 
 @pytest.mark.parametrize("domains", [True, False])
 @pytest.mark.parametrize("locations", [True, False])

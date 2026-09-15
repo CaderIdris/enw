@@ -11,7 +11,7 @@ from enw.types import (
     AbsOrRelOpts,
     RandomSeedOpts,
     HorizontalCoordSystems,
-    VerticalCoordSystems, MultipleCaseConfig,
+    VerticalCoordSystems,
 )
 from enw.utils import (
     check_pos_int,
@@ -31,11 +31,13 @@ if TYPE_CHECKING:
         DomainConfig,
         CoordinateSystemsConfig,
         MainConfig,
+        MultipleCaseConfig,
         OutputConfig,
         RestartConfig,
         OpenMPConfig,
         DispersionOptionsConfig,
-        VerticalGridsConfig
+        VerticalGridsConfig,
+        HorizontalGridsConfig
     )
 
 
@@ -507,14 +509,12 @@ def check_location_options(
         "y",
         "inlet_height",
         "hcoord",
-        "subset"
     }
     vals = (
         ("name", str),
         ("x", float | int),
         ("y", float | int),
         ("inlet_height", float | int),
-        ("subset", str),
     )
     literals: tuple[tuple[str, str, _LiteralGenericAlias], ...] = (
         ("hcoord", "HorizontalCoordSystems", HorizontalCoordSystems),
@@ -582,7 +582,7 @@ def check_species_options(
 
 def check_domain_options(
     config: dict[str, object | dict[str, object]] | dict[str, DomainConfig]
-) -> DomainConfig:
+) -> dict[str, DomainConfig]:
     """"""
     expected_keys: dict[str, set[str]] = {
         "root": {"name", "hcoord", "zcoord", "x", "y", "z", "t"},
@@ -599,13 +599,13 @@ def check_domain_options(
             ("min", float | int),
             ("max", float | int),
             ("num", int),
-            ("unbounded", bool)
+            ("unbounded", bool | NoneType)
         ),
         "y": (
             ("min", float | int),
             ("max", float | int),
             ("num", int),
-            ("unbounded", bool)
+            ("unbounded", bool | NoneType)
         ),
         "z": (
             ("max", float | int),
@@ -632,7 +632,7 @@ def check_domain_options(
             check_keys(
                 set(cast("dict[str, object]", dom_config[sub]).keys()),
                 expected_keys[sub],
-                f"Domains ({dom}, {sub}, OpenGHG)"
+                f"Domains ({dom}, {sub})"
             )
             for val, expected_type in vals[sub]:
                 check_type(
@@ -640,6 +640,9 @@ def check_domain_options(
                     cast("dict[str, object]", dom_config[sub]).get(val),
                     expected_type
                 )
+        for sub in ["x", "y"]:
+            if "step" in cast("dict[str, object]", dom_config[sub]):
+                cast("dict[str, object]", dom_config[sub]).pop("step")
         for val, literal_name, literal_type in literals:
             check_literal(
                 f"{dom}.{val}",
@@ -648,7 +651,7 @@ def check_domain_options(
                 literal_type
             )
 
-    return cast("DomainConfig", config)
+    return cast("dict[str, DomainConfig]", config)
 
 def check_set_of_dispersion_options(
     config: dict[str, object]
@@ -766,3 +769,79 @@ def check_vertical_grids_options(
             literal_type
         )
     return cast("VerticalGridsConfig", config)
+
+
+def check_horizontal_grid_options(
+    config: dict[str, object | dict[str, object]] | dict[str, DomainConfig]
+) -> dict[str, HorizontalGridsConfig]:
+    """"""
+    expected_keys: dict[str, set[str]] = {
+        "root": {"name", "hcoord", "x", "y"},
+        "x": {"min", "max", "num", "step"},
+        "y": {"min", "max", "num", "step"},
+    }
+    vals: dict[str, tuple[tuple[str, type | UnionType], ...]] = {
+        "root": (
+            ("name", str),
+        ),
+        "x": (
+            ("min", float | int),
+            ("max", float | int),
+            ("num", int),
+            ("step", float | int | NoneType),
+            ("unbounded", bool | NoneType)
+        ),
+        "y": (
+            ("min", float | int),
+            ("max", float | int),
+            ("num", int),
+            ("step", float | int | NoneType),
+            ("unbounded", bool | NoneType)
+        ),
+    }
+    literals: tuple[tuple[str, str, _LiteralGenericAlias], ...] = (
+        ("hcoord", "HorizontalCoordSystems", HorizontalCoordSystems),
+    )
+    for hgrid, hgrid_config in config.items():
+        hgrid_config = cast("dict[str, dict[str, object]]", hgrid_config)
+        check_keys(
+            set(hgrid_config.keys()),
+            expected_keys["root"],
+            f"Horizontal Grid ({hgrid})"
+        )
+        for val, expected_type in vals["root"]:
+            check_type(f"{hgrid}.{val}", hgrid_config.get(val), expected_type)
+        for sub in ["x", "y"]:
+            check_keys(
+                set(hgrid_config[sub].keys()),
+                expected_keys[sub],
+                f"Horizontal Grid ({hgrid}, {sub})"
+            )
+            for val, expected_type in vals[sub]:
+                check_type(
+                    f"{hgrid}.{sub}.{val}",
+                    hgrid_config[sub].get(val),
+                    expected_type
+                )
+            if "step" in hgrid_config[sub]:
+                hgrid_config[sub]["min"] = (
+                    cast("float", hgrid_config[sub]["min"]) - (
+                        0.5 * cast("float", hgrid_config[sub]["step"])
+                    )
+                )
+                hgrid_config[sub]["max"] = (
+                    cast("float", hgrid_config[sub]["max"]) + (
+                        0.5 * cast("float", hgrid_config[sub]["step"])
+                    )
+                )
+                hgrid_config[sub].pop("num")
+            if "unbounded" in hgrid_config[sub]:
+                hgrid_config[sub].pop("unbounded")
+        for val, literal_name, literal_type in literals:
+            check_literal(
+                f"{hgrid}.{val}",
+                cast("str", hgrid_config.get(val, "MISSING")),
+                literal_name,
+                literal_type
+            )
+    return cast("dict[str, HorizontalGridsConfig]", config)
