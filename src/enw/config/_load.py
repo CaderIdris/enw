@@ -1,3 +1,4 @@
+from copy import deepcopy as copy
 import datetime as dt
 from importlib.resources import as_file, files
 import logging
@@ -67,19 +68,21 @@ def load_config_run(raw_config: dict[str, dict[str, object]]) -> RunConfig:
     config_output = load_defaults(raw_config["Output"], "output")
     config["Output"] = check_output_options(config_output)
     #INFO: Check Restart
-    if "Restart" in raw_config:
-        config["Restart"] = check_restart_options(raw_config["Restart"])
+    if "Restart" not in raw_config:
+        _logger.info("OpenMP config not present, using defaults.")
+    restart_output = load_defaults(raw_config.get("Restart", {}), "restart")
+    config["Restart"] = check_restart_options(restart_output)
     #INFO: Check Multiple Case NOT SET and then set default
     if "Multiple Case" in raw_config:
         msg = "Configuration for Multiple Case not enabled!"
         raise NotImplementedError(msg)
-    config["Multiple Case"] = {
+    config["MultipleCase"] = {
         "dispersion_options_ensemble_size": 1,
         "met_ensemble_size": 1
     }
     #INFO: Check OpenMP and set default
     if "OpenMP" not in raw_config:
-        _logger.warning("OpenMP config not present, using defaults.")
+        _logger.info("OpenMP config not present, using defaults.")
     config_openmp = load_defaults(raw_config.get("OpenMP", {}), "openmp")
     config["OpenMP"] = check_openmp_options(config_openmp)
 
@@ -106,14 +109,14 @@ def load_config_spatial(
     config = {}
     #INFO: Check Coordinate Systems and set default
     if "Coordinate Systems" not in raw_config:
-        _logger.warning(
+        _logger.info(
             "Coordinate Systems config not present, using defaults."
         )
     config_coords = load_defaults(
         raw_config.get("Coordinate Systems", {}),
         "coords"
     )
-    config["Coordinate Systems"] = check_coord_options(config_coords)
+    config["CoordinateSystems"] = check_coord_options(config_coords)
     #INFO: Import OpenGHG presets and test, along with any custom values
     openghg_presets = load_openghg(raw_config.get("OpenGHG Presets", {}))
     config["Locations"] = (
@@ -132,7 +135,7 @@ def load_config_spatial(
         msg = "Mandatory section 'Domains' not found in config."
         raise ValueError(msg)
     config["Domains"] = (
-        check_domain_options(openghg_presets["Domains"])
+        check_domain_options(copy(openghg_presets["Domains"]))
         if "Domains" in openghg_presets else {}
     )
     config["Domains"] = config["Domains"] | (
@@ -144,11 +147,12 @@ def load_config_spatial(
     ):
         msg = "Mandatory section 'Horizontal Grids' not found in config."
         raise ValueError(msg)
-    config["Horizontal Grids"] = (
-        check_horizontal_grid_options(openghg_presets["Domains"])
+
+    config["HorizontalGrid"] = (
+        check_horizontal_grid_options(copy(openghg_presets["Domains"]))
         if "Domains" in openghg_presets else {}
     )
-    config["Horizontal Grids"] = config["Horizontal Grids"] | (
+    config["HorizontalGrid"] = config["HorizontalGrid"] | (
         check_horizontal_grid_options(raw_config.get("Horizontal Grids", {}))
     )
     if (
@@ -158,7 +162,7 @@ def load_config_spatial(
         msg = "Mandatory section 'Species' not found in config."
         raise ValueError(msg)
     config["Species"] = (
-        check_species_options(openghg_presets["Species"])
+        check_species_options(copy(openghg_presets["Species"]))
         if "Species" in openghg_presets else {}
     )
     config["Species"] = config["Species"] | (
@@ -170,10 +174,15 @@ def load_config_spatial(
         )
     )
     if "Vertical Grids" not in raw_config:
-        msg = "Mandatory section 'Vertical Grids' not found in config."
-        raise ValueError(msg)
-    config["Vertical Grids"] = (
-        check_vertical_grids_options(raw_config.get("Vertical Grids", {}))
+        _logger.info(
+            "Vertical Grids config not present, using defaults."
+        )
+    vertical_grids_coords = load_defaults(
+        raw_config.get("Vertical Grids", {}),
+        "vgrid"
+    )
+    config["VerticalGrid"] = (
+        check_vertical_grids_options(vertical_grids_coords)
     )
     return cast("SpatialConfig", config)
 
@@ -217,7 +226,14 @@ def load_config_temp(
         "OpenGHG" in raw_config,
         "Lat-Long" not in cast(
             "list[str]",
-            raw_config["Coordinate Systems"]["horizontal"]
+            (
+                raw_config
+                .get("Coordinate Systems", {})
+                .get("horizontal", ["Lat-Long"])
+                #INFO: If horizontal is not defined, Lat-Long added by default
+                # so it doesn't need a check. This is also a temp function so
+                # lets just do this hack.
+            )
         )
     )):
         msg = (
@@ -236,6 +252,14 @@ def load_config_temp(
     return config
 
 
+def create_run_name(config: EnwConfig) -> str:
+    """"""
+    start_time = config["Main"]["start_time"].strftime("%Y%m%d")
+    end_time = config["Main"]["end_time"].strftime("%Y%m%d")
+    locations = "-".join(config["Locations"].keys())
+    species = "-".join(config["Species"].keys())
+    return f"NAME_{locations}_{species}_{start_time}_{end_time}"
+
 def load_config(path: Path) -> EnwConfig:
     """Load the config file, with error checking.
 
@@ -251,7 +275,7 @@ def load_config(path: Path) -> EnwConfig:
 
     """
     raw_config = load_toml(path)
-    config = {}
+    config: dict[str, object] = {}
 
     config = (
         config |
@@ -265,8 +289,12 @@ def load_config(path: Path) -> EnwConfig:
             cast("dict[str, dict[str, object]]", config)
         )
     )
+    config: EnwConfig = cast("EnwConfig", config)
 
-    return cast("EnwConfig", config)
+    if "name" not in config["Main"]:
+        config["Main"]["name"] = create_run_name(config)
+
+    return config
 
 
 def load_toml(path: Path) -> dict[str, Any]:

@@ -91,7 +91,9 @@ def get_domain_keys() -> set[str]:
     return set(domain_info.keys())
 
 
-def get_domain_info(key: str) -> dict[str, str | dict[str, float]]:
+def get_domain_info(
+    key: str,
+) -> dict[str, str | dict[str, float | str | bool]]:
     """Get domain info stored in openghg-defs.
 
     Loads info for the specified domain stored in the
@@ -125,7 +127,7 @@ def get_domain_info(key: str) -> dict[str, str | dict[str, float]]:
         vals["y_min"] = float(latitudes[0])
         vals["y_max"] = float(latitudes[-1])
         vals["y_num"] = len(latitudes)
-    vals["y_step"] = all_info["latitude_increment"]
+    vals["y_step"] = float(all_info["latitude_increment"])
 
     lons = openghg_defs_data / all_info["longitude_file"]
     with lons.open("rb") as longitude_file:
@@ -133,7 +135,7 @@ def get_domain_info(key: str) -> dict[str, str | dict[str, float]]:
         vals["x_min"] = float(longitudes[0])
         vals["x_max"] = float(longitudes[-1])
         vals["x_num"] = len(longitudes)
-    vals["x_step"] = all_info["longitude_increment"]
+    vals["x_step"] = float(all_info["longitude_increment"])
 
     return {
         "name": vals["name"],
@@ -156,7 +158,8 @@ def get_domain_info(key: str) -> dict[str, str | dict[str, float]]:
             "unbounded": False
         },
         "t": {
-            "unbounded": True
+            "unbounded": True,
+            "max_travel_time": "720:00"
         },
         "hcoord": "Lat-Long",
         "zcoord": "m agl"

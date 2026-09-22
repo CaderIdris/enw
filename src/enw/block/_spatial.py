@@ -574,14 +574,14 @@ class HorizontalGrids(NAMEIIIHeaderInputBlock):
     name: str
     hcoord: HorizontalCoordSystems
     x_count: int | None = None
-    x_spacing: float | None = None
+    x_step: float | None = None
     x_min: float | None = None
     x_max: float | None = None
     x_centre: float | None = None
     x_range: float | None = None
     x_array: str | None = None
     y_count: int | None = None
-    y_spacing: float | None = None
+    y_step: float | None = None
     y_min: float | None = None
     y_max: float | None = None
     y_centre: float | None = None
@@ -619,7 +619,7 @@ class HorizontalGrids(NAMEIIIHeaderInputBlock):
             the following keys:
 
             - "count" (int): Corresponds to **nX**
-            - "spacing" (float): Corresponds to **dX**
+            - "step" (float): Corresponds to **dX**
             - "min" (float): Corresponds to **X Min**
             - "max" (float): Corresponds to **X Max**
             - "centre" (float): Corresponds to **X Centre**
@@ -634,7 +634,7 @@ class HorizontalGrids(NAMEIIIHeaderInputBlock):
             the following keys:
 
             - "count" (int): Corresponds to **nY**
-            - "spacing" (float): Corresponds to **dY**
+            - "step" (float): Corresponds to **dY**
             - "min" (float): Corresponds to **Y Min**
             - "max" (float): Corresponds to **Y Max**
             - "centre" (float): Corresponds to **Y Centre**
@@ -691,7 +691,7 @@ class HorizontalGrids(NAMEIIIHeaderInputBlock):
         """
         expected_keys: set[str] = {
             "count",
-            "spacing",
+            "step",
             "min",
             "max",
             "centre",
@@ -715,13 +715,13 @@ class HorizontalGrids(NAMEIIIHeaderInputBlock):
         if "count" in vals:
             check_type(f"{name}.count", vals["count"], int)
             check_pos_int(f"{name}.count", cast("int", vals["count"]))
-        #INFO: Check vals.spacing
-        if "spacing" in vals:
-            check_type(f"{name}.spacing", vals["spacing"], (float, int))
-            check_pos_float(f"{name}.spacing", cast("float", vals["spacing"]))
+        #INFO: Check vals.step
+        if "step" in vals:
+            check_type(f"{name}.step", vals["step"], (float, int))
+            check_pos_float(f"{name}.step", cast("float", vals["step"]))
             check_mutually_exclusive(
-                f"{name}.spacing",
-                vals["spacing"],
+                f"{name}.step",
+                vals["step"],
                 f"{name}.range",
                 vals.get("range")
             )
@@ -765,14 +765,14 @@ class HorizontalGrids(NAMEIIIHeaderInputBlock):
             name=self.name,
             hcoord=self.hcoord,
             x_count=self.x_count,
-            x_spacing=self.x_spacing,
+            x_spacing=self.x_step,
             x_min=self.x_min,
             x_max=self.x_max,
             x_centre=self.x_centre,
             x_range=self.x_range,
             x_array=self.x_array,
             y_count=self.y_count,
-            y_spacing=self.y_spacing,
+            y_spacing=self.y_step,
             y_min=self.y_min,
             y_max=self.y_max,
             y_centre=self.y_centre,
@@ -917,9 +917,9 @@ class VerticalGrids(NAMEIIIHeaderInputBlock):
 
     name: str
     zcoord: VerticalCoordSystems
-    count: int | None
+    num: int | None
     spacing: float | None
-    min_point: float | None
+    min: float | None
     array_name: str | None
     av_array_name: str | None
     index_array_name: str | None
@@ -933,9 +933,9 @@ class VerticalGrids(NAMEIIIHeaderInputBlock):
         *,
         name: str,
         zcoord: VerticalCoordSystems,
-        count: int | None = None,
+        num: int | None = None,
         spacing: float | None = None,
-        min_point: float | None = None,
+        min: float | None = None,
         array_name: str | None = None,
         av_array_name: str | None = None,
         index_array_name: str | None = None
@@ -954,7 +954,7 @@ class VerticalGrids(NAMEIIIHeaderInputBlock):
 
             Corresponds to **Z-Coord**.
 
-        count : int | None
+        num : int | None
             Number of vertical grid points.
 
             Corresponds to **nZ**.
@@ -964,7 +964,7 @@ class VerticalGrids(NAMEIIIHeaderInputBlock):
 
             Corresponds to **dZ**.
 
-        min_point : float | None
+        min : float | None
             Smallest Z coordinate.
 
             Corresponds to **Z0**.
@@ -995,18 +995,18 @@ class VerticalGrids(NAMEIIIHeaderInputBlock):
             "VerticalCoordSystems",
             VerticalCoordSystems
         )
-        #TODO: Item count?
-        #INFO: Check count
-        if count is not None:
-            check_type("count", count, (float, int))
-            check_pos_int("count", count)
+        #TODO: Item num?
+        #INFO: Check num
+        if num is not None:
+            check_type("num", num, (float, int))
+            check_pos_int("num", num)
         #INFO: Check spacing
         if spacing is not None:
             check_type("spacing", spacing, (float, int))
             check_pos_float("spacing", spacing)
-        #INFO: Check min_point
-        if min_point is not None:
-            check_type("min_point", min_point, (float, int))
+        #INFO: Check min
+        if min is not None:
+            check_type("min", min, (float, int))
         #INFO: Check array_name
         if array_name is not None:
             msg = "Array not implemented for VerticalGrids."
@@ -1026,9 +1026,9 @@ class VerticalGrids(NAMEIIIHeaderInputBlock):
         return cls(
             name=name,
             zcoord=zcoord,
-            count=count,
+            num=num,
             spacing=spacing,
-            min_point=min_point,
+            min=min,
             array_name=array_name,
             av_array_name=av_array_name,
             index_array_name=index_array_name
@@ -1054,9 +1054,9 @@ class VerticalGrids(NAMEIIIHeaderInputBlock):
         return template.render(
             name=self.name,
             zcoord=self.zcoord,
-            count=self.count,
+            count=self.num,
             spacing=self.spacing,
-            min_point=self.min_point,
+            min_point=self.min,
             array_name=self.array_name,
             av_array_name=self.av_array_name,
             index_array_name=self.index_array_name
@@ -1274,7 +1274,7 @@ class Domains(NAMEIIIHeaderInputBlock):
     def setup(
         cls,
         *,
-        rows: list[dict[str, str | dict[str, str | float | int | bool]]]
+        rows: dict[str, dict[str, str | float | int | bool]]
     ) -> Domains:
         """Set up the domains block.
 
@@ -1289,7 +1289,12 @@ class Domains(NAMEIIIHeaderInputBlock):
             Domains block containing all rows.
 
         """
-        converted_rows = [DomainRow.setup(**row) for row in rows]  #type: ignore[ty:invalid-argument-type]
+        converted_rows = [
+            DomainRow.setup(
+                **row #type: ignore[ty:invalid-argument-type]
+            )
+            for name, row in rows.items()
+        ]
         used_keys = {}
         for row in converted_rows:
             used_keys = {
@@ -1574,7 +1579,7 @@ class DomainRow:
             "range"
         }
         #INFO: Check max 1 value in vals if unbounded
-        if "unbounded" in vals and len(vals) > 1:
+        if vals.get("unbounded", False) and len(vals) > 1:
             msg = f"Specific values provided for {name} when unbounded."
             raise ValueError(msg)
         #INFO: Check max 2 values in vals if neither are unbounded
@@ -1632,7 +1637,7 @@ class DomainRow:
             "max",
         }
         #INFO: Check max 1 value in vals if unbounded
-        if "unbounded" in vals and len(vals) > 1:
+        if vals.get("unbounded") and len(vals) > 1:
             msg = "Specific values provided for z when unbounded."
             raise ValueError(msg)
         #INFO: Check all vals keys are expected

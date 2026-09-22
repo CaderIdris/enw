@@ -79,7 +79,8 @@ def test_get_domain_info(
             "unbounded": False
         },
         "t": {
-            "unbounded": True
+            "unbounded": True,
+            "max_travel_time": "720:00"
         },
         "hcoord": "Lat-Long",
         "zcoord": "m agl"

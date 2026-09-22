@@ -78,9 +78,16 @@ def test_set_defaults():
 
     assert all(tests.values())
 
-
+@pytest.mark.parametrize(
+    "toml",
+    [
+        "test.toml",
+        "test-minimal.toml"
+    ]
+)
 def test_load_config(
     monkeypatch: pytest.MonkeyPatch,
+    toml: str
 ):
     """Test if the example config loads properly."""
     monkeypatch.setattr(
@@ -104,7 +111,7 @@ def test_load_config(
         Path("tests/test_utils/test_openghg/files/")
     )
     tests = {}
-    test_config = load_config(Path("./tests/test_config/files/test.toml"))
+    test_config = load_config(Path(f"./tests/test_config/files/{toml}"))
 
     tests["Main block present"] = "Main" in test_config
     main_keys = [
@@ -129,9 +136,174 @@ def test_load_config(
     for k in output_keys:
         tests[f"{k} in Output"] = k in test_config.get("Output", {})
 
+    tests["Restart block present"] = "Restart" in test_config
+    restart_keys = [
+        "cases_between_writes",
+        "delete_old_files",
+        "write_on_suspend"
+    ]
+    for k in restart_keys:
+        tests[f"{k} in Restart"] = k in test_config.get("Restart", {})
+
+    tests["Multiple Case block present"] = "MultipleCase" in test_config
+    multiple_case_keys = [
+        "dispersion_options_ensemble_size",
+        "met_ensemble_size"
+    ]
+    for k in multiple_case_keys:
+        tests[f"{k} in Multiple Case"] = k in test_config.get(
+            "MultipleCase",
+            {}
+        )
+
+    tests["OpenMP block present"] = "OpenMP" in test_config
+    openmp_keys = [
+        "use_openmp",
+        "threads"
+    ]
+    for k in openmp_keys:
+        tests[f"{k} in OpenMP"] = k in test_config.get("OpenMP", {})
+
+    tests["Coordinate Systems block present"] = (
+        "CoordinateSystems" in test_config
+    )
+    tests["At least one Horizontal Coord System"] = len(
+        test_config.get(
+            "CoordinateSystems",
+            {}
+        ).get("horizontal", {})
+    ) > 0
+    tests["At least one Vertical Coord System"] = len(
+        test_config.get(
+            "CoordinateSystems",
+            {}
+        ).get("vertical", {})
+    ) > 0
+    coordinate_system_keys = [
+        "horizontal",
+        "vertical"
+    ]
+    for k in coordinate_system_keys:
+        tests[f"{k} in Coordinate Systems"] = k in test_config.get(
+            "CoordinateSystems",
+            {}
+        )
+
+    tests["Locations block present"] = "Locations" in test_config
+    tests["At least one Location"] = len(
+        test_config.get("Locations", {})
+    ) > 0
+    locations_keys = [
+        "name",
+        "x",
+        "y",
+        "inlet_height",
+        "hcoord"
+    ]
+    for loc, loc_config in test_config.get("Locations", {}).items():
+        for k in locations_keys:
+            tests[f"{k} in Locations.{loc}"] = k in loc_config
+        tests[f"subset not in Locations.{loc}"] = "subset" not in loc_config
+
+    tests["Domains block present"] = "Domains" in test_config
+    tests["At least one Domain"] = len(
+        test_config.get("Domains", {})
+    ) > 0
+    domain_keys = [
+        "name",
+        "x",
+        "y",
+        "z",
+        "t",
+        "hcoord",
+        "zcoord"
+    ]
+    h_keys = [
+        "min",
+        "max",
+        "unbounded"
+    ]
+    v_keys = [
+        "max",
+        "unbounded"
+    ]
+    t_keys = [
+        "unbounded"
+    ]
+    for dom, dom_config in test_config.get("Domains", {}).items():
+        for k in domain_keys:
+            tests[f"{k} in Domains.{dom}"] = k in dom_config
+        for h in ["x", "y"]:
+            for k in h_keys:
+                tests[f"{k} in Domains.{dom}.{h}"] = k in dom_config.get(h, {})
+        for k in v_keys:
+            tests[f"{k} in Domains.{dom}.z"] = k in dom_config.get("z", {})
+        for k in t_keys:
+            tests[f"{k} in Domains.{dom}.t"] = k in dom_config.get("t", {})
+
+    tests["Horizontal Grids block present"] = "HorizontalGrid" in test_config
+    tests["At least one Horizontal Grid"] = len(
+        test_config.get("HorizontalGrid", {})
+    ) > 0
+
+    hgrid_keys = [
+        "name",
+        "x",
+        "y",
+        "hcoord",
+    ]
+    h_keys = [
+        "min",
+        "max",
+        "step",
+    ]
+    for hgrid, hgrid_config in test_config.get("HorizontalGrid", {}).items():
+        for k in hgrid_keys:
+            tests[f"{k} in HorizontalGrids.{hgrid}"] = k in hgrid_config
+        for h in ["x", "y"]:
+            for k in h_keys:
+                tests[f"{k} in Horizontal Grids.{hgrid}.{h}"] = (
+                    k in hgrid_config.get(h, {})
+                )
+
+    species_keys = [
+        "name",
+        "category",
+        "molecular_weight",
+        "deposition_velocity",
+        "material_unit",
+        "uv_loss_rate",
+        "half_life",
+        "surface_resistance",
+        "on_particles",
+        "on_fields",
+        "advect_fields"
+    ]
+    tests["Species block present"] = "Species" in test_config
+    tests["At least one Species"] = len(
+        test_config.get("Species", {})
+    ) > 0
+    for species, species_config in test_config.get("Species", {}).items():
+        for k in species_keys:
+            tests[f"{k} in Species.{species}"] = k in species_config
+
+    vertical_grids_keys = [
+        "zcoord",
+        "num",
+        "min",
+        "spacing"
+    ]
+    tests["Vertical Grids block present"] = "VerticalGrid" in test_config
+    for k in vertical_grids_keys:
+        tests[f"{k} in Vertical Grids"] = (
+            k in test_config.get("VerticalGrid", {})
+        )
+
     for test, result in tests.items():
         if not result:
             print(test)
+
+    print(test_config)
 
     assert all(tests.values())
 
@@ -167,7 +339,7 @@ def test_load_config_no_main_error(
     )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("Main")
-    good_config.pop("Multiple Case")
+    good_config.pop("MultipleCase")
     good_config["Species"]["C3"].pop("surface_resistance")
 
     bad_config = tmp_path / "no_main.toml"
@@ -206,7 +378,7 @@ def test_load_config_no_output_error(
     )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("Output")
-    good_config.pop("Multiple Case")
+    good_config.pop("MultipleCase")
     good_config["Species"]["C3"].pop("surface_resistance")
 
     bad_config = tmp_path / "no_output.toml"
@@ -248,8 +420,14 @@ def test_load_config_no_restart_fine(
     )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("Restart")
-    good_config.pop("Multiple Case")
+    good_config.pop("MultipleCase")
+    good_config["Horizontal Grids"] = good_config["HorizontalGrid"]
+    good_config.pop("HorizontalGrid")
+    good_config["Vertical Grids"] = good_config["VerticalGrid"]
+    good_config.pop("VerticalGrid")
     good_config["Species"]["C3"].pop("surface_resistance")
+
+    print(good_config)
 
     bad_config = tmp_path / "no_restart.toml"
     with bad_config.open("wb") as toml_file:
@@ -285,12 +463,16 @@ def test_load_config_multiple_case_error(
         Path("tests/test_utils/test_openghg/files/")
     )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
-    good_config.pop("Multiple Case")
+    good_config.pop("MultipleCase")
     good_config["Multiple Case"] = {
         "name": "Bad",
         "dispersion_options_ensemble_size": 2,
         "met_ensemble_size": 2
     }
+    good_config["Horizontal Grids"] = good_config["HorizontalGrid"]
+    good_config.pop("HorizontalGrid")
+    good_config["Vertical Grids"] = good_config["VerticalGrid"]
+    good_config.pop("VerticalGrid")
     good_config["Species"]["C3"].pop("surface_resistance")
 
     bad_config = tmp_path / "multiple_case.toml"
@@ -334,14 +516,18 @@ def test_load_config_no_openmp_warning(
     tests = {}
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("OpenMP")
-    good_config.pop("Multiple Case")
+    good_config.pop("MultipleCase")
+    good_config["Horizontal Grids"] = good_config["HorizontalGrid"]
+    good_config.pop("HorizontalGrid")
+    good_config["Vertical Grids"] = good_config["VerticalGrid"]
+    good_config.pop("VerticalGrid")
     good_config["Species"]["C3"].pop("surface_resistance")
 
     bad_config = tmp_path / "no_openmp.toml"
     with bad_config.open("wb") as toml_file:
         tomli_w.dump(good_config, toml_file)
 
-    with caplog.at_level(logging.WARNING):
+    with caplog.at_level(logging.INFO):
         no_openmp = load_config(bad_config)
         tests["OpenMP defaults used"] = "OpenMP" in no_openmp
         warning_text = caplog.text
@@ -384,18 +570,22 @@ def test_load_config_no_coords_warning(
     )
     tests = {}
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
-    good_config.pop("Coordinate Systems")
-    good_config.pop("Multiple Case")
+    good_config.pop("CoordinateSystems")
+    good_config.pop("MultipleCase")
+    good_config["Horizontal Grids"] = good_config["HorizontalGrid"]
+    good_config.pop("HorizontalGrid")
+    good_config["Vertical Grids"] = good_config["VerticalGrid"]
+    good_config.pop("VerticalGrid")
     good_config["Species"]["C3"].pop("surface_resistance")
 
     bad_config = tmp_path / "no_coords.toml"
     with bad_config.open("wb") as toml_file:
         tomli_w.dump(good_config, toml_file)
 
-    with caplog.at_level(logging.WARNING):
+    with caplog.at_level(logging.INFO):
         no_openmp = load_config(bad_config)
         tests["Coordinate Systems defaults used"] = (
-            "Coordinate Systems" in no_openmp
+            "CoordinateSystems" in no_openmp
         )
         warning_text = caplog.text
 
@@ -437,7 +627,7 @@ def test_load_config_domain_error(
         Path("tests/test_utils/test_openghg/files/")
     )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
-    good_config.pop("Multiple Case")
+    good_config.pop("MultipleCase")
     good_config.pop("Domains")
     good_config["Species"]["C3"].pop("surface_resistance")
 
@@ -479,9 +669,9 @@ def test_load_config_horizontal_grids_error(
         Path("tests/test_utils/test_openghg/files/")
     )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
-    good_config.pop("Multiple Case")
+    good_config.pop("MultipleCase")
     good_config.pop("Domains")
-    good_config.pop("Horizontal Grids")
+    good_config.pop("HorizontalGrid")
     good_config["Species"]["C3"].pop("surface_resistance")
     good_config["Domains"] = {
         "A": {
@@ -491,7 +681,7 @@ def test_load_config_horizontal_grids_error(
             "x": {"min": 1, "max": 2, "num": 20},
             "y": {"min": 1, "max": 2, "num": 20},
             "z": {"max": 100, "unbounded": False},
-            "t": {"unbounded": True},
+            "t": {"unbounded": True, "max_travel_time": "24:00"},
             "location_block_name": "BLOCK",
             "location": "A"
         }
@@ -535,8 +725,10 @@ def test_load_config_species_error(
         Path("tests/test_utils/test_openghg/files/")
     )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
-    good_config.pop("Multiple Case")
+    good_config.pop("MultipleCase")
     good_config.pop("Species")
+    good_config["Horizontal Grids"] = good_config["HorizontalGrid"]
+    good_config.pop("HorizontalGrid")
 
     bad_config = tmp_path / "multiple_case.toml"
     with bad_config.open("wb") as toml_file:
@@ -550,11 +742,12 @@ def test_load_config_species_error(
 
 
 @no_type_check
-def test_load_config_vertical_grids_error(
+def test_load_config_no_vertical_grids_warning(
     tmp_path: pytest.TempPathFactory,
+    caplog: pytest.LogCaptureFixture,
     monkeypatch: pytest.MonkeyPatch,
 ):
-    """Test if a error is raised when Multiple Case config is present."""
+    """Test if a warning is logged when no OpenMP config is present."""
     monkeypatch.setattr(
         openghg_defs,
         "domain_info_file",
@@ -575,20 +768,33 @@ def test_load_config_vertical_grids_error(
         "openghg_defs_data",
         Path("tests/test_utils/test_openghg/files/")
     )
+    tests = {}
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
-    good_config.pop("Multiple Case")
-    good_config.pop("Vertical Grids")
+    good_config.pop("OpenMP")
+    good_config.pop("MultipleCase")
+    good_config.pop("VerticalGrid")
+    good_config["Horizontal Grids"] = good_config["HorizontalGrid"]
+    good_config.pop("HorizontalGrid")
     good_config["Species"]["C3"].pop("surface_resistance")
 
-    bad_config = tmp_path / "multiple_case.toml"
+    bad_config = tmp_path / "no_openmp.toml"
     with bad_config.open("wb") as toml_file:
         tomli_w.dump(good_config, toml_file)
 
-    with pytest.raises(
-        ValueError,
-        match=r"Mandatory section 'Vertical Grids' not found in config."
-    ):
-        _ = load_config(bad_config)
+    with caplog.at_level(logging.INFO):
+        no_openmp = load_config(bad_config)
+        tests["OpenMP defaults used"] = "OpenMP" in no_openmp
+        warning_text = caplog.text
+
+    tests["Main block warning"] = "Vertical Grids config not present" in warning_text
+
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())
+
+
 
 
 @pytest.mark.parametrize("domains", [True, False])
@@ -651,7 +857,8 @@ def test_load_openghg_single_vals_good(
                     "unbounded": False
                 },
                 "t": {
-                    "unbounded": True
+                    "unbounded": True,
+                    "max_travel_time": "720:00"
                 },
                 "hcoord": "Lat-Long",
                 "zcoord": "m agl"
@@ -758,7 +965,8 @@ def test_load_openghg_multiple_vals_good(
                     "unbounded": False
                 },
                 "t": {
-                    "unbounded": True
+                    "unbounded": True,
+                    "max_travel_time": "720:00"
                 },
                 "hcoord": "Lat-Long",
                 "zcoord": "m agl"
@@ -784,7 +992,8 @@ def test_load_openghg_multiple_vals_good(
                     "unbounded": False
                 },
                 "t": {
-                    "unbounded": True
+                    "unbounded": True,
+                    "max_travel_time": "720:00"
                 },
                 "hcoord": "Lat-Long",
                 "zcoord": "m agl"
@@ -937,7 +1146,8 @@ def test_load_openghg_subsets_vals_good(
                 "unbounded": False
             },
             "t": {
-                "unbounded": True
+                "unbounded": True,
+                "max_travel_time": "720:00"
             },
             "hcoord": "Lat-Long",
             "zcoord": "m agl"

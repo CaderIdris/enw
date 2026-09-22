@@ -1,0 +1,3 @@
+cases_between_writes = 100
+delete_old_files = true
+write_on_suspend = true

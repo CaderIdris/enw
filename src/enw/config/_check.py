@@ -103,7 +103,7 @@ def check_main_options(config: dict[str, object]) -> MainConfig:
         "same_results_with_update_on_demand"
     }
     _base_types = (
-        ("Main.name", config["name"], str),
+        ("Main.name", config.get("name"), str | NoneType),
         ("Main.start_time", config["start_time"], dt.datetime),
         ("Main.end_time", config["end_time"], dt.datetime),
         ("Main.time_step", config["time_step"], str),
@@ -400,7 +400,8 @@ def check_coord_options(
 
     """
     expected_keys = {
-        "name"
+        "horizontal",
+        "vertical"
     }
     check_keys(
         set(config.keys()),
@@ -598,13 +599,11 @@ def check_domain_options(
         "x": (
             ("min", float | int),
             ("max", float | int),
-            ("num", int),
             ("unbounded", bool | NoneType)
         ),
         "y": (
             ("min", float | int),
             ("max", float | int),
-            ("num", int),
             ("unbounded", bool | NoneType)
         ),
         "z": (
@@ -613,6 +612,7 @@ def check_domain_options(
         ),
         "t": (
             ("unbounded", bool),
+            ("max_travel_time", str),
         ),
     }
     literals: tuple[tuple[str, str, _LiteralGenericAlias], ...] = (
@@ -643,6 +643,8 @@ def check_domain_options(
         for sub in ["x", "y"]:
             if "step" in cast("dict[str, object]", dom_config[sub]):
                 cast("dict[str, object]", dom_config[sub]).pop("step")
+            if "num" in cast("dict[str, object]", dom_config[sub]):
+                cast("dict[str, object]", dom_config[sub]).pop("num")
         for val, literal_name, literal_type in literals:
             check_literal(
                 f"{dom}.{val}",
@@ -650,7 +652,6 @@ def check_domain_options(
                 literal_name,
                 literal_type
             )
-
     return cast("dict[str, DomainConfig]", config)
 
 def check_set_of_dispersion_options(
@@ -787,14 +788,14 @@ def check_horizontal_grid_options(
         "x": (
             ("min", float | int),
             ("max", float | int),
-            ("num", int),
+            ("num", int | NoneType),
             ("step", float | int | NoneType),
             ("unbounded", bool | NoneType)
         ),
         "y": (
             ("min", float | int),
             ("max", float | int),
-            ("num", int),
+            ("num", int | NoneType),
             ("step", float | int | NoneType),
             ("unbounded", bool | NoneType)
         ),
@@ -834,7 +835,9 @@ def check_horizontal_grid_options(
                         0.5 * cast("float", hgrid_config[sub]["step"])
                     )
                 )
-                hgrid_config[sub].pop("num")
+                if "num" in hgrid_config[sub]:
+                    hgrid_config[sub].pop("num")
+
             if "unbounded" in hgrid_config[sub]:
                 hgrid_config[sub].pop("unbounded")
         for val, literal_name, literal_type in literals:
@@ -844,4 +847,8 @@ def check_horizontal_grid_options(
                 literal_name,
                 literal_type
             )
+        for k in ("z", "t", "zcoord"):
+            if k in hgrid_config:
+                hgrid_config.pop(k)
+
     return cast("dict[str, HorizontalGridsConfig]", config)

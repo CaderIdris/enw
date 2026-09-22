@@ -8,6 +8,9 @@ dependencies = [
     "openghg-defs",
 ]
 
+[project.scripts]
+"enw" = "enw.main.main:enw"
+
 [dependency-groups]
 dev = [
     "enw",

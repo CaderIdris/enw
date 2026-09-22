@@ -693,7 +693,7 @@ class MultipleCase(NAMEIIIHeaderInputBlock):
     def setup(
         cls,
         *,
-        name: str | None,
+        name: str | None = None,
         dispersion_options_ensemble_size: int,
         met_ensemble_size: int
     ) -> MultipleCase:

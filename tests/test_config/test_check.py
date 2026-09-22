@@ -693,7 +693,8 @@ def example_domain_config() -> dict[str, dict[str, object]]:
                 "unbounded": False
             },
             "t": {
-                "unbounded": True
+                "unbounded": True,
+                "max_travel_time": "24:00"
             },
         }
     }
@@ -743,7 +744,6 @@ def test_domain_options_bad_str(
     [
         {"min": "BAD"},
         {"max": "BAD"},
-        {"num": "BAD"},
     ]
 )
 @pytest.mark.parametrize("axis", ["x", "y"])

@@ -1,0 +1,16 @@
+[Main]
+name = "Example Configuration"
+start_time = 2025-01-01 00:00:00
+end_time = 2026-01-01 00:00:00
+time_step = "01:00"
+use_ukv = true
+
+[Output]
+folder = "some/random/path"
+
+["OpenGHG Presets"."Domains"."A"]
+
+["OpenGHG Presets"."Locations"."E"]
+subset = "2"
+
+["OpenGHG Presets"."Species"."C3"]

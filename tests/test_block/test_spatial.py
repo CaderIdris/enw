@@ -609,15 +609,15 @@ def good_h_values() -> list[dict[str, str | int | float | None]]:
     """"""
     return [
         {
-            "spacing": 0.7,
+            "step": 0.7,
             "min": -10.2,
         },
         {
-            "spacing": 0.2,
+            "step": 0.2,
             "max": 10.3
         },
         {
-            "spacing": 0.9,
+            "step": 0.9,
             "centre": 5.3
         },
         {
@@ -647,7 +647,7 @@ def good_h_values() -> list[dict[str, str | int | float | None]]:
     ]
 
 @pytest.fixture
-def preset_horizontal_grids() -> dict[str, str]:
+def preset_horizontal_grids() -> dict[str, dict[str, str]]:
     """Preset config for locations."""
     return {
         "name": "Test",
@@ -710,13 +710,13 @@ def test_horizontal_grids_str(
         "name": "Name",
         "hcoord": "H-Coord",
         "x_count": "nX",
-        "x_spacing": "dX",
+        "x_step": "dX",
         "x_min": "X Min",
         "x_max": "X Max",
         "x_centre": "X Centre",
         "x_range": "X Range",
         "y_count": "nY",
-        "y_spacing": "dY",
+        "y_step": "dY",
         "y_min": "Y Min",
         "y_max": "Y Max",
         "y_centre": "Y Centre",
@@ -792,14 +792,14 @@ def test_horizontal_grids_repr(
         "\tname                : Test",
         "\thcoord              : Lat-Long",
         "\tx_count             : 10",
-        f"\tx_spacing           : {x.get("spacing")}",
+        f"\tx_step              : {x.get("step")}",
         f"\tx_min               : {x.get("min")}",
         f"\tx_max               : {x.get("max")}",
         f"\tx_centre            : {x.get("centre")}",
         f"\tx_range             : {x.get("range")}",
         f"\tx_array             : {x.get("array")}",
         "\ty_count             : 10",
-        f"\ty_spacing           : {y.get("spacing")}",
+        f"\ty_step              : {y.get("step")}",
         f"\ty_min               : {y.get("min")}",
         f"\ty_max               : {y.get("max")}",
         f"\ty_centre            : {y.get("centre")}",
@@ -823,12 +823,12 @@ def test_init_horizontal_grids_bad_name(
     args = preset_horizontal_grids | {
         "x": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -7.3
         },
         "y": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -7.3
         },
     }
@@ -847,12 +847,12 @@ def test_init_horizontal_grids_bad_hcoord(
     args = preset_horizontal_grids | {
         "x": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -7.3
         },
         "y": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -7.3
         },
     }
@@ -875,12 +875,12 @@ def test_init_horizontal_grids_too_many(
     args = preset_horizontal_grids | {
         "x": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -7.3
         },
         "y": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -7.3
         },
     }
@@ -903,12 +903,12 @@ def test_init_horizontal_grids_mutually_exclusive(
     args = preset_horizontal_grids | {
         "x": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -7.3
         },
         "y": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -7.3
         },
     }
@@ -918,7 +918,7 @@ def test_init_horizontal_grids_mutually_exclusive(
 
     with pytest.raises(
         ValueError,
-        match=r"Both [xy]\.spacing and [xy]\.range are set"
+        match=r"Both [xy]\.step and [xy]\.range are set"
     ):
         _ = HorizontalGrids.setup(**args)
 
@@ -932,12 +932,12 @@ def test_init_horizontal_grids_bad_key(
     args = preset_horizontal_grids | {
         "x": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -0.3
         },
         "y": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -0.3
         },
     }
@@ -956,7 +956,7 @@ def test_init_horizontal_grids_bad_key(
 @pytest.mark.parametrize("axis", ["x", "y"])
 @pytest.mark.parametrize(
     "bad_key",
-    ["min", "max", "spacing", "centre", "range"]
+    ["min", "max", "step", "centre", "range"]
 )
 def test_init_horizontal_grids_not_float_value(
     preset_horizontal_grids: dict[str, str],
@@ -968,12 +968,12 @@ def test_init_horizontal_grids_not_float_value(
     args = preset_horizontal_grids | {
         "x": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -0.3
         },
         "y": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -0.3
         },
     } | {
@@ -1001,12 +1001,12 @@ def test_init_horizontal_grids_count_not_int(
     args = preset_horizontal_grids | {
         "x": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -7.3
         },
         "y": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -7.3
         },
     }
@@ -1030,12 +1030,12 @@ def test_init_horizontal_grids_array_not_implemented(
     args = preset_horizontal_grids | {
         "x": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -7.3
         },
         "y": {
             "count": 10,
-            "spacing": 0.1,
+            "step": 0.1,
             "min": -7.3
         },
     }
@@ -1056,9 +1056,9 @@ def preset_vertical_grids() -> dict[str, str | float | int]:
     return {
         "name": "Test",
         "zcoord": "m asl",
-        "count": 100,
+        "num": 100,
         "spacing": 0.01,
-        "min_point": 10
+        "min": 10
     }
 
 def test_init_vertical_grids_preset(
@@ -1110,13 +1110,13 @@ def test_init_vertical_grids_error_array(
         )
 
 
-@pytest.mark.parametrize("count", [None, 100])
+@pytest.mark.parametrize("num", [None, 100])
 @pytest.mark.parametrize("spacing", [None, 10])
-@pytest.mark.parametrize("min_point", [None, 20])
+@pytest.mark.parametrize("min", [None, 20])
 def test_vertical_grids_str(
-    count: int | None,
+    num: int | None,
     spacing: int | None,
-    min_point: int | None,
+    min: int | None,
 ):
     """Does the VerticalGrids class give the right str?"""
     tests = {}
@@ -1125,21 +1125,21 @@ def test_vertical_grids_str(
         "zcoord": "m agl"
     }
     extra_config = {}
-    if count is not None:
-        extra_config = extra_config | {"count": count}
+    if num is not None:
+        extra_config = extra_config | {"num": num}
     if spacing is not None:
         extra_config = extra_config | {"spacing": spacing}
-    if min_point is not None:
-        extra_config = extra_config | {"min_point": min_point}
+    if min is not None:
+        extra_config = extra_config | {"min": min}
 
     args = base_config | extra_config
 
     headers = {
         "name": "Name",
         "zcoord": "Z-Coord",
-        "count": "nZ",
+        "num": "nZ",
         "spacing": "dZ",
-        "min_point": "Z0",
+        "min": "Z0",
     }
 
     vgrids = VerticalGrids.setup(
@@ -1176,13 +1176,13 @@ def test_vertical_grids_str(
     assert all(tests.values())
 
 
-@pytest.mark.parametrize("count", [None, 100])
+@pytest.mark.parametrize("num", [None, 100])
 @pytest.mark.parametrize("spacing", [None, 10])
-@pytest.mark.parametrize("min_point", [None, 20])
+@pytest.mark.parametrize("min", [None, 20])
 def test_vertical_grids_repr(
-    count: int | None,
+    num: int | None,
     spacing: int | None,
-    min_point: int | None,
+    min: int | None,
 ):
     """Does the VerticalGrids class give the right repr?"""
     tests = {}
@@ -1191,12 +1191,12 @@ def test_vertical_grids_repr(
         "zcoord": "m agl"
     }
     extra_config = {}
-    if count is not None:
-        extra_config = extra_config | {"count": count}
+    if num is not None:
+        extra_config = extra_config | {"num": num}
     if spacing is not None:
         extra_config = extra_config | {"spacing": spacing}
-    if min_point is not None:
-        extra_config = extra_config | {"min_point": min_point}
+    if min is not None:
+        extra_config = extra_config | {"min": min}
 
     args = base_config | extra_config
 
@@ -1207,9 +1207,9 @@ def test_vertical_grids_repr(
         "[Vertical Grids]",
         "\tname                : Test",
         "\tzcoord              : m agl",
-        f"\tcount               : {extra_config.get('count')}",
+        f"\tnum                 : {extra_config.get('num')}",
         f"\tspacing             : {extra_config.get('spacing')}",
-        f"\tmin_point           : {extra_config.get('min_point')}",
+        f"\tmin                 : {extra_config.get('min')}",
         "\tarray_name          : None",
         "\tav_array_name       : None",
         "\tindex_array_name    : None",
@@ -1255,7 +1255,7 @@ def test_init_vertical_grids_bad_zcoord(
 @no_type_check
 @pytest.mark.parametrize(
     "bad_key",
-    ["count", "spacing", "min_point"]
+    ["num", "spacing", "min"]
 )
 def test_init_vertical_grids_not_float_value(
     preset_vertical_grids: dict[str, str],
@@ -1272,12 +1272,14 @@ def test_init_vertical_grids_not_float_value(
 
 
 @pytest.fixture
-def preset_domains() -> dict[str, str | float | int]:
+def preset_domains() -> dict[str, dict[str, str | float | int]]:
     """Preset config for locations."""
     return {
-        "name": "Test",
-        "hcoord": "Lat-Long",
-        "zcoord": "m agl",
+        "Test": {
+            "name": "Test",
+            "hcoord": "Lat-Long",
+            "zcoord": "m agl",
+        }
     }
 
 
@@ -1333,7 +1335,9 @@ def test_init_domains_preset(
 ):
     """Does the Domains class initialise?"""
     tests = {}
-    args = preset_domains | {
+    args = preset_domains
+
+    args["Test"] = args["Test"] | {
         "x": x
     } | {
         "y": y
@@ -1365,7 +1369,7 @@ def test_init_domains_preset(
     if t.get("unbounded") is not None:
         expected_vals["t_unbounded"] = "Yes" if t["unbounded"] else "No"
 
-    domains = Domains.setup(rows=[args])
+    domains = Domains.setup(rows=args)
     vals = domains.rows[0].__dict__
 
     for k, v in expected_vals.items():
@@ -1397,7 +1401,9 @@ def test_init_domains_str(
 ):
     """Does the Domains class give the right str?"""
     tests = {}
-    args = preset_domains | {
+
+    args = preset_domains
+    args["Test"] = args["Test"] | {
         "x": x
     } | {
         "y": y
@@ -1468,7 +1474,7 @@ def test_init_domains_str(
         str(v) for v in expected_vals.values() if v is not None
     ])
 
-    domains = Domains.setup(rows=[args])
+    domains = Domains.setup(rows=args)
 
     expected_str = "\n".join([
         "Domains:",
@@ -1501,7 +1507,9 @@ def test_init_domains_repr(
 ):
     """Does the Domains class give the right str?"""
     tests = {}
-    args = preset_domains | {
+
+    args = preset_domains
+    args["Test"] = args["Test"] | {
         "x": x
     } | {
         "y": y
@@ -1546,7 +1554,7 @@ def test_init_domains_repr(
         expected_vals["t_unbounded"] = "Yes" if t["unbounded"] else "No"
 
 
-    domains = Domains.setup(rows=[args])
+    domains = Domains.setup(rows=args)
 
     expected_repr = "\n".join([
         "[Domains]",
@@ -1576,7 +1584,8 @@ def test_init_domains_preset_h_unbounded(
 ):
     """Does the Domains class initialise?"""
     tests = {}
-    args = preset_domains | {
+    args = preset_domains
+    args["Test"] = args["Test"] | {
         "h_unbounded": True
     } | {
         "t": t | {"max_travel_time": "24:00"}
@@ -1600,7 +1609,7 @@ def test_init_domains_preset_h_unbounded(
     if t.get("unbounded") is not None:
         expected_vals["t_unbounded"] = "Yes" if t["unbounded"] else "No"
 
-    domains = Domains.setup(rows=[args])
+    domains = Domains.setup(rows=args)
     vals = domains.rows[0].__dict__
 
     for k, v in expected_vals.items():
@@ -1625,7 +1634,8 @@ def test_init_domains_bad_loc_name(
     preset_domains: dict[str, str | float | int]
 ):
     """Does the Domains class initialise?"""
-    args = preset_domains | {
+    args = preset_domains
+    args["Test"] = args["Test"] | {
         "h_unbounded": True,
         "t": {
             "start": "12/01/2025 01:00",
@@ -1640,7 +1650,7 @@ def test_init_domains_bad_loc_name(
         NotImplementedError,
         match=r"Specific location not implemented for Domains\."
     ):
-        _ = Domains.setup(rows=[args])
+        _ = Domains.setup(rows=args)
 
 
 @pytest.mark.parametrize("axis", ["x", "y"])
@@ -1659,7 +1669,8 @@ def test_init_domains_bad_h_unbounded_with_value(
             "max": 10.3
         },
     }
-    args = preset_domains | {
+    args = preset_domains
+    args["Test"] = args["Test"] | {
         "h_unbounded": True,
         "t": {
             "start": "12/01/2025 01:00",
@@ -1668,13 +1679,13 @@ def test_init_domains_bad_h_unbounded_with_value(
         },
         "z": {"max": 30}
     }
-    args[axis] = other[axis]
+    args["Test"][axis] = other[axis]
 
     with pytest.raises(
         ValueError,
         match=r"Both h_unbounded and [xy] are set, but these are mutually"
     ):
-        _ = Domains.setup(rows=[args])
+        _ = Domains.setup(rows=args)
 
 @pytest.mark.parametrize("axis", ["x", "y", "z", "t"])
 def test_init_domains_bad_axis_unbounded_with_value(
@@ -1682,7 +1693,8 @@ def test_init_domains_bad_axis_unbounded_with_value(
     preset_domains: dict[str, str | float | int]
 ):
     """Does the Domains class initialise?"""
-    args = preset_domains | {
+    args = preset_domains
+    args["Test"] = args["Test"] | {
         "t": {
             "start": "12/01/2025 01:00",
             "duration": "24:00",
@@ -1698,13 +1710,13 @@ def test_init_domains_bad_axis_unbounded_with_value(
         },
         "z": {"max": 30}
     }
-    args[axis]["unbounded"] = True
+    args["Test"][axis]["unbounded"] = True
 
     with pytest.raises(
         ValueError,
         match=r"Specific values provided for [xyzt] when unbounded."
     ):
-        _ = Domains.setup(rows=[args])
+        _ = Domains.setup(rows=args)
 
 
 @pytest.mark.parametrize("axis", ["x", "y"])
@@ -1713,7 +1725,8 @@ def test_init_domains_bad_too_many_vals(
     preset_domains: dict[str, str | float | int]
 ):
     """Does the Domains class initialise?"""
-    args = preset_domains | {
+    args = preset_domains
+    args["Test"] = args["Test"] | {
         "t": {
             "start": "12/01/2025 01:00",
             "duration": "24:00",
@@ -1729,13 +1742,13 @@ def test_init_domains_bad_too_many_vals(
         },
         "z": {"max": 30}
     }
-    args[axis]["range"] = 10
+    args["Test"][axis]["range"] = 10
 
     with pytest.raises(
         ValueError,
         match=r"Incorrect number of values provided for [xy]\. Expected 2\."
     ):
-        _ = Domains.setup(rows=[args])
+        _ = Domains.setup(rows=args)
 
 
 @pytest.mark.parametrize("axis", ["x", "y", "z", "t"])
@@ -1744,7 +1757,8 @@ def test_init_domains_bad_key(
     preset_domains: dict[str, str | float | int]
 ):
     """Does the Domains class initialise?"""
-    args = preset_domains | {
+    args = preset_domains
+    args["Test"] = args["Test"] | {
         "t": {
             "start": "12/01/2025 01:00",
             "duration": "24:00",
@@ -1761,21 +1775,22 @@ def test_init_domains_bad_key(
         "z": {"max": 30}
     }
     if axis in ("x", "y"):
-        args[axis].pop("max")
-    args[axis]["BAD KEY"] = "BAD VALUE"
+        args["Test"][axis].pop("max")
+    args["Test"][axis]["BAD KEY"] = "BAD VALUE"
 
     with pytest.raises(
         ValueError,
         match=r"Unexpected keys in [xzyt]:.*BAD KEY.*"
     ):
-        _ = Domains.setup(rows=[args])
+        _ = Domains.setup(rows=args)
 
 
 def test_init_domains_bad_no_max_travel_time(
     preset_domains: dict[str, str | float | int]
 ):
     """Does the Domains class initialise?"""
-    args = preset_domains | {
+    args = preset_domains
+    args["Test"] = args["Test"] | {
         "t": {
             "start": "12/01/2025 01:00",
             "duration": "24:00",
@@ -1795,14 +1810,15 @@ def test_init_domains_bad_no_max_travel_time(
         ValueError,
         match=r"max_travel_time not provided for t\."
     ):
-        _ = Domains.setup(rows=[args])
+        _ = Domains.setup(rows=args)
 
 
 def test_init_domains_descriptive_time_intervals(
     preset_domains: dict[str, str | float | int]
 ):
     """Does the Domains class initialise?"""
-    args = preset_domains | {
+    args = preset_domains
+    args["Test"] = args["Test"] | {
         "t": {
             "start": "-12 day",
             "end": "-6 day",
@@ -1819,14 +1835,15 @@ def test_init_domains_descriptive_time_intervals(
         "z": {"max": 30}
     }
 
-    _ = Domains.setup(rows=[args])
+    _ = Domains.setup(rows=args)
 
 
 def test_init_domains_nondescriptive_time_intervals(
     preset_domains: dict[str, str | float | int]
 ):
     """Does the Domains class initialise?"""
-    args = preset_domains | {
+    args = preset_domains
+    args["Test"] = args["Test"] | {
         "t": {
             "start": "-1d 02:00",
             "end": "2d 01:00",
@@ -1843,7 +1860,7 @@ def test_init_domains_nondescriptive_time_intervals(
         "z": {"max": 30}
     }
 
-    _ = Domains.setup(rows=[args])
+    _ = Domains.setup(rows=args)
 
 
 @pytest.mark.parametrize("bad_time", ["start", "end"])
@@ -1852,7 +1869,8 @@ def test_init_domains_bad_time_interval(
     bad_time: str
 ):
     """Does the Domains class initialise?"""
-    args = preset_domains | {
+    args = preset_domains
+    args["Test"] = args["Test"] | {
         "t": {
             "start": "-1d 02:00",
             "end": "2d 01:00",
@@ -1868,20 +1886,20 @@ def test_init_domains_bad_time_interval(
         },
         "z": {"max": 30}
     }
-    args["t"][bad_time] = "BAD VALUE"
+    args["Test"]["t"][bad_time] = "BAD VALUE"
 
     with pytest.raises(
         ValueError,
         match=rf"{bad_time}_time is not in datetime or time interval format\."
     ):
-        _ = Domains.setup(rows=[args])
+        _ = Domains.setup(rows=args)
 
 
 def test_init_multi_domains_preset():
     """Does the Domains class initialise with 2 rows?"""
     tests = {}
-    args = [
-        {
+    args = {
+        "Row 1": {
             "name": "Row 1",
             "hcoord": "Lat-Long",
             "zcoord": "m agl",
@@ -1902,7 +1920,7 @@ def test_init_multi_domains_preset():
                 "max_travel_time": "48:00"
             }
         },
-        {
+        "Row 2": {
             "name": "Row 2",
             "hcoord": "Lat-Long",
             "zcoord": "m agl",
@@ -1923,7 +1941,7 @@ def test_init_multi_domains_preset():
                 "max_travel_time": "24:00"
             }
         }
-    ]
+    }
 
     expected_vals = [
         {
@@ -1978,8 +1996,8 @@ def test_init_multi_domains_preset():
 def test_init_multi_domains_str():
     """Does the Domains class give the right str?"""
     tests = {}
-    args = [
-        {
+    args = {
+        "Row 1": {
             "name": "Row 1",
             "hcoord": "Lat-Long",
             "zcoord": "m agl",
@@ -2000,7 +2018,7 @@ def test_init_multi_domains_str():
                 "max_travel_time": "48:00"
             }
         },
-        {
+        "Row 2": {
             "name": "Row 2",
             "hcoord": "Lat-Long",
             "zcoord": "m agl",
@@ -2021,7 +2039,7 @@ def test_init_multi_domains_str():
                 "max_travel_time": "24:00"
             }
         }
-    ]
+    }
 
     expected_vals = [
         {
@@ -2130,8 +2148,8 @@ def test_init_multi_domains_repr(
 ):
     """Does the Domains class give the right str?"""
     tests = {}
-    args = [
-        {
+    args = {
+        "Row 1": {
             "name": "Row 1",
             "hcoord": "Lat-Long",
             "zcoord": "m agl",
@@ -2152,7 +2170,7 @@ def test_init_multi_domains_repr(
                 "max_travel_time": "48:00"
             }
         },
-        {
+        "Row 2": {
             "name": "Row 2",
             "hcoord": "Lat-Long",
             "zcoord": "m agl",
@@ -2173,7 +2191,7 @@ def test_init_multi_domains_repr(
                 "max_travel_time": "24:00"
             }
         }
-    ]
+    }
 
     expected_vals = [
         {
@@ -2254,8 +2272,8 @@ def test_init_multi_domains_preset_h_unbounded(
 ):
     """Does the Domains class initialise?"""
     tests = {}
-    args = [
-        {
+    args = {
+        "Row 1": {
             "name": "Row 1",
             "hcoord": "Lat-Long",
             "zcoord": "m agl",
@@ -2269,7 +2287,7 @@ def test_init_multi_domains_preset_h_unbounded(
                 "max_travel_time": "48:00"
             }
         },
-        {
+        "Row 2": {
             "name": "Row 2",
             "hcoord": "Lat-Long",
             "zcoord": "m agl",
@@ -2283,7 +2301,7 @@ def test_init_multi_domains_preset_h_unbounded(
                 "max_travel_time": "24:00"
             }
         }
-    ]
+    }
 
     expected_vals = [
         {
