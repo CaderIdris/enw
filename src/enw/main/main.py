@@ -1,7 +1,6 @@
 """"""
 import argparse
 import enum
-import gzip
 import io
 from pathlib import Path
 import tarfile
@@ -10,11 +9,14 @@ from typing import TYPE_CHECKING
 import enw.block as block
 from enw.config import load_config
 
+from ._generate_spatial import site
+
 if TYPE_CHECKING:
     from enw.types import EnwConfig
 
 
 class Subcommands(enum.StrEnum):
+    """All valid subcommands"""
     build = "BUILD"
 
 
@@ -44,55 +46,38 @@ def generate_run(config: EnwConfig) -> str:
         **config["OpenMP"]
     )
 
-    output = block.Output.setup(
-        **config["Output"]
-    )
-
     return "\n\n".join([
         str(main),
         str(restart_file),
         str(multiple_case_file),
-        str(openmp),
-        str(output)
+        str(openmp)
     ])
 
 
-def generate_spatial(config: EnwConfig) -> str:
+def generate_species(config: EnwConfig) -> str:
     """"""
-    horizontal = block.HorizontalCoords.setup(
-        names=config["CoordinateSystems"]["horizontal"]
-    )
-    vertical = block.VerticalCoords.setup(
-        names=config["CoordinateSystems"]["vertical"]
-    )
-
-    locations = block.Locations.setup(
-        block_name="Receptor Locations",
-        rows=config["Locations"]
-    )
-
-    hgrids = block.HorizontalGrids.setup(
-        **config["HorizontalGrid"]["EUROPE"]
-    )
-    #BUG: Make hgrids accept multiple AAAAAAA
-
-    vgrids = block.VerticalGrids.setup(
-        name="VGrid1",
-        **config["VerticalGrid"]
-    )
-
-    domains = block.Domains.setup(
-        rows=config["Domains"]
+    species = block.Species.setup(
+        rows=config["Species"]
     )
 
     return "\n\n".join([
-        str(horizontal),
-        str(vertical),
-        str(locations),
-        str(hgrids),
-        str(vgrids),
-        str(domains)
+        str(species)
     ])
+
+
+def generate_output(config: EnwConfig) -> str:
+    """"""
+
+    output = block.Output.setup(
+        **config["Output"]
+    )
+
+    #TODO: Finish pls
+
+    return "\n\n".join([
+        str(output)
+    ])
+
 
 def parse_default_args() -> argparse.Namespace:
     """"""
@@ -149,7 +134,8 @@ def enw() -> None:
 def build(config_file: Path, output: Path) -> int:
     """"""
     config = load_config(config_file)
-
+    # print(config)
+    # assert 0
     tar_path = output / f"{config["Main"]["name"]}.tar.gz"
     with tarfile.open(tar_path, "w:gz") as tar:
         #INFO: Run input file
@@ -160,7 +146,19 @@ def build(config_file: Path, output: Path) -> int:
         tar.addfile(run_info, run_io)
         #INFO: Spatial input file
         spatial_info = tarfile.TarInfo("Input Files/Configuration/Spatial.txt")
-        spatial_file = generate_spatial(config)
+        spatial_file = site(config)
         spatial_io = io.BytesIO(spatial_file.encode("utf-8"))
         spatial_info.size = spatial_io.getbuffer().nbytes
         tar.addfile(spatial_info, spatial_io)
+        #INFO: Species input file
+        species_info = tarfile.TarInfo("Input Files/Configuration/Species.txt")
+        species_file = generate_species(config)
+        species_io = io.BytesIO(species_file.encode("utf-8"))
+        species_info.size = species_io.getbuffer().nbytes
+        tar.addfile(species_info, species_io)
+        #INFO: Output input file (isn't that a mouthful)
+        output_info = tarfile.TarInfo("Input Files/Configuration/Output.txt")
+        output_file = generate_output(config)
+        output_io = io.BytesIO(output_file.encode("utf-8"))
+        output_info.size = output_io.getbuffer().nbytes
+        tar.addfile(output_info, output_io)
