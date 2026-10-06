@@ -1,6 +1,6 @@
 [Main]
 start_time = 2025-01-01 00:00:00
-end_time = 2026-01-01 00:00:00
+end_time = 2025-02-01 00:00:00
 time_step = "01:00"
 use_ukv = true
 
@@ -12,13 +12,9 @@ folder = "some/random/path"
 ["OpenGHG Presets"."Locations"."NPL"]
 
 ["Species"."Inert"]
-name = "INERT"
 category = "None"
 molecular_weight = 1
 deposition_velocity = 0
 material_unit = "g"
 uv_loss_rate = 0
 half_life = "Stable"
-on_particles = true
-on_fields = false
-advect_fields = false

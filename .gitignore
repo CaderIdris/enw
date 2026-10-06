@@ -15,3 +15,7 @@ reports/*
 site/
 
 *.local
+
+.DS_Store
+
+*.tar.gz
