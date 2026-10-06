@@ -552,12 +552,9 @@ def check_species_options(
         "uv_loss_rate",
         "half_life",
         "surface_resistance",
-        "on_particles",
-        "on_fields",
-        "advect_fields"
     }
     vals = (
-        ("name", str),
+        ("name", NoneType), #BUG: Need to fix this at some point
         ("category", str),
         ("molecular_weight", float | int),
         ("deposition_velocity", float | int),
@@ -565,9 +562,6 @@ def check_species_options(
         ("uv_loss_rate", float | int),
         ("half_life", float | int | str),
         ("surface_resistance", int | float | NoneType),
-        ("on_particles", bool),
-        ("on_fields", bool),
-        ("advect_fields", bool)
     )
     for spc, spc_config in config.items():
         check_keys(

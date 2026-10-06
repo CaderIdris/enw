@@ -20,16 +20,9 @@ pytestmark = [
     pytest.mark.utils_openghg_defs,
 ]
 
-def test_get_domain_keys(
-    monkeypatch: pytest.MonkeyPatch
-):
+def test_get_domain_keys():
     """"""
     tests = {}
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
 
     expected = {"A", "B", "C", "D", "E"}
     actual = get_domain_keys()
@@ -42,21 +35,9 @@ def test_get_domain_keys(
 
     assert all(tests.values())
 
-def test_get_domain_info(
-    monkeypatch: pytest.MonkeyPatch
-):
+def test_get_domain_info():
     """"""
     tests = {}
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
 
     expected = {
         "name": "A",
@@ -95,15 +76,8 @@ def test_get_domain_info(
 
     assert all(tests.values())
 
-def test_get_domain_info_bad_key(
-    monkeypatch: pytest.MonkeyPatch
-):
+def test_get_domain_info_bad_key():
     """"""
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
     with pytest.raises(
         KeyError,
         match=(
@@ -112,16 +86,9 @@ def test_get_domain_info_bad_key(
     ):
         _ = get_domain_info("BAD KEY")
 
-def test_get_location_keys(
-    monkeypatch: pytest.MonkeyPatch
-):
+def test_get_location_keys():
     """"""
     tests = {}
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
 
     expected = {"A", "B", "C", "D", "E"}
     actual = get_location_keys()
@@ -134,16 +101,9 @@ def test_get_location_keys(
 
     assert all(tests.values())
 
-def test_get_location_info_single_val(
-    monkeypatch: pytest.MonkeyPatch
-):
+def test_get_location_info_single_val():
     """"""
     tests = {}
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
 
     expected = {
         "name": (
@@ -165,16 +125,9 @@ def test_get_location_info_single_val(
 
     assert all(tests.values())
 
-def test_get_location_info_subset(
-    monkeypatch: pytest.MonkeyPatch
-):
+def test_get_location_info_subset():
     """"""
     tests = {}
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
 
     expected = {
         "name": (
@@ -196,15 +149,8 @@ def test_get_location_info_subset(
 
     assert all(tests.values())
 
-def test_get_location_info_bad_key(
-    monkeypatch: pytest.MonkeyPatch
-):
+def test_get_location_info_bad_key():
     """"""
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
     with pytest.raises(
         KeyError,
         match=(
@@ -213,15 +159,8 @@ def test_get_location_info_bad_key(
     ):
         _ = get_location_info("BAD KEY")
 
-def test_get_location_info_bad_subset_not_defined(
-    monkeypatch: pytest.MonkeyPatch
-):
+def test_get_location_info_bad_subset_not_defined():
     """"""
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
     with pytest.raises(
         KeyError,
         match=(
@@ -231,15 +170,8 @@ def test_get_location_info_bad_subset_not_defined(
     ):
         _ = get_location_info("E")
 
-def test_get_location_info_bad_subset(
-    monkeypatch: pytest.MonkeyPatch
-):
+def test_get_location_info_bad_subset():
     """"""
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
     with pytest.raises(
         KeyError,
         match=(
@@ -248,16 +180,9 @@ def test_get_location_info_bad_subset(
     ):
         _ = get_location_info("E", subset="3")
 
-def test_get_species_key_bridge(
-    monkeypatch: pytest.MonkeyPatch
-):
+def test_get_species_key_bridge():
     """"""
     tests = {}
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
 
     expected = {
         "A": "A",
@@ -286,16 +211,9 @@ def test_get_species_key_bridge(
 
     assert all(tests.values())
 
-def test_get_species_keys(
-    monkeypatch: pytest.MonkeyPatch
-):
+def test_get_species_keys():
     """"""
     tests = {}
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
 
     expected = {
         "A",
@@ -325,20 +243,11 @@ def test_get_species_keys(
     assert all(tests.values())
 
 @pytest.mark.parametrize("species", ["A", "A1", "A2", "A3"])
-def test_get_species_info(
-    monkeypatch: pytest.MonkeyPatch,
-    species: str
-):
+def test_get_species_info(species: str):
     """"""
     tests = {}
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
 
     expected = {
-        "name": "Test A",
         "category": "Group A",
         "molecular_weight": 3.01,
         "deposition_velocity": 0,
@@ -362,15 +271,8 @@ def test_get_species_info(
 
     assert all(tests.values())
 
-def test_get_species_info_bad_key(
-    monkeypatch: pytest.MonkeyPatch
-):
+def test_get_species_info_bad_key():
     """"""
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
     with pytest.raises(
         KeyError,
         match=(

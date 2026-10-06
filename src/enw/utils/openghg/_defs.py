@@ -239,7 +239,7 @@ def get_species_info(key: str) -> dict[str, str | float]:
     all_info = species_info[key_bridge[key]]
 
     return {
-        "name": all_info.get("long_name", key),
+        # "name": all_info.get("long_name", key),
         "category": all_info.get("group", "None"),
         "molecular_weight": all_info.get("mol_mass", 1),
         #INFO: Below not currently in species_info

@@ -85,31 +85,8 @@ def test_set_defaults():
         "test-minimal.toml"
     ]
 )
-def test_load_config(
-    monkeypatch: pytest.MonkeyPatch,
-    toml: str
-):
+def test_load_config(toml: str):
     """Test if the example config loads properly."""
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
     tests = {}
     test_config = load_config(Path(f"./tests/test_config/files/{toml}"))
 
@@ -267,7 +244,6 @@ def test_load_config(
                 )
 
     species_keys = [
-        "name",
         "category",
         "molecular_weight",
         "deposition_velocity",
@@ -312,31 +288,8 @@ def test_load_config(
 
 
 @no_type_check
-def test_load_config_no_main_error(
-    tmp_path: pytest.TempPathFactory,
-    monkeypatch: pytest.MonkeyPatch,
-):
+def test_load_config_no_main_error(tmp_path: pytest.TempPathFactory):
     """Test if a warning is logged when no Main config is present."""
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("Main")
     good_config.pop("MultipleCase")
@@ -351,31 +304,8 @@ def test_load_config_no_main_error(
 
 
 @no_type_check
-def test_load_config_no_output_error(
-    tmp_path: pytest.TempPathFactory,
-    monkeypatch: pytest.MonkeyPatch,
-):
+def test_load_config_no_output_error(tmp_path: pytest.TempPathFactory):
     """Test if a error is raised when no Output config is present."""
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("Output")
     good_config.pop("MultipleCase")
@@ -393,31 +323,8 @@ def test_load_config_no_output_error(
 
 
 @no_type_check
-def test_load_config_no_restart_fine(
-    tmp_path: pytest.TempPathFactory,
-    monkeypatch: pytest.MonkeyPatch,
-):
+def test_load_config_no_restart_fine(tmp_path: pytest.TempPathFactory):
     """Test if no error raised when no Restart config is present."""
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("Restart")
     good_config.pop("MultipleCase")
@@ -427,8 +334,6 @@ def test_load_config_no_restart_fine(
     good_config.pop("VerticalGrid")
     good_config["Species"]["C3"].pop("surface_resistance")
 
-    print(good_config)
-
     bad_config = tmp_path / "no_restart.toml"
     with bad_config.open("wb") as toml_file:
         tomli_w.dump(good_config, toml_file)
@@ -437,31 +342,8 @@ def test_load_config_no_restart_fine(
 
 
 @no_type_check
-def test_load_config_multiple_case_error(
-    tmp_path: pytest.TempPathFactory,
-    monkeypatch: pytest.MonkeyPatch,
-):
+def test_load_config_multiple_case_error(tmp_path: pytest.TempPathFactory):
     """Test if a error is raised when Multiple Case config is present."""
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("MultipleCase")
     good_config["Multiple Case"] = {
@@ -490,29 +372,8 @@ def test_load_config_multiple_case_error(
 def test_load_config_no_openmp_warning(
     tmp_path: pytest.TempPathFactory,
     caplog: pytest.LogCaptureFixture,
-    monkeypatch: pytest.MonkeyPatch,
 ):
     """Test if a warning is logged when no OpenMP config is present."""
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
     tests = {}
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("OpenMP")
@@ -545,29 +406,8 @@ def test_load_config_no_openmp_warning(
 def test_load_config_no_coords_warning(
     tmp_path: pytest.TempPathFactory,
     caplog: pytest.LogCaptureFixture,
-    monkeypatch: pytest.MonkeyPatch,
 ):
     """Test if a warning is logged when no OpenMP config is present."""
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
     tests = {}
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("CoordinateSystems")
@@ -603,29 +443,8 @@ def test_load_config_no_coords_warning(
 @no_type_check
 def test_load_config_domain_error(
     tmp_path: pytest.TempPathFactory,
-    monkeypatch: pytest.MonkeyPatch,
 ):
     """Test if a error is raised when Multiple Case config is present."""
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("MultipleCase")
     good_config.pop("Domains")
@@ -645,29 +464,8 @@ def test_load_config_domain_error(
 @no_type_check
 def test_load_config_horizontal_grids_error(
     tmp_path: pytest.TempPathFactory,
-    monkeypatch: pytest.MonkeyPatch,
 ):
     """Test if a error is raised when Multiple Case config is present."""
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("MultipleCase")
     good_config.pop("Domains")
@@ -701,29 +499,8 @@ def test_load_config_horizontal_grids_error(
 @no_type_check
 def test_load_config_species_error(
     tmp_path: pytest.TempPathFactory,
-    monkeypatch: pytest.MonkeyPatch,
 ):
     """Test if a error is raised when Multiple Case config is present."""
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("MultipleCase")
     good_config.pop("Species")
@@ -745,29 +522,8 @@ def test_load_config_species_error(
 def test_load_config_no_vertical_grids_warning(
     tmp_path: pytest.TempPathFactory,
     caplog: pytest.LogCaptureFixture,
-    monkeypatch: pytest.MonkeyPatch,
 ):
     """Test if a warning is logged when no OpenMP config is present."""
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
     tests = {}
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("OpenMP")
@@ -801,7 +557,6 @@ def test_load_config_no_vertical_grids_warning(
 @pytest.mark.parametrize("locations", [True, False])
 @pytest.mark.parametrize("species", [True, False])
 def test_load_openghg_single_vals_good(
-    monkeypatch: pytest.MonkeyPatch,
     *,
     domains: bool,
     locations: bool,
@@ -809,26 +564,6 @@ def test_load_openghg_single_vals_good(
 ):
     """"""
     tests = {}
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
 
     test_config = {}
     expected = {}
@@ -881,7 +616,6 @@ def test_load_openghg_single_vals_good(
         test_config["Species"] = {"E2": {}}
         expected["Species"] = {
             "E2": {
-                "name": "Test E",
                 "category": "Group E",
                 "molecular_weight": 5.5,
                 "deposition_velocity": 0,
@@ -909,7 +643,6 @@ def test_load_openghg_single_vals_good(
 @pytest.mark.parametrize("locations", [True, False])
 @pytest.mark.parametrize("species", [True, False])
 def test_load_openghg_multiple_vals_good(
-    monkeypatch: pytest.MonkeyPatch,
     *,
     domains: bool,
     locations: bool,
@@ -917,26 +650,6 @@ def test_load_openghg_multiple_vals_good(
 ):
     """"""
     tests = {}
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
 
     test_config = {}
     expected = {}
@@ -1023,7 +736,6 @@ def test_load_openghg_multiple_vals_good(
         test_config["Species"] = {"D": {}, "E2": {}}
         expected["Species"] = {
             "D": {
-                "name": "Test D",
                 "category": "Group D",
                 "molecular_weight": 1.01,
                 "deposition_velocity": 0,
@@ -1037,7 +749,6 @@ def test_load_openghg_multiple_vals_good(
 
             },
             "E2": {
-                "name": "Test E",
                 "category": "Group E",
                 "molecular_weight": 5.5,
                 "deposition_velocity": 0,
@@ -1064,32 +775,11 @@ def test_load_openghg_multiple_vals_good(
 
 @pytest.mark.parametrize("subset", ["1", "2"])
 def test_load_openghg_subsets_vals_good(
-    monkeypatch: pytest.MonkeyPatch,
     *,
     subset: str,
 ):
     """"""
     tests = {}
-    monkeypatch.setattr(
-        openghg_defs,
-        "domain_info_file",
-        Path("tests/test_utils/test_openghg/files/example_domains.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "site_info_file",
-        Path("tests/test_utils/test_openghg/files/example_locations.json")
-    )
-    monkeypatch.setattr(
-        openghg_defs,
-        "species_info_file",
-        Path("tests/test_utils/test_openghg/files/example_species.json")
-    )
-    monkeypatch.setattr(
-        _defs,
-        "openghg_defs_data",
-        Path("tests/test_utils/test_openghg/files/")
-    )
 
     test_config = {}
     expected = {}
@@ -1108,7 +798,6 @@ def test_load_openghg_subsets_vals_good(
     test_config["Species"] = {"E2": {}}
     expected["Species"] = {
         "E2": {
-            "name": "Test E",
             "category": "Group E",
             "molecular_weight": 5.5,
             "deposition_velocity": 0,

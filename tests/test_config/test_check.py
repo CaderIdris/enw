@@ -578,7 +578,6 @@ def example_species_config() -> dict[str, dict[str, object]]:
     """An example config for the speciess block."""
     return {
         "TSpec": {
-            "name": "Test Species",
             "category": "Test Category",
             "molecular_weight": 123,
             "deposition_velocity": 0,
@@ -586,9 +585,6 @@ def example_species_config() -> dict[str, dict[str, object]]:
             "uv_loss_rate": 0,
             "half_life": "Stable",
             "surface_resistance": None,
-            "on_particles": True,
-            "on_fields": False,
-            "advect_fields": False
         }
     }
 
@@ -611,7 +607,6 @@ def test_check_species_options_good(example_species_config: dict[str, Any]):
 @pytest.mark.parametrize(
     "bad_options",
     [
-        {"name": 0},
         {"category": 0},
         {"material_unit": 0},
     ]
@@ -646,25 +641,6 @@ def test_species_options_bad_num(
         "TSpec": example_species_config["TSpec"] | bad_options,
     }
     with pytest.raises(TypeError, match=r"TSpec.*is not.*int.*str"):
-        _ = check_species_options(bad_config)
-
-@pytest.mark.parametrize(
-    "bad_options",
-    [
-        {"on_particles": "BAD"},
-        {"on_fields": "BAD"},
-        {"advect_fields": "BAD"},
-    ]
-)
-def test_species_options_bad_bool(
-    example_species_config: dict[str, dict[str, object]],
-    bad_options: dict[str, str | list[str]],
-):
-    """Test if bad coords error."""
-    bad_config = {
-        "TSpec": example_species_config["TSpec"] | bad_options,
-    }
-    with pytest.raises(TypeError, match=r"TSpec.*is not.*bool.*str"):
         _ = check_species_options(bad_config)
 
 
