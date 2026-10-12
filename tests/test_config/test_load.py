@@ -4,7 +4,6 @@ from pathlib import Path
 import tomllib
 from typing import no_type_check
 
-import openghg_defs
 import pytest
 import tomli_w
 
@@ -13,8 +12,8 @@ from enw.config import (
     load_openghg,
     load_toml,
     load_defaults,
+    create_run_name
 )
-import enw.utils.openghg._defs as _defs
 
 pytestmark = [
     pytest.mark.config,
@@ -85,7 +84,9 @@ def test_set_defaults():
         "test-minimal.toml"
     ]
 )
-def test_load_config(toml: str):
+def test_load_config(
+    toml: str,
+):
     """Test if the example config loads properly."""
     tests = {}
     test_config = load_config(Path(f"./tests/test_config/files/{toml}"))
@@ -275,11 +276,44 @@ def test_load_config(toml: str):
             k in test_config.get("VerticalGrid", {})
         )
 
+    output_requirements_keys = [
+        "Run",
+        "Global"
+    ]
+    output_requirements_subkeys = [
+        "quantity",
+        "bl_average",
+        "t_av_or_int",
+        "av_time",
+        "num_av_times",
+        "sync",
+        "output_route"
+    ]
+
+    tests[
+        "Output Requirements block present"
+    ] = "OutputRequirements" in test_config
+    for k in output_requirements_keys:
+        tests[f"OutputRequirements.{k} present"] = k in test_config.get(
+            "OutputRequirements",
+            {}
+        )
+        for sub_k in output_requirements_subkeys:
+            for subsub_k, v in test_config.get(
+                "OutputRequirements",
+                {}
+            ).get(
+                k,
+                {}
+            ).items():
+                tests[
+                    f"OutputRequirements.{k}.{subsub_k}.{sub_k} present"
+                ] = sub_k in v
+
+
     for test, result in tests.items():
         if not result:
             print(test)
-
-    print(test_config)
 
     assert all(tests.values())
 
@@ -450,7 +484,7 @@ def test_load_config_domain_error(
     good_config.pop("Domains")
     good_config["Species"]["C3"].pop("surface_resistance")
 
-    bad_config = tmp_path / "multiple_case.toml"
+    bad_config = tmp_path / "no_domain.toml"
     with bad_config.open("wb") as toml_file:
         tomli_w.dump(good_config, toml_file)
 
@@ -485,7 +519,7 @@ def test_load_config_horizontal_grids_error(
         }
     }
 
-    bad_config = tmp_path / "multiple_case.toml"
+    bad_config = tmp_path / "no_hgrids.toml"
     with bad_config.open("wb") as toml_file:
         tomli_w.dump(good_config, toml_file)
 
@@ -507,7 +541,7 @@ def test_load_config_species_error(
     good_config["Horizontal Grids"] = good_config["HorizontalGrid"]
     good_config.pop("HorizontalGrid")
 
-    bad_config = tmp_path / "multiple_case.toml"
+    bad_config = tmp_path / "no_species.toml"
     with bad_config.open("wb") as toml_file:
         tomli_w.dump(good_config, toml_file)
 
@@ -533,7 +567,7 @@ def test_load_config_no_vertical_grids_warning(
     good_config.pop("HorizontalGrid")
     good_config["Species"]["C3"].pop("surface_resistance")
 
-    bad_config = tmp_path / "no_openmp.toml"
+    bad_config = tmp_path / "no_vgrids.toml"
     with bad_config.open("wb") as toml_file:
         tomli_w.dump(good_config, toml_file)
 
@@ -550,6 +584,134 @@ def test_load_config_no_vertical_grids_warning(
 
     assert all(tests.values())
 
+
+@no_type_check
+def test_load_config_specific_output_requirements(
+    tmp_path: pytest.TempPathFactory
+):
+    """Test if a warning is logged when no OpenMP config is present."""
+    tests = {}
+    good_config = load_config(Path("./tests/test_config/files/test.toml"))
+    good_config.pop("OpenMP")
+    good_config.pop("MultipleCase")
+    good_config.pop("OutputRequirements")
+    good_config["Horizontal Grids"] = good_config["HorizontalGrid"]
+    good_config["Species"]["C3"].pop("surface_resistance")
+    good_config["Output Requirements"] = {
+        "Run": {
+            "preset_a": {}
+        },
+        "Global": {
+            "preset_a": {}
+        }
+    }
+
+    bad_config = tmp_path / "specific_or.toml"
+    with bad_config.open("wb") as toml_file:
+        tomli_w.dump(good_config, toml_file)
+
+    specific_or = load_config(bad_config)
+    output_requirements_keys = [
+        "Run",
+        "Global"
+    ]
+    output_requirements_subkeys = [
+        "quantity",
+        "bl_average",
+        "t_av_or_int",
+        "av_time",
+        "num_av_times",
+        "sync",
+        "output_route"
+    ]
+
+    tests[
+        "Output Requirements block present"
+    ] = "OutputRequirements" in specific_or
+    for k in output_requirements_keys:
+        tests[f"OutputRequirements.{k} present"] = k in specific_or.get(
+            "OutputRequirements",
+            {}
+        )
+        tests[
+            f"OutputRequirements.{k}.preset_a present"
+        ] = "preset_a" in specific_or.get(
+            "OutputRequirements",
+            {}
+        ).get(
+            k,
+            {}
+        )
+        for subsub_k in output_requirements_subkeys:
+            v = specific_or.get(
+                "OutputRequirements"
+            ).get(
+                k,
+                {}
+            ).get(
+                "preset_a",
+                {}
+            )
+            tests[
+                f"OutputRequirements.{k}.preset_a.{subsub_k} present"
+            ] = subsub_k in v
+
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())
+
+
+@no_type_check
+def test_load_config_specific_output_requirements_with_overrides(
+    tmp_path: pytest.TempPathFactory,
+):
+    """Test if a warning is logged when no OpenMP config is present."""
+    tests = {}
+    good_config = load_config(Path("./tests/test_config/files/test.toml"))
+    good_config.pop("OpenMP")
+    good_config.pop("MultipleCase")
+    good_config.pop("OutputRequirements")
+    good_config["Horizontal Grids"] = good_config["HorizontalGrid"]
+    good_config["Species"]["C3"].pop("surface_resistance")
+    good_config["Output Requirements"] = {
+        "Run": {
+            "preset_a": {
+                "bl_average": True
+            }
+        },
+        "Global": {
+            "preset_a": {
+                "sync": True
+            }
+        }
+    }
+
+    bad_config = tmp_path / "specific_or.toml"
+    with bad_config.open("wb") as toml_file:
+        tomli_w.dump(good_config, toml_file)
+
+    specific_or = load_config(bad_config)
+
+    tests["bl_average changed Run"] = specific_or["OutputRequirements"]["Run"][
+        "preset_a"
+    ]["bl_average"]
+    tests["bl_average unchanged Global"] = not specific_or["OutputRequirements"]["Global"][
+        "preset_a"
+    ]["bl_average"]
+    tests["sync changed Global"] = specific_or["OutputRequirements"]["Global"][
+        "preset_a"
+    ]["sync"]
+    tests["sync unchanged Run"] = not specific_or["OutputRequirements"]["Run"][
+        "preset_a"
+    ]["sync"]
+
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())
 
 
 
@@ -845,9 +1007,6 @@ def test_load_openghg_subsets_vals_good(
 
     actual = load_openghg(test_config)
 
-    print(expected)
-    print(actual)
-
     tests["Expected presets"] = expected == actual
 
     for test, result in tests.items():
@@ -856,4 +1015,47 @@ def test_load_openghg_subsets_vals_good(
 
     assert all(tests.values())
 
+@no_type_check
+def test_create_run_name(
+):
+    """Test create_run_name function"""
+    tests = {}
+    good_config = load_config(Path("./tests/test_config/files/test.toml"))
+    run_name = create_run_name(good_config)
+    tests["Correct name"] = run_name == "NAME_E_C3_20250101_20260101"
 
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())
+
+
+@no_type_check
+def test_create_run_name_no_run_name_in_config(
+    tmp_path: pytest.TempPathFactory,
+):
+    """Test create_run_name function"""
+    tests = {}
+    good_config = load_config(Path("./tests/test_config/files/test.toml"))
+    good_config["Main"].pop("name")
+    good_config.pop("OpenMP")
+    good_config.pop("MultipleCase")
+    good_config["Horizontal Grids"] = good_config["HorizontalGrid"]
+    good_config["Species"]["C3"].pop("surface_resistance")
+
+    bad_config = tmp_path / "bad_name.toml"
+    with bad_config.open("wb") as toml_file:
+        tomli_w.dump(good_config, toml_file)
+
+    run_name = load_config(bad_config)
+
+    tests["Correct name"] = (
+        run_name["Main"]["name"] == "NAME_E_C3_20250101_20260101"
+    )
+
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())

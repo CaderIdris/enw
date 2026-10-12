@@ -1,0 +1,7 @@
+quantity = "Mixing Ratio"
+bl_average = false
+t_av_or_int = "Int"
+av_time = "24:00"
+num_av_times = 1440
+sync = false
+output_route = "N"

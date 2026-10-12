@@ -5,6 +5,7 @@ import logging
 import tomllib
 from typing import Any, cast, TYPE_CHECKING
 
+
 from enw.utils.openghg import (
     get_location_info,
     get_domain_info,
@@ -19,10 +20,14 @@ from ._check import (
     check_main_options,
     check_openmp_options,
     check_output_options,
+    check_output_requirements_options,
+    check_ppinfo_options,
     check_restart_options,
+    check_set_of_dispersion_options,
     check_species_options,
     check_vertical_grids_options
 )
+from ._presets import load_preset
 
 if TYPE_CHECKING:
     from enw.types import (
@@ -61,12 +66,6 @@ def load_config_run(raw_config: dict[str, dict[str, object]]) -> RunConfig:
         raise ValueError(msg)
     config_main = load_defaults(raw_config.get("Main", {}), "main")
     config["Main"] = check_main_options(config_main)
-    #INFO: Check Output
-    if "Output" not in raw_config:
-        msg = "Mandatory section 'Output' not found in config."
-        raise ValueError(msg)
-    config_output = load_defaults(raw_config["Output"], "output")
-    config["Output"] = check_output_options(config_output)
     #INFO: Check Restart
     if "Restart" not in raw_config:
         _logger.info("OpenMP config not present, using defaults.")
@@ -187,6 +186,86 @@ def load_config_spatial(
     return cast("SpatialConfig", config)
 
 
+def load_config_output(
+    raw_config: dict[str, dict[str, object]]
+) -> None:
+    """Load the run relevant items from the config file, with error checking.
+
+    Parameters
+    ----------
+    raw_config : dict[str, object | dict[str, object]]
+        The raw config.
+
+    Returns
+    -------
+    OutputRequirementConfig
+        The output requirement elements of the config file
+
+    """
+    config = {}
+    #INFO: Check Output
+    if "Output" not in raw_config:
+        msg = "Mandatory section 'Output' not found in config."
+        raise ValueError(msg)
+    config_output = load_defaults(raw_config["Output"], "output")
+    config["Output"] = check_output_options(config_output)
+
+    #INFO: Check Output Requirements - Fields
+    or_config = {}
+    for override_type in ("Run", "Global"):
+        or_config[override_type] = {}
+        for preset, overrides in cast(
+            "dict",
+            (
+                raw_config
+                .get("Output Requirements", {})
+                .get(override_type, {})
+            )
+        ).items():
+            preset_vals = load_preset(
+                preset,
+                "output_requirements"
+            )
+            if overrides:
+                preset_vals = preset_vals | overrides
+            if preset_vals:
+                or_config[override_type][preset] = (
+                    preset_vals
+                )
+
+    if "Run" not in raw_config.get("Output Requirements", {}):
+        or_config["Run"]["NetCDF"] = load_preset(
+            "NetCDF",
+            "output_requirements"
+        )
+
+    if "Global" not in raw_config.get("Output Requirements", {}):
+        or_config["Global"]["Particles"] = load_preset(
+            "Particles",
+            "output_requirements"
+        )
+
+    config["OutputRequirements"] = check_output_requirements_options(or_config)
+
+    #INFO: Check Particle/Puff Info
+    config_ppinfo = load_defaults(
+        raw_config.get("Particle + Puff Information", {}),
+        "or_ppinfo"
+    )
+    config["PPInfo"] = check_ppinfo_options(config_ppinfo)
+
+    #INFO: Check Sets of Dispersion Info
+    config_dispersion_opts = load_defaults(
+        raw_config.get("Dispersion Options", {}),
+        "sets_of_dispersion_options"
+    )
+
+    config["DispersionOptions"] = check_set_of_dispersion_options(
+        config_dispersion_opts
+    )
+
+    return config
+
 def load_config_temp(
     raw_config: dict[str, dict[str, object]],
 ) -> dict[str, object]:
@@ -280,7 +359,8 @@ def load_config(path: Path) -> EnwConfig:
     config = (
         config |
         load_config_run(raw_config) |
-        load_config_spatial(raw_config)
+        load_config_spatial(raw_config) |
+        load_config_output(raw_config)
     )
 
     config = (

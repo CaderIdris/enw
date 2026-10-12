@@ -11,7 +11,7 @@ from enw.types import (
     AbsOrRelOpts,
     RandomSeedOpts,
     HorizontalCoordSystems,
-    VerticalCoordSystems,
+    VerticalCoordSystems, TAvOrIntOpts, QuantityOpts,
 )
 from enw.utils import (
     check_pos_int,
@@ -687,7 +687,7 @@ def check_set_of_dispersion_options(
         ("puff_time", str),
         ("sync_time", str),
         ("puff_interval", str),
-        ("deep_convection", bool),
+        ("deep_convection", str),
         ("radioactive_decay", bool),
         ("agent_decay", bool),
         ("dry_deposition", bool),
@@ -802,7 +802,7 @@ def check_horizontal_grid_options(
         check_keys(
             set(hgrid_config.keys()),
             expected_keys["root"],
-            f"Horizontal Grid ({hgrid})"
+            f"horizontal grid ({hgrid})"
         )
         for val, expected_type in vals["root"]:
             check_type(f"{hgrid}.{val}", hgrid_config.get(val), expected_type)
@@ -846,3 +846,99 @@ def check_horizontal_grid_options(
                 hgrid_config.pop(k)
 
     return cast("dict[str, HorizontalGridsConfig]", config)
+
+
+def check_output_requirements_options(
+    config: dict[str, dict[str, dict[str, object]]],
+) -> OutputRequirementsConfig:
+    """"""
+    expected_base_keys = {"Global", "Run"}
+    vals = (
+        ("species", str | None),
+        ("source", str | None),
+        ("h_grid", str | None),
+        ("z_grid", str | None),
+        ("t_grid", str | None),
+        ("bl_average", bool | None),
+        ("t_av_or_int", str),
+        ("av_time", str | None),
+        ("num_av_times", int | None),
+        ("sync", bool),
+        ("across", str | None),
+        ("separate_file", str | None),
+        ("output_format", str | None),
+        ("output_route", str),
+        ("output_group", str | None),
+    )
+    literals: tuple[tuple[str, str, _LiteralGenericAlias], ...] = (
+        ("t_av_or_int", "TAvOrIntOpts", TAvOrIntOpts),
+        ("quantity", "QuantityOpts", QuantityOpts),
+    )
+    check_keys(
+        set(config.keys()),
+        expected_base_keys,
+        "Output Requirements"
+    )
+    for base_name, base_dict in config.items():
+        for output_name, output_dict in base_dict.items():
+            check_keys(
+                {i[0] for i in vals},
+                set(output_dict.keys()),
+                f"Output Requirements.{base_name}.{output_name}"
+            )
+            for val, expected_type in vals:
+                check_type(
+                    f"Output Requirements.{base_name}.{output_name}.{val}",
+                    output_dict.get(val),
+                    expected_type
+                )
+            for val, literal_name, literal_type in literals:
+                check_literal(
+                    f"Output Requirements.{base_name}.{output_name}.{val}",
+                    cast("str", output_dict.get(val, "MISSING")),
+                    literal_name,
+                    literal_type
+                )
+    return config
+
+
+def check_ppinfo_options(
+    config: dict[str, dict[str, object]],
+) -> PPInfoConfig:
+    """"""
+    vals = (
+        ("particles", bool),
+        ("puffs", bool),
+        ("met", bool),
+        ("mass", bool),
+        ("plume_rise", bool),
+        ("dispersion_scheme", bool),
+        ("puff_family", bool),
+        ("fate_info", bool),
+        ("sync", bool),
+        ("output_route", str),
+    )
+    literals: tuple[tuple[str, str, _LiteralGenericAlias], ...] = (
+        ("h_coord", "HorizontalCoordSystems", HorizontalCoordSystems),
+        ("z_coord", "VerticalCoordSystems", VerticalCoordSystems),
+    )
+    for pp_name, pp_info in config.items():
+        check_keys(
+            {i[0] for i in vals},
+            set(pp_info.keys()),
+            f"Particle/Puff Info.{pp_name}"
+        )
+        for val, expected_type in vals:
+            check_type(
+                f"Particle/Puff Info.{pp_name}.{val}",
+                pp_info.get(val),
+                expected_type
+            )
+        for val, literal_name, literal_type in literals:
+            check_literal(
+                f"Particle/Puff Info.{pp_name}.{val}",
+                cast("str", pp_info.get(val)),
+                literal_name,
+                literal_type
+            )
+    return config

@@ -3,6 +3,7 @@ from pathlib import Path
 import openghg_defs
 import pytest
 
+import enw.config._presets as _presets
 import enw.utils.openghg._defs as _defs
 
 mp = pytest.MonkeyPatch()
@@ -25,4 +26,9 @@ mp.setattr(
     _defs,
     "openghg_defs_data",
     Path("tests/test_utils/test_openghg/files/")
+)
+mp.setattr(
+    _presets,
+    "preset_files",
+    Path("tests/test_config/files/presets/")
 )

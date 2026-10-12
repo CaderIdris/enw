@@ -36,7 +36,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.package-data]
 "enw.files.config.defaults" = ["*.toml"]
-"enw.files.config.presets" = ["*.toml"]
+"enw.files.config.presets" = ["**/*.toml"]
 "enw.files.block_templates" = ["*.jinja"]
 "enw.files.sql" = ["**/*.sql"]
 #BUG: Get rid of temp eventually

@@ -72,11 +72,35 @@ def generate_output(config: EnwConfig) -> str:
         **config["Output"]
     )
 
+    for v in config["OutputRequirements"]["Global"].values():
+        if "t_grid" not in v:
+            v["t_grid"] = "TGrid"
+
+    global_output_requirements = block.Fields.setup(
+        rows=config["OutputRequirements"]["Global"]
+    )
     #TODO: Finish pls
+    pp_info = block.PPInfo.setup(
+        rows=config["PPInfo"]
+    )
+
+    domain_name = next(iter(config["Domains"].keys()))
+
+    sets_of_dispersion_options = block.DispersionOptions.setup(
+        **config["DispersionOptions"],
+        computational_domain=domain_name,
+    )
 
     return "\n\n".join([
-        str(output)
+        str(output),
+        str(global_output_requirements),
+        str(pp_info),
+        str(sets_of_dispersion_options)
     ])
+
+
+def generate_time(config: EnwConfig) -> str:
+    """"""
 
 
 def parse_default_args() -> argparse.Namespace:
@@ -131,7 +155,7 @@ def enw() -> None:
             )
 
 
-def build(config_file: Path, output: Path) -> int:
+def build(config_file: Path, output: Path) -> None:
     """"""
     config = load_config(config_file)
     # print(config)

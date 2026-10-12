@@ -1331,7 +1331,7 @@ class DispersionOptions(NAMEIIIHeaderInputBlock):
     computational_domain: str
     puff_interval: TimeInterval
     delta_opt: str #INFO: I'm not sure about this one so use str for now
-    time_of_fixed_met: DateTime
+    time_of_fixed_met: DateTime | None
     deep_convection: DeepConvectionOpts
     radioactive_decay: Switch
     agent_decay: Switch
@@ -1373,7 +1373,7 @@ class DispersionOptions(NAMEIIIHeaderInputBlock):
         computational_domain: str,
         puff_interval: str,
         delta_opt: str,
-        time_of_fixed_met: str,
+        time_of_fixed_met: str | None = None,
         deep_convection: str,
         radioactive_decay: bool,
         agent_decay: bool,
@@ -1659,8 +1659,11 @@ class DispersionOptions(NAMEIIIHeaderInputBlock):
             time_intervals[name] = make_time_interval(val)
 
         #INFO: Check datetimes
-        datetimes: dict[str, DateTime] = {}
+        datetimes: dict[str, DateTime | None] = {}
         for name, val in _datetimes:
+            if val is None:
+                datetimes[name] = None
+                continue
             check_type(name, val, str)
             check_datetime(name, val)
             datetimes[name] = DateTime(val)

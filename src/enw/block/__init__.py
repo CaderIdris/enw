@@ -25,7 +25,8 @@ from ._run import (
     Output,
     Restart,
     MultipleCase,
-    OpenMP
+    OpenMP,
+    DispersionOptions
 )
 from ._output import Fields, PPInfo
 from ._source import Species, Sources, SpeciesUses
@@ -33,6 +34,7 @@ from ._temporal import TemporalGrids
 
 __all__ = [
     "Array",
+    "DispersionOptions",
     "Domains",
     "Fields",
     "FlowAttributes",
