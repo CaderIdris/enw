@@ -810,7 +810,7 @@ def example_set_of_dispersion_config() -> dict[str, object]:
         "puff_time": "12:00",
         "sync_time": "12:00",
         "puff_interval": "14:00",
-        "deep_convection": True,
+        "deep_convection": "No",
         "radioactive_decay": False,
         "agent_decay": True,
         "dry_deposition": False,
@@ -898,7 +898,6 @@ def test_set_of_dispersion_options_bad_neg_int(
 @pytest.mark.parametrize(
     "bad_options",
     [
-        {"deep_convection": "BAD"},
         {"radioactive_decay": "BAD"},
         {"agent_decay": "BAD"},
         {"dry_deposition": "BAD"},

@@ -343,6 +343,7 @@ def test_load_config_no_output_error(tmp_path: pytest.TempPathFactory):
     good_config = load_config(Path("./tests/test_config/files/test.toml"))
     good_config.pop("Output")
     good_config.pop("MultipleCase")
+    good_config["Horizontal Grids"] = good_config["HorizontalGrid"]
     good_config["Species"]["C3"].pop("surface_resistance")
 
     bad_config = tmp_path / "no_output.toml"
