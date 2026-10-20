@@ -40,7 +40,8 @@ def example_main_config() -> dict[str, Any]:
         "absolute_or_relative": "Absolute",
         "fixed_met": True,
         "flat_earth": True,
-        "random_seed": "Fixed (Parallel)"
+        "random_seed": "Fixed (Parallel)",
+        "split_by": "1 day"
     }
 
 

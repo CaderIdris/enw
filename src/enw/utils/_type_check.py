@@ -1,4 +1,5 @@
 """Utilities for type checking arguments."""
+import datetime as dt
 from enum import StrEnum
 from pathlib import Path
 import re
@@ -26,27 +27,27 @@ class NAMEDateTimeEnum(StrEnum):
 _non_descriptive_regex = re.compile(
     "^" #INFO: Start of string
     r"\s*" #INFO: Optional spaces
-    r"\-{,1}" #INFO: Optional negative sign
+    r"(?P<minus>\-){,1}" #INFO: Optional negative sign
     r"\s*" #INFO: Optional spaces
     "(?:" #INFO: Start of number of days
-    r"(?:[1-9]\d*|0)d" #INFO: Number of days
+    r"(?P<days>[1-9]\d*|0)d" #INFO: Number of days
     "){,1}" #INFO: End of number of days
     r"\s*" #INFO: Optional spaces
-    r"\d{1,}" #INFO: Number of hours
+    r"(?P<hours>\d{1,})" #INFO: Number of hours
     r"\s*" #INFO: Optional spaces
     ":" #INFO: Separator of hours and minutes
     r"\s*" #INFO: Optional spaces
-    r"\d{1,}" #INFO: Number of seconds
+    r"(?P<minutes>\d{1,})" #INFO: Number of minutes
     r"\s*" #INFO: Optional spaces
     "(?:" #INFO: Start of number of seconds
     r"\:" #INFO: Separator of minutes and seconds
     r"\s*" #INFO: Optional spaces
-    r"\d{1,}" # INFO: Number of seconds
+    r"(?P<seconds>\d{1,})" # INFO: Number of seconds
     r"\s*" #INFO: Optional spaces
     "(?:" #INFO: Start of number of milliseconds
     r"\."  #INFO: Separator of seconds and milliseconds
     r"\s*" #INFO: Optional spaces
-    r"\d{1,}" #INFO: Number of milliseconds
+    r"(?P<ms>\d{1,})" #INFO: Number of milliseconds
     "){,1}" #INFO: End of number of milliseconds
     "){,1}" #INFO: End of number of seconds
     r"\s*" #INFO: Optional spaces
@@ -56,14 +57,14 @@ _non_descriptive_regex = re.compile(
 _descriptive_regex = re.compile(
     "^" #INFO: Start of string
     r"\s*" #INFO: Optional spaces
-    "-{,1}" #INFO: Optional negative sign
+    "(?P<minus>-{,1})" #INFO: Optional negative sign
     r"\s*" #INFO: Optional spaces
     "(?:" #INFO: Start of time interval
-    r"(?:\d*\s*day\s*){,1}" #INFO: Number of days
-    r"(?:\d*\s*hr\s*){,1}" #INFO: Number of hours
-    r"(?:\d*\s*min\s*){,1}" #INFO: Number of minutes
-    r"(?:\d*\s*(?:\.\s*\d*\s*){,1}sec\s*){,1}" #INFO: Number of seconds
-    #INFO: and milliseconds
+    r"(?:(?P<days>\d*)\s*day\s*){,1}" #INFO: Number of days
+    r"(?:(?P<hours>\d*)\s*hr\s*){,1}" #INFO: Number of hours
+    r"(?:(?P<minutes>\d*)\s*min\s*){,1}" #INFO: Number of minutes
+    r"(?:(?P<seconds>\d*)\s*(?:\.\s*(?P<ms>\d*)\s*){,1}sec\s*){,1}"
+    #INFO: Number of seconds and milliseconds
     ")" #INFO: End of time interval
     r"\s*" #INFO: Optional spaces
     "$" #INFO: End of string
@@ -537,5 +538,3 @@ def parse_time_string(string: str) -> NAMEDateTimeEnum:
     if is_datetime:
         return NAMEDateTimeEnum.DateTime
     return NAMEDateTimeEnum.Invalid
-
-

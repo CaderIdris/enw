@@ -1,5 +1,6 @@
 """"""
 import argparse
+import datetime as dt
 import enum
 import io
 from pathlib import Path
@@ -8,6 +9,7 @@ from typing import TYPE_CHECKING
 
 import enw.block as block
 from enw.config import load_config
+from enw.utils import get_timedelta, dt_to_name_string
 
 from ._generate_spatial import site
 
@@ -101,7 +103,28 @@ def generate_output(config: EnwConfig) -> str:
 
 def generate_time(config: EnwConfig) -> str:
     """"""
+    duration = config["Main"]["end_time"] - config["Main"]["start_time"]
+    time_step_td = get_timedelta(config["Main"]["time_step"])
 
+    num_steps = duration // time_step_td
+    grids = {
+        "TGridEnd": {
+            "t_num": 1,
+            "t_spacing": config["Main"]["time_step"],
+            "t_min": dt_to_name_string(config["Main"]["end_time"])
+        },
+        "TGridRun": {
+            "t_num": num_steps,
+            "t_spacing": config["Main"]["time_step"],
+            "t_min": dt_to_name_string(config["Main"]["start_time"])
+        }
+    }
+
+    temporal_grids = block.TemporalGrids.setup(rows=grids)
+
+    return "\n\n".join([
+        str(temporal_grids)
+    ])
 
 def parse_default_args() -> argparse.Namespace:
     """"""
@@ -185,4 +208,11 @@ def build(config_file: Path, output: Path) -> None:
         output_file = generate_output(config)
         output_io = io.BytesIO(output_file.encode("utf-8"))
         output_info.size = output_io.getbuffer().nbytes
-        tar.addfile(output_info, output_io)
+        #INFO: Temporal input file
+        temporal_info = tarfile.TarInfo(
+            "Input Files/Configuration/Temporal.txt"
+        )
+        temporal_file = generate_time(config)
+        temporal_io = io.BytesIO(temporal_file.encode("utf-8"))
+        temporal_info.size = temporal_io.getbuffer().nbytes
+        tar.addfile(temporal_info, temporal_io)

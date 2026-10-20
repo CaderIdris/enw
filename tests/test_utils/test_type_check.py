@@ -11,7 +11,9 @@ from enw.utils import (
     check_output_string_fields,
     check_output_string_pp,
     check_type,
-    parse_time_string, check_source_strength,
+    parse_time_string,
+    check_source_strength,
+    get_timedelta
 )
 
 pytestmark = [
@@ -541,3 +543,5 @@ def test_check_output_string_pp_bad_output_type():
         match=r"is not a member of OutputColumn"
     ):
         _ = check_output_string_pp("invalid", "BAD VALUE", "BAD NAME")
+
+

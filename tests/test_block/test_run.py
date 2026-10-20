@@ -1453,3 +1453,71 @@ def test_dispersion_options_bad_literals(
         _ = DispersionOptions.setup(
             **config
         )
+
+def test_dispersion_options_time_of_fixed_met_none(
+    preset_dispersion_options: dict[str, int | str | bool]
+):
+    """Does the OpenMP class initialise?"""
+    expected_vals: dict[str, str | int | None] = {
+        "max_num_particles": 1000,
+        "max_num_full_particles": 2000,
+        "max_num_puffs": 2000,
+        "max_num_original_puffs": 4000,
+        "skew_time": "00:00",
+        "velocity_memory_time": "00:30",
+        "inhomogeneous_time": "2d 01:25",
+        "mesoscale_velocity_memory_time": "1d 00:43",
+        "puff_time": "00:00",
+        "sync_time": "00:25:30",
+        "computational_domain": "Domain",
+        "puff_interval": "00:30:10",
+        "delta_opt": "1",
+        "time_of_fixed_met": None,
+        "deep_convection": "Old",
+        "radioactive_decay": "Yes",
+        "agent_decay": "No",
+        "dry_deposition": "Yes",
+        "wet_deposition": "No",
+        "mesoscale_motions": "Yes",
+        "chemistry": "No",
+        "turbulence": "Yes",
+        "particle_ceiling": None,
+        "particle_factor": None,
+        "damping": None,
+        "a1": None,
+        "a5": None,
+        "a7": None,
+        "vertical_velocity": None,
+        "eulerian_bcs_filestem": None,
+        "eulerian_bcs_dt": None,
+        "use_next_bc_value": None,
+        "allow_particle_creation_error": None,
+        "bc_domain": None,
+        "eulerian_monotonicity": None,
+    }
+
+    tests = {}
+
+    config = preset_dispersion_options | {
+        "deep_convection": "Old",
+        "time_of_fixed_met": None,
+    }
+    disp = DispersionOptions.setup(
+        **config
+    )
+    vals = disp.__dict__
+
+    for k, v in expected_vals.items():
+        tests[f"{k} present"] = k in vals
+        tests[f"{k} correct"] = v == vals.get(k)
+
+    tests["Environment present"] = isinstance(
+        disp._environment,  #noqa: SLF001
+        Environment
+    )
+
+    for test, result in tests.items():
+        if not result:
+            print(test)
+
+    assert all(tests.values())

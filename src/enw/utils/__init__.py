@@ -4,7 +4,7 @@ from ._conversion import (
     make_switch,
     make_time_interval,
 )
-
+from ._time import get_timedelta, dt_to_name_string
 from ._type_check import (
     check_datetime,
     check_literal,
@@ -36,6 +36,8 @@ __all__ = [
     "check_source_strength",
     "check_time_interval",
     "check_type",
+    "dt_to_name_string",
+    "get_timedelta",
     "make_datetime",
     "make_switch",
     "make_time_interval",

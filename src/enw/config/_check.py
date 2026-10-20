@@ -100,13 +100,15 @@ def check_main_options(config: dict[str, object]) -> MainConfig:
         "flat_earth",
         "random_seed",
         "run_to",
-        "same_results_with_update_on_demand"
+        "same_results_with_update_on_demand",
+        "split_by"
     }
     _base_types = (
         ("Main.name", config.get("name"), str | NoneType),
         ("Main.start_time", config["start_time"], dt.datetime),
         ("Main.end_time", config["end_time"], dt.datetime),
         ("Main.time_step", config["time_step"], str),
+        ("Main.split_by", config["split_by"], str),
         ("Main.max_num_sources", config["max_num_sources"], int),
         ("Main.max_num_field_reqs", config["max_num_field_reqs"], int),
         (
@@ -153,6 +155,15 @@ def check_main_options(config: dict[str, object]) -> MainConfig:
         cast("str", config["random_seed"]),
         "RandomSeedOpts",
         RandomSeedOpts
+    )
+    #INFO: Check time_step and split_by
+    check_time_interval(
+        "Main.time_step",
+        cast("str", config["time_step"])
+    )
+    check_time_interval(
+        "Main.split_by",
+        cast("str", config["split_by"])
     )
     #WARN: Check run_to
     if "run_to" in config:
