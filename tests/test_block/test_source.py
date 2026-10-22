@@ -1070,14 +1070,12 @@ def test_init_bad_key(
 def preset_uses() -> dict[str, dict[str, str | int | float | None]]:
     """Preset rows for uses."""
     return {
-        "A": {
-            "name": "TestA",
+        "TestA": {
             "on_particles": True,
             "on_fields": False,
             "advect_field": True
         },
-        "B": {
-            "name": "TestB",
+        "TestB": {
             "on_particles": False,
             "on_fields": True,
             "advect_field": False
@@ -1090,10 +1088,10 @@ def uses_expected_str() -> dict[str, str]:
         "Header": (
             "Species Uses:\nSpecies,On Particles?,On Fields?,Advect Field?"
         ),
-        "A": (
+        "TestA": (
             "TestA,Yes,No,Yes"
         ),
-        "B": (
+        "TestB": (
             "TestB,No,Yes,No"
         )
     }
@@ -1101,26 +1099,27 @@ def uses_expected_str() -> dict[str, str]:
 @pytest.fixture
 def uses_expected_repr() -> dict[str, str]:
     return {
-        "A": "\n".join([
-            "[Species Uses]",
-            "\tname                                    : TestA",
-            "\ton_particles                            : Yes",
-            "\ton_fields                               : No",
-            "\tadvect_field                            : Yes",
-            "\tparticle_size_distribution_for_fields   : None",
-        ]),
-        "B": "\n".join([
-            "[Species Uses]",
-            "\tname                                    : TestB",
-            "\ton_particles                            : No",
-            "\ton_fields                               : Yes",
-            "\tadvect_field                            : No",
-            "\tparticle_size_distribution_for_fields   : None",
-        ]),
+        "Base": [
+            "[Species Uses]"
+        ],
+        "TestA": [
+            "\t[[TestA]]",
+            "\t\ton_particles                            : Yes",
+            "\t\ton_fields                               : No",
+            "\t\tadvect_field                            : Yes",
+            "\t\tparticle_size_distribution_for_fields   : None",
+        ],
+        "TestB": [
+            "\t[[TestB]]",
+            "\t\ton_particles                            : No",
+            "\t\ton_fields                               : Yes",
+            "\t\tadvect_field                            : No",
+            "\t\tparticle_size_distribution_for_fields   : None",
+        ]
     }
 
-@pytest.mark.parametrize("row", ["A", "B"])
-def test_init_uses(
+@pytest.mark.parametrize("row", ["TestA", "TestB"])
+def test_init_uses_single(
     row: str,
     preset_uses: dict[str, str | bool]
 ):
@@ -1128,26 +1127,25 @@ def test_init_uses(
     tests = {}
 
     uses = SpeciesUses.setup(
-        **preset_uses[row]
+        rows={row: preset_uses[row]}
     )
     expected_rows = {
-        "A": {
-            "name": "TestA",
+        "TestA": {
             "on_particles": "Yes",
             "on_fields": "No",
             "advect_field": "Yes"
         },
-        "B": {
-            "name": "TestB",
+        "TestB": {
             "on_particles": "No",
             "on_fields": "Yes",
             "advect_field": "No"
         }
     }
-    vals = uses.__dict__
-    print(vals)
+
+    vals = uses.rows
+
     for k, v in expected_rows[row].items():
-        tests[f"Correct val: {k}"] = v == vals[k]
+        tests[f"Correct val: {k}"] = v == vals[0].__dict__[k]
 
     tests["Environment present"] = isinstance(
         uses._environment,  #noqa: SLF001
@@ -1161,8 +1159,8 @@ def test_init_uses(
     assert all(tests.values())
 
 
-@pytest.mark.parametrize("row", ["A", "B"])
-def test_init_uses_str(
+@pytest.mark.parametrize("row", ["TestA", "TestB"])
+def test_init_uses_single_str(
     row: str,
     preset_uses: dict[str, dict[str, object]],
     uses_expected_str: dict[str, str]
@@ -1171,7 +1169,7 @@ def test_init_uses_str(
     tests = {}
 
     uses = SpeciesUses.setup(
-        **preset_uses[row]
+        rows={row: preset_uses[row]}
     )
 
     expected = "\n".join([
@@ -1179,7 +1177,6 @@ def test_init_uses_str(
         uses_expected_str[row],
     ])
     actual = str(uses)
-    print(expected)
     print(actual)
 
     tests["Expected str"] = actual == expected
@@ -1191,8 +1188,8 @@ def test_init_uses_str(
     assert all(tests.values())
 
 
-@pytest.mark.parametrize("row", ["A", "B"])
-def test_init_uses_repr(
+@pytest.mark.parametrize("row", ["TestA", "TestB"])
+def test_init_uses_repr_single(
     row: str,
     preset_uses: dict[str, dict[str, object]],
     uses_expected_repr: dict[str, str]
@@ -1201,13 +1198,17 @@ def test_init_uses_repr(
     tests = {}
 
     uses = SpeciesUses.setup(
-        **preset_uses[row]
+        rows={row: preset_uses[row]}
+    )
+
+    expected = "\n".join(
+        uses_expected_repr["Base"] + uses_expected_repr[row]
     )
 
     actual = repr(uses)
 
-    tests["Expected repr"] = actual == uses_expected_repr[row]
-    print(uses_expected_repr[row])
+    tests["Expected repr"] = actual == expected
+    print(expected)
     print(actual)
 
     for test, result in tests.items():
@@ -1215,25 +1216,6 @@ def test_init_uses_repr(
             print(test)
 
     assert all(tests.values())
-
-
-@pytest.mark.parametrize("bad_arg", [
-        ("name", 0),
-])
-def test_init_uses_bad_base_type(
-    bad_arg: tuple[str, str | int],
-    preset_uses: dict[str, dict[str, object]],
-):
-    """Does the Species class initialise?"""
-    vals = preset_uses["A"]
-    vals[bad_arg[0]] = bad_arg[1]
-    with pytest.raises(
-        TypeError,
-        match=r"is not.*str.*Is.*int"
-    ):
-        _ = SpeciesUses.setup(
-            **vals
-        )
 
 
 @pytest.mark.parametrize("bad_key", [
@@ -1246,14 +1228,14 @@ def test_init_uses_bad_switch(
     preset_uses: dict[str, dict[str, object]],
 ):
     """Does the Species class initialise?"""
-    vals = preset_uses["A"]
+    vals = preset_uses["TestA"]
     vals[bad_key] = "BAD VALUE"
     with pytest.raises(
         TypeError,
         match=r"is not.*bool.*Is.*str"
     ):
         _ = SpeciesUses.setup(
-            **vals
+            rows={"TestA": preset_uses["TestA"]}
         )
 
 
@@ -1265,7 +1247,7 @@ def test_init_uses_unimplemented(
     preset_uses: dict[str, dict[str, object]],
 ):
     """Does the Species class initialise?"""
-    vals = preset_uses["A"]
+    vals = preset_uses["TestA"]
     vals[bad_key] = "BAD VALUE"
     with pytest.raises(
         NotImplementedError,
@@ -1274,5 +1256,5 @@ def test_init_uses_unimplemented(
         )
     ):
         _ = SpeciesUses.setup(
-            **vals
+            rows={"TestA": preset_uses["TestA"]}
         )

@@ -252,9 +252,7 @@ def test_load_config(
         "uv_loss_rate",
         "half_life",
         "surface_resistance",
-        "on_particles",
-        "on_fields",
-        "advect_fields"
+        "uses"
     ]
     tests["Species block present"] = "Species" in test_config
     tests["At least one Species"] = len(
@@ -786,9 +784,11 @@ def test_load_openghg_single_vals_good(
                 "uv_loss_rate": 0,
                 "half_life": "Stable",
                 "surface_resistance": None,
-                "on_particles": True,
-                "on_fields": False,
-                "advect_fields": False,
+                "uses": {
+                    "on_particles": True,
+                    "on_fields": False,
+                    "advect_fields": False,
+                }
             }
         }
 
@@ -906,9 +906,11 @@ def test_load_openghg_multiple_vals_good(
                 "uv_loss_rate": 0,
                 "half_life": "Stable",
                 "surface_resistance": None,
-                "on_particles": True,
-                "on_fields": False,
-                "advect_fields": False,
+                "uses": {
+                    "on_particles": True,
+                    "on_fields": False,
+                    "advect_fields": False,
+                }
 
             },
             "E2": {
@@ -919,9 +921,11 @@ def test_load_openghg_multiple_vals_good(
                 "uv_loss_rate": 0,
                 "half_life": "Stable",
                 "surface_resistance": None,
-                "on_particles": True,
-                "on_fields": False,
-                "advect_fields": False,
+                "uses": {
+                    "on_particles": True,
+                    "on_fields": False,
+                    "advect_fields": False,
+                }
 
             }
         }
@@ -968,10 +972,11 @@ def test_load_openghg_subsets_vals_good(
             "uv_loss_rate": 0,
             "half_life": "Stable",
             "surface_resistance": None,
-            "on_particles": True,
-            "on_fields": False,
-            "advect_fields": False,
-
+            "uses": {
+                "on_particles": True,
+                "on_fields": False,
+                "advect_fields": False,
+            }
         }
     }
 

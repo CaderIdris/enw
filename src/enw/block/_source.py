@@ -1162,6 +1162,88 @@ class SourcesRow:
 
 @dataclass(kw_only=True)
 class SpeciesUses(NAMEIIIHeaderInputBlock):
+    """
+    """
+
+    rows: list[SourcesRow]
+    used_keys: dict[str, bool]
+
+    def __post_init__(self) -> None:
+        super().__init__()
+
+    @classmethod
+    def setup(
+        cls,
+        *,
+        rows: dict[str, dict[str, str | int | float | None]]
+    ) -> Sources:
+        """Configure a config block with error checking and formatting.
+
+        Parameters
+        ----------
+        rows : list[dict[str, str | int | float | Nonw]]
+            A list of sources.
+
+        """
+        converted_rows: list[SpeciesUsesRow] = [
+            SpeciesUsesRow.setup(name=name, **row) #type: ignore[ty:invalid-argument-type]
+            for name, row in rows.items()
+        ]
+        used_keys = {"name": True}
+        for row in converted_rows:
+            used_keys = {
+                k: v is not None or used_keys.get(k, False)
+                for k, v in row.__dict__.items()
+            }
+        return cls(
+            rows=converted_rows,
+            used_keys=used_keys
+        )
+
+    def __str__(self) -> str:
+        """Return the configuration block for the NAME input header file.
+
+        Passes the block configuration into the "speciesuses.jinja" block
+        template to get the appropriate configuration block.
+
+        ``` jinja title="speciesuses.jinja"
+        --8<-- "./src/enw/files/block_templates/speciesuses.jinja"
+        ```
+
+        Returns
+        -------
+        str
+            Formatted configuration block for NAME III Input Header file.
+
+        """
+        template = self._environment.get_template("speciesuses.jinja")
+        return template.render(
+            rows=[row.__dict__ for row in self.rows],
+            used_keys=self.used_keys
+        )
+
+
+    def __repr__(self) -> str:
+        """Return representation of object to print to console.
+
+        Returns
+        -------
+        str
+            Representation of object.
+
+        """
+        repr_lines = ["[Species Uses]"]
+        for row in self.rows:
+            repr_lines.append(f"\t[[{row.name}]]")
+            repr_lines.extend([
+                f"\t\t{k:<40}: {v}"
+                for k, v in row.__dict__.items()
+                if k[0] != "_" and k != "name"
+            ])
+        return "\n".join(repr_lines)
+
+@dataclass(kw_only=True)
+class SpeciesUsesRow(NAMEIIIHeaderInputBlock):
     """"""
     name: str
     on_particles: Switch
@@ -1181,7 +1263,7 @@ class SpeciesUses(NAMEIIIHeaderInputBlock):
         on_fields: bool,
         advect_field: bool,
         particle_size_distribution_for_fields: None = None
-    ) -> SpeciesUses:
+    ) -> SpeciesUsesRow:
         """"""
 
         _base_types = (
@@ -1230,47 +1312,5 @@ class SpeciesUses(NAMEIIIHeaderInputBlock):
             )
         )
 
-    def __str__(self) -> str:
-        """Return the configuration block for the NAME input header file.
-
-        Passes the block configuration into the "speciesuses.jinja" block
-        template to get the appropriate configuration block.
-
-        ``` jinja title="speciesuses.jinja"
-        --8<-- "./src/enw/files/block_templates/speciesuses.jinja"
-        ```
-
-        Returns
-        -------
-        str
-            Formatted configuration block for NAME III Input Header file.
-
-        """
-        template = self._environment.get_template("speciesuses.jinja")
-        return template.render(
-            name=self.name,
-            on_particles=self.on_particles,
-            on_fields=self.on_fields,
-            advect_field=self.advect_field,
-            particle_size_distribution_for_fields=self.particle_size_distribution_for_fields,
-        )
-
-
-    def __repr__(self) -> str:
-        """Return representation of object to print to console.
-
-        Returns
-        -------
-        str
-            Representation of object.
-
-        """
-        repr_lines = ["[Species Uses]"]
-        repr_lines.extend([
-            f"\t{k:<40}: {v}"
-            for k, v in self.__dict__.items()
-            if k[0] != "_"
-        ])
-        return "\n".join(repr_lines)
 
 

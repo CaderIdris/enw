@@ -41,7 +41,8 @@ def example_main_config() -> dict[str, Any]:
         "fixed_met": True,
         "flat_earth": True,
         "random_seed": "Fixed (Parallel)",
-        "split_by": "1 day"
+        "split_by": "1 day",
+        "max_age": "30 day"
     }
 
 
@@ -586,6 +587,11 @@ def example_species_config() -> dict[str, dict[str, object]]:
             "uv_loss_rate": 0,
             "half_life": "Stable",
             "surface_resistance": None,
+            "uses": {
+                "on_particles": True,
+                "on_fields": False,
+                "advect_fields": False
+            }
         }
     }
 

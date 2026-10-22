@@ -8,3 +8,4 @@ fixed_met = false
 flat_earth = false
 random_seed = "Random (Parallel)"
 split_by = "1 day"
+max_age = "30 day"

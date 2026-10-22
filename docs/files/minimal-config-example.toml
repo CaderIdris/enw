@@ -12,9 +12,3 @@ folder = "some/random/path"
 ["OpenGHG Presets"."Locations"."NPL"]
 
 ["Species"."Inert"]
-category = "None"
-molecular_weight = 1
-deposition_velocity = 0
-material_unit = "g"
-uv_loss_rate = 0
-half_life = "Stable"

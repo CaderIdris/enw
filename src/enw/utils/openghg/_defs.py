@@ -248,8 +248,10 @@ def get_species_info(key: str) -> dict[str, str | float]:
         "uv_loss_rate": all_info.get("uv_loss_rate", 0),
         "half_life": all_info.get("half_life", "Stable"),
         "surface_resistance": all_info.get("surface_resistance"),
-        "on_particles": True,
-        "on_fields": False,
-        "advect_fields": False
+        "uses": {
+            "on_particles": True,
+            "on_fields": False,
+            "advect_fields": False
+        }
     }
 

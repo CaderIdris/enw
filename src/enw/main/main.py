@@ -1,5 +1,6 @@
 """"""
 import argparse
+from copy import deepcopy
 import datetime as dt
 import enum
 import io
@@ -56,17 +57,6 @@ def generate_run(config: EnwConfig) -> str:
     ])
 
 
-def generate_species(config: EnwConfig) -> str:
-    """"""
-    species = block.Species.setup(
-        rows=config["Species"]
-    )
-
-    return "\n\n".join([
-        str(species)
-    ])
-
-
 def generate_output(config: EnwConfig) -> str:
     """"""
 
@@ -105,8 +95,11 @@ def generate_time(config: EnwConfig) -> str:
     """"""
     duration = config["Main"]["end_time"] - config["Main"]["start_time"]
     time_step_td = get_timedelta(config["Main"]["time_step"])
+    max_age_td = get_timedelta(config["Main"]["max_age"])
 
-    num_steps = duration // time_step_td
+    #BUG: Calculating t_num wrong! Use max_age + duration of day!
+
+    num_steps = (duration + max_age_td) // time_step_td
     grids = {
         "TGridEnd": {
             "t_num": 1,
@@ -125,6 +118,80 @@ def generate_time(config: EnwConfig) -> str:
     return "\n\n".join([
         str(temporal_grids)
     ])
+
+
+def generate_run_blocks(config: EnwConfig) -> dict[str, str]:
+    splits = {}
+    duration = config["Main"]["end_time"] - config["Main"]["start_time"]
+    split_by_td = get_timedelta(config["Main"]["split_by"])
+    time_step_td = get_timedelta(config["Main"]["time_step"])
+
+    num_splits = duration // split_by_td
+    num_steps = split_by_td // time_step_td
+
+    species_uses = {
+        k: v["uses"] for k, v in config["Species"].items()
+    }
+    species = config["Species"].copy()
+    for v in species.values():
+        if "uses" in v:
+            v.pop("uses")
+
+    num_digits_steps = len(str(num_steps))
+
+    for split in range(num_splits):
+        time = config["Main"]["start_time"] + (split_by_td * split)
+        species_step = {}
+        species_uses_step = {}
+        sources = {}
+        for step in range(num_steps):
+            start_time = time + (time_step_td * step)
+            end_time = time + (time_step_td * (step - 1))
+            species_step = species_step | {
+                f"{k}_{step:0{num_digits_steps}}": v
+                for k, v in species.items()
+            }
+            species_uses_step = species_uses_step | {
+                f"{k}_{step:0{num_digits_steps}}": v
+                for k, v in species_uses.items()
+            }
+            sources = sources | {
+                f"{species_name}_{location}_{step}": {
+                    "shape": "Cuboid",
+                    "set_of_locations": "Receptor Locations",
+                    "location": location,
+                    "h_coord": config["CoordinateSystems"]["horizontal"][0],
+                    "z_coord": config["CoordinateSystems"]["vertical"][0],
+                    "z": float(config["Locations"][location]["inlet_height"]),
+                    "dh_metres": True,
+                    "dz_metres": True,
+                    "dx": 0,
+                    "dy": 0,
+                    "dz": 20,
+                    "angle": 0,
+                    "source_strength": f"{species_name} 1.0 g/s",
+                    "plume_rise": False,
+                    "temperature": 0,
+                    "volume_flow_rate": 0,
+                    "num_particles": 20000,
+                    "max_age": "infinity",
+                    "top_hat": True,
+                    "start_time": dt_to_name_string(start_time),
+                    "stop_time": dt_to_name_string(end_time)
+                }
+                for location in config["Locations"]
+                for species_name in species
+            }
+        _species = block.Species.setup(rows=species_step)
+        _species_uses = block.SpeciesUses.setup(rows=species_uses_step)
+        _sources = block.Sources.setup(rows=sources)
+        splits[time.strftime("%Y%m%d%H%M%S")] = "\n\n".join([
+            str(_species),
+            str(_species_uses),
+            str(_sources)
+        ])
+    return splits
+        
 
 def parse_default_args() -> argparse.Namespace:
     """"""
@@ -178,41 +245,58 @@ def enw() -> None:
             )
 
 
+def write_to_tar(
+    tar: tarfile.TarFile,
+    file_path: str,
+    contents: str,
+) -> None:
+    """"""
+    info = tarfile.TarInfo(file_path)
+    contents_io = io.BytesIO(contents.encode("utf-8"))
+    info.size = contents_io.getbuffer().nbytes
+    tar.addfile(info, contents_io)
+
+
 def build(config_file: Path, output: Path) -> None:
     """"""
     config = load_config(config_file)
-    # print(config)
     # assert 0
+
     tar_path = output / f"{config["Main"]["name"]}.tar.gz"
     with tarfile.open(tar_path, "w:gz") as tar:
         #INFO: Run input file
-        run_info = tarfile.TarInfo("Input Files/Configuration/Run.txt")
         run_file = generate_run(config)
-        run_io = io.BytesIO(run_file.encode("utf-8"))
-        run_info.size = run_io.getbuffer().nbytes
-        tar.addfile(run_info, run_io)
-        #INFO: Spatial input file
-        spatial_info = tarfile.TarInfo("Input Files/Configuration/Spatial.txt")
-        spatial_file = site(config)
-        spatial_io = io.BytesIO(spatial_file.encode("utf-8"))
-        spatial_info.size = spatial_io.getbuffer().nbytes
-        tar.addfile(spatial_info, spatial_io)
-        #INFO: Species input file
-        species_info = tarfile.TarInfo("Input Files/Configuration/Species.txt")
-        species_file = generate_species(config)
-        species_io = io.BytesIO(species_file.encode("utf-8"))
-        species_info.size = species_io.getbuffer().nbytes
-        tar.addfile(species_info, species_io)
-        #INFO: Output input file (isn't that a mouthful)
-        output_info = tarfile.TarInfo("Input Files/Configuration/Output.txt")
-        output_file = generate_output(config)
-        output_io = io.BytesIO(output_file.encode("utf-8"))
-        output_info.size = output_io.getbuffer().nbytes
-        #INFO: Temporal input file
-        temporal_info = tarfile.TarInfo(
-            "Input Files/Configuration/Temporal.txt"
+        write_to_tar(
+            tar,
+            "Input Files/Configuration/Run.txt",
+            run_file
         )
+        #INFO: Spatial input file
+        spatial_file = site(config)
+        write_to_tar(
+            tar,
+            "Input Files/Configuration/Spatial.txt",
+            spatial_file
+        )
+        #INFO: Output input file (isn't that a mouthful)
+        output_file = generate_output(config)
+        write_to_tar(
+            tar,
+            "Input Files/Configuration/Output.txt",
+            output_file
+        )
+        #INFO: Temporal input file
         temporal_file = generate_time(config)
-        temporal_io = io.BytesIO(temporal_file.encode("utf-8"))
-        temporal_info.size = temporal_io.getbuffer().nbytes
-        tar.addfile(temporal_info, temporal_io)
+        write_to_tar(
+            tar,
+            "Input Files/Configuration/Temporal.txt",
+            temporal_file
+        )
+        splits = generate_run_blocks(config)
+        for split_date, split_contents in splits.items():
+            write_to_tar(
+                tar,
+                f"Input Files/Splits/{split_date}.txt",
+                split_contents
+            )
+

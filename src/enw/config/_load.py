@@ -160,18 +160,26 @@ def load_config_spatial(
     ):
         msg = "Mandatory section 'Species' not found in config."
         raise ValueError(msg)
-    config["Species"] = (
+
+    config["Species"] = {}
+
+    for preset, overrides in raw_config.get("Species", {}).items():
+        preset_vals = load_preset(
+            preset,
+            "species"
+        )
+        if overrides:
+            preset_vals = preset_vals | overrides
+        if preset_vals:
+            config["Species"][preset] = preset_vals
+
+    check_species_options(config["Species"])
+
+    config["Species"] = config["Species"] | (
         check_species_options(copy(openghg_presets["Species"]))
         if "Species" in openghg_presets else {}
     )
-    config["Species"] = config["Species"] | (
-        check_species_options(
-            cast(
-                "dict[str, dict[str, object]]",
-                raw_config.get("Species", {})
-            )
-        )
-    )
+
     if "Vertical Grids" not in raw_config:
         _logger.info(
             "Vertical Grids config not present, using defaults."

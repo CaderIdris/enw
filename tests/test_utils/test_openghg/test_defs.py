@@ -255,9 +255,11 @@ def test_get_species_info(species: str):
         "uv_loss_rate": 0,
         "half_life": "Stable",
         "surface_resistance": None,
-        "on_particles": True,
-        "on_fields": False,
-        "advect_fields": False,
+        "uses": {
+            "on_particles": True,
+            "on_fields": False,
+            "advect_fields": False,
+        }
     }
     actual = get_species_info(species)
     print(expected)

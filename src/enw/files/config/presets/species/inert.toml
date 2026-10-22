@@ -1,0 +1,11 @@
+category = "None"
+molecular_weight = 1
+deposition_velocity = 0
+material_unit = "g"
+uv_loss_rate = 0
+half_life = "Stable"
+
+[uses]
+on_particles = true
+on_fields = false
+advect_field = false

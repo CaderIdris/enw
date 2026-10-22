@@ -101,7 +101,8 @@ def check_main_options(config: dict[str, object]) -> MainConfig:
         "random_seed",
         "run_to",
         "same_results_with_update_on_demand",
-        "split_by"
+        "split_by",
+        "max_age"
     }
     _base_types = (
         ("Main.name", config.get("name"), str | NoneType),
@@ -164,6 +165,10 @@ def check_main_options(config: dict[str, object]) -> MainConfig:
     check_time_interval(
         "Main.split_by",
         cast("str", config["split_by"])
+    )
+    check_time_interval(
+        "Main.max_age",
+        cast("str", config["max_age"])
     )
     #WARN: Check run_to
     if "run_to" in config:

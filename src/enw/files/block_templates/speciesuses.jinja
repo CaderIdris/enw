@@ -1,3 +1,9 @@
+{%- set default_dict = {} -%}
+{%- for k, v in used_keys.items() -%}
+{%- set _ = default_dict.update( {k: ',' if v else '' } ) -%} 
+{%- endfor -%}
 Species Uses:
-Species{{ ',On Particles?' if on_particles is not none }}{{ ',On Fields?' if on_fields is not none }}{{ ',Advect Field?' if advect_field is not none }}{{ ',Particle Size Distribution For Fields' if particle_size_distribution_for_fields is not none }}
-{{ name }}{{ ',' ~ on_particles if on_particles is not none }}{{ ',' ~ on_fields if on_fields is not none }}{{ ',' ~ advect_field if advect_field is not none }}{{ ',' ~ particle_size_distribution_for_fields if particle_size_distribution_for_fields is not none }}
+Species{{ ',On Particles?' if used_keys['on_particles'] }}{{ ',On Fields?' if used_keys['on_fields'] }}{{ ',Advect Field?' if used_keys['advect_field'] }}{{ ',Particle Size Distribution For Fields' if used_keys['particle_size_distribution_for_fields'] }}
+{%- for row in rows %}
+{{ row['name'] }}{{ ',' ~ row['on_particles'] if row['on_particles'] is not none else default_dict['on_particles'] }}{{ ',' ~ row['on_fields'] if row['on_fields'] is not none else default_dict['on_fields'] }}{{ ',' ~ row['advect_field'] if row['advect_field'] is not none else default_dict['advect_field'] }}{{ ',' ~ row['particle_size_distribution_for_fields'] if row['particle_size_distribution_for_fields'] is not none else default_dict['particle_size_distribution_for_fields'] }}
+{%- endfor %}
