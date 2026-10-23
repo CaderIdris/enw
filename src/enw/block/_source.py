@@ -1162,7 +1162,52 @@ class SourcesRow:
 
 @dataclass(kw_only=True)
 class SpeciesUses(NAMEIIIHeaderInputBlock):
-    """
+    """Configuration for the Species Uses block for NAME III.
+
+    The `Species Uses:` block contains the following columns:
+
+    ??? information Columns
+        **Species**
+
+        Name of the source.
+
+        _Accepted Values_
+
+        Any species present in the Species block.
+
+        **On Particles?**
+
+        Species can be carried on particles?
+
+        _Accepted Values_
+
+        "Yes" or "No"
+
+        **On Fields?**
+
+        Species can be carried on fields?
+
+        _Accepted Values_
+
+        "Yes" or "No"
+
+        **Advect Field?**
+
+        Advect species that are carried on fields?
+
+        _Accepted Values_
+
+        "Yes" or "No"
+
+        **Particle Size Distribution For Fields**
+
+        Which particle size distribution to use.
+        Not currently used.
+
+        _Accepted Values_
+
+        ==Not currently implemented==
+
     """
 
     rows: list[SourcesRow]
@@ -1244,7 +1289,8 @@ class SpeciesUses(NAMEIIIHeaderInputBlock):
 
 @dataclass(kw_only=True)
 class SpeciesUsesRow(NAMEIIIHeaderInputBlock):
-    """"""
+    """A single row of the Species Uses block."""
+
     name: str
     on_particles: Switch
     on_fields: Switch
@@ -1264,8 +1310,31 @@ class SpeciesUsesRow(NAMEIIIHeaderInputBlock):
         advect_field: bool,
         particle_size_distribution_for_fields: None = None
     ) -> SpeciesUsesRow:
-        """"""
+        """Create a new row for the species uses block.
 
+        Parameters
+        ----------
+        name : str
+            Name of the species.
+            Corresponds to **Species**.
+        on_particles : bool
+            Whether species should be carried on particles.
+            Corresponds to **On Particles?**
+        on_fields : bool
+            Whether species should be carried on fields.
+            Corresponds to **On Fields?**
+        advect_field : bool
+            Whether species should advected when be carried on fields.
+            Corresponds to **Advect Field?**
+        particle_size_distribution_for_fields : None, default=None
+            Indicates which particle size distribution is to be used, if any.
+            Corresponds to **Particle Size Distribution For Fields**
+
+        Returns
+        -------
+        SpeciesUsesRow
+
+        """
         _base_types = (
             ("name", name, str),
         )

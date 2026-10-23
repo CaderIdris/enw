@@ -1,3 +1,4 @@
+"""Generate spatial blocks."""
 from typing import TYPE_CHECKING
 
 import enw.block as block
@@ -6,7 +7,19 @@ if TYPE_CHECKING:
     from enw.types import EnwConfig
 
 def site(config: EnwConfig) -> str:
-    """"""
+    """Generate spatial blocks for site runs.
+
+    Parameters
+    ----------
+    config : EnwConfig
+        Complete config for Enw, including spatial blocks.
+
+    Returns
+    -------
+    str
+        NAME input header file with all spatial blocks.
+
+    """
     horizontal = block.HorizontalCoords.setup(
         names=config["CoordinateSystems"]["horizontal"]
     )

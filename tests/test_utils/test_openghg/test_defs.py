@@ -1,5 +1,3 @@
-import openghg_defs
-from pathlib import Path
 
 import pytest
 
@@ -12,7 +10,6 @@ from enw.utils.openghg import (
     get_species_keys,
     get_species_info,
 )
-import enw.utils.openghg._defs as _defs
 
 pytestmark = [
     pytest.mark.utils,

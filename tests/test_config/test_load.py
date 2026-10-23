@@ -84,9 +84,10 @@ def test_set_defaults():
         "test-minimal.toml"
     ]
 )
-def test_load_config(
+def test_load_config( #noqa: C901
     toml: str,
 ):
+    #INFO: Ignoring the complexity warning as it's just a test
     """Test if the example config loads properly."""
     tests = {}
     test_config = load_config(Path(f"./tests/test_config/files/{toml}"))
@@ -575,7 +576,9 @@ def test_load_config_no_vertical_grids_warning(
         tests["OpenMP defaults used"] = "OpenMP" in no_openmp
         warning_text = caplog.text
 
-    tests["Main block warning"] = "Vertical Grids config not present" in warning_text
+    tests["Main block warning"] = (
+        "Vertical Grids config not present" in warning_text
+    )
 
     for test, result in tests.items():
         if not result:
@@ -696,9 +699,9 @@ def test_load_config_specific_output_requirements_with_overrides(
     tests["bl_average changed Run"] = specific_or["OutputRequirements"]["Run"][
         "preset_a"
     ]["bl_average"]
-    tests["bl_average unchanged Global"] = not specific_or["OutputRequirements"]["Global"][
-        "preset_a"
-    ]["bl_average"]
+    tests["bl_average unchanged Global"] = not specific_or[
+        "OutputRequirements"
+    ]["Global"]["preset_a"]["bl_average"]
     tests["sync changed Global"] = specific_or["OutputRequirements"]["Global"][
         "preset_a"
     ]["sync"]

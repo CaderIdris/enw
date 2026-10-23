@@ -519,7 +519,19 @@ def check_multiple_case_options(
 def check_location_options(
     config: dict[str, dict[str, object]] | dict[str, LocationConfig]
 ) -> LocationConfig:
-    """"""
+    """Check the location portion of the config file.
+
+    Parameters
+    ----------
+    config : dict[str, object]
+        The "Locations" section of the config.
+
+    Returns
+    -------
+    LocationConfig
+        The Location options, after setting defaults and type checking.
+
+    """
     expected_keys = {
         "name",
         "x",
@@ -558,7 +570,19 @@ def check_location_options(
 def check_species_options(
     config: dict[str, dict[str, object]] | dict[str, SpeciesConfig]
 ) -> SpeciesConfig:
-    """"""
+    """Check the species portion of the config file.
+
+    Parameters
+    ----------
+    config : dict[str, object]
+        The "Species" section of the config.
+
+    Returns
+    -------
+    SpeciesConfig
+        The Species options, after setting defaults and type checking.
+
+    """
     expected_keys = {
         "name",
         "category",
@@ -594,7 +618,19 @@ def check_species_options(
 def check_domain_options(
     config: dict[str, object | dict[str, object]] | dict[str, DomainConfig]
 ) -> dict[str, DomainConfig]:
-    """"""
+    """Check the domain portion of the config file.
+
+    Parameters
+    ----------
+    config : dict[str, object]
+        The "Domains" section of the config.
+
+    Returns
+    -------
+    dict[str, DomainConfig]
+        The Domain options, after setting defaults and type checking.
+
+    """
     expected_keys: dict[str, set[str]] = {
         "root": {"name", "hcoord", "zcoord", "x", "y", "z", "t"},
         "x": {"min", "max", "num", "unbounded"},
@@ -667,7 +703,19 @@ def check_domain_options(
 def check_set_of_dispersion_options(
     config: dict[str, object]
 ) -> DispersionOptionsConfig:
-    """"""
+    """Check the dispersion options portion of the config file.
+
+    Parameters
+    ----------
+    config : dict[str, object]
+        The "Dispersion Options" section of the config.
+
+    Returns
+    -------
+    DispersionOptionsConfig
+        The Dispersion Options, after setting defaults and type checking.
+
+    """
     expected_keys = {
         "max_num_particles",
         "max_num_full_particles",
@@ -745,7 +793,19 @@ def check_set_of_dispersion_options(
 def check_vertical_grids_options(
     config: dict[str, object]
 ) -> VerticalGridsConfig:
-    """"""
+    """Check the vertical grids portion of the config file.
+
+    Parameters
+    ----------
+    config : dict[str, object]
+        The "Vertical Grids" section of the config.
+
+    Returns
+    -------
+    VerticalGridsConfig
+        The Vertical Grids options, after setting defaults and type checking.
+
+    """
     expected_keys: set[str] = {
         "zcoord",
         "num",
@@ -785,7 +845,19 @@ def check_vertical_grids_options(
 def check_horizontal_grid_options(
     config: dict[str, object | dict[str, object]] | dict[str, DomainConfig]
 ) -> dict[str, HorizontalGridsConfig]:
-    """"""
+    """Check the horizontal grids portion of the config file.
+
+    Parameters
+    ----------
+    config : dict[str, object]
+        The "Horizontal Grids" section of the config.
+
+    Returns
+    -------
+    dict[str, HorizontalGridsConfig]
+        The Horizontal Grids options, after setting defaults and type checking.
+
+    """
     expected_keys: dict[str, set[str]] = {
         "root": {"name", "hcoord", "x", "y"},
         "x": {"min", "max", "num", "step"},
@@ -858,8 +930,7 @@ def check_horizontal_grid_options(
                 literal_type
             )
         for k in ("z", "t", "zcoord"):
-            if k in hgrid_config:
-                hgrid_config.pop(k)
+            hgrid_config.pop(k) if k in hgrid_config else None
 
     return cast("dict[str, HorizontalGridsConfig]", config)
 
@@ -867,7 +938,20 @@ def check_horizontal_grid_options(
 def check_output_requirements_options(
     config: dict[str, dict[str, dict[str, object]]],
 ) -> OutputRequirementsConfig:
-    """"""
+    """Check the output requirements portion of the config file.
+
+    Parameters
+    ----------
+    config : dict[str, object]
+        The "Output Requirements" section of the config.
+
+    Returns
+    -------
+    OutputRequirementsConfig
+        The output requirements config, after setting defaults and type
+        checking.
+
+    """
     expected_base_keys = {"Global", "Run"}
     vals = (
         ("species", str | None),
@@ -921,7 +1005,19 @@ def check_output_requirements_options(
 def check_ppinfo_options(
     config: dict[str, dict[str, object]],
 ) -> PPInfoConfig:
-    """"""
+    """Check the particle/puff info portion of the config file.
+
+    Parameters
+    ----------
+    config : dict[str, object]
+        The "Particle/Puff Info" section of the config.
+
+    Returns
+    -------
+    PPInfoConfig
+        The PPInfo options, after setting defaults and type checking.
+
+    """
     vals = (
         ("particles", bool),
         ("puffs", bool),

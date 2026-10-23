@@ -935,7 +935,9 @@ class VerticalGrids(NAMEIIIHeaderInputBlock):
         zcoord: VerticalCoordSystems,
         num: int | None = None,
         spacing: float | None = None,
-        min: float | None = None,
+        min: float | None = None, #noqa: A002
+        #INFO: Should i be shadowing a python builtin? No.
+        # Is it that big a deal? Also no.
         array_name: str | None = None,
         av_array_name: str | None = None,
         index_array_name: str | None = None

@@ -24,6 +24,8 @@ class MainConfig(TypedDict):
     start_time: dt.datetime
     end_time: dt.datetime
     time_step: str
+    split_by: str
+    max_age: str
 
     max_num_sources: int
     max_num_field_reqs: int
@@ -215,12 +217,24 @@ class SpeciesConfig(TypedDict):
     advect_fields: bool
 
 class OutputRequirementsConfig(TypedDict):
-    """"""
+    """Configuration variables for the Output Requirements input blocks.
+
+    This TypedDict represents all the configuration variables for the
+    `Output Reqiurements` blocks in the NAME III Input Header files, using pure
+    Python types.
+    """
+
     fields: dict[str, ORFields]
     ppinfo: dict[str, ORPPInfo]
 
 class ORFields(TypedDict):
-    """"""
+    """Configuration variables for the Output Requirements - Fields block.
+
+    This TypedDict represents all the configuration variables for the
+    `Output Requirements - Fields` block in the NAME III Input Header files,
+    using pure Python types.
+    """
+
     quantity: str
     species: NotRequired[str]
     source: NotRequired[str]
@@ -239,7 +253,13 @@ class ORFields(TypedDict):
     output_group: str
 
 class ORPPInfo(TypedDict):
-    """"""
+    """Configuration variables for the Output Requirements - PP Info block.
+
+    This TypedDict represents all the configuration variables for the
+    `Output Requirements - Particle/Puff Info` block in the NAME III Input
+    Header files, using pure Python types.
+    """
+
     particles: bool
     puffs: bool
     met: bool
@@ -255,7 +275,13 @@ class ORPPInfo(TypedDict):
 
 
 class DispersionOptionsConfig(TypedDict):
-    """"""
+    """Configuration variables for the Sets of Dispersion Options input block.
+
+    This TypedDict represents all the configuration variables for the
+    `Sets of Dispersion Options` block in the NAME III Input
+    Header files, using pure Python types.
+    """
+
     max_num_particles: int
     max_num_full_particles: int
     max_num_puffs: int

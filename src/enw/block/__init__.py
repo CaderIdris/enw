@@ -1,4 +1,4 @@
-""""""
+"""Dataclasses for input header blocks."""
 
 from ._base import NAMEIIIHeaderInputBlock
 from ._flow import (

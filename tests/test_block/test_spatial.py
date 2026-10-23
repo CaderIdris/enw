@@ -1116,7 +1116,7 @@ def test_init_vertical_grids_error_array(
 def test_vertical_grids_str(
     num: int | None,
     spacing: int | None,
-    min: int | None,
+    min: int | None,  #noqa: A002
 ):
     """Does the VerticalGrids class give the right str?"""
     tests = {}
@@ -1182,7 +1182,7 @@ def test_vertical_grids_str(
 def test_vertical_grids_repr(
     num: int | None,
     spacing: int | None,
-    min: int | None,
+    min: int | None,  #noqa: A002
 ):
     """Does the VerticalGrids class give the right repr?"""
     tests = {}

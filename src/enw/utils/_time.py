@@ -59,6 +59,13 @@ def get_timedelta(string: str) -> dt.timedelta:
 
 
 def dt_to_name_string(datetime: dt.datetime) -> str:
-    """"""
+    """Convert python datetime object to NAME datetime string.
+
+    Parameters
+    ----------
+    datetime : dt.datetime
+        The datetime object to be converted.
+
+    """
     return datetime.strftime("%d/%m/%Y %H:%M:%S")
 

@@ -279,6 +279,8 @@ def load_config_temp(
 ) -> dict[str, object]:
     """Check the temporary limits on the options.
 
+    This will not be here forever.
+
     Parameters
     ----------
     raw_config : dict[str, dict[str, object]]
@@ -340,7 +342,19 @@ def load_config_temp(
 
 
 def create_run_name(config: EnwConfig) -> str:
-    """"""
+    """Automatically generate a name for the run from config.
+
+    Parameters
+    ----------
+    config : EnwConfig
+        Config for enw.
+
+    Returns
+    -------
+    str
+        Automatically generated run anme.
+
+    """
     start_time = config["Main"]["start_time"].strftime("%Y%m%d")
     end_time = config["Main"]["end_time"].strftime("%Y%m%d")
     locations = "-".join(config["Locations"].keys())

@@ -1,5 +1,4 @@
 """Utilities for type checking arguments."""
-import datetime as dt
 from enum import StrEnum
 from pathlib import Path
 import re

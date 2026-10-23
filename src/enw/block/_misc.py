@@ -103,7 +103,19 @@ class InputFiles(NAMEIIIHeaderInputBlock):
 
 @dataclass(kw_only=True)
 class Array(NAMEIIIHeaderInputBlock):
-    """"""
+    """Used to provide values to other blocks.
+
+    The `Array:` block contains the following columns:
+
+    ??? information Columns
+        **Array Values**
+
+        The values of the array
+
+        _Accepted Values_
+
+        Any
+    """
 
     name: str
     values: list[str]
@@ -122,7 +134,24 @@ class Array(NAMEIIIHeaderInputBlock):
         comments: list[str] | None = None,
         comments_name: str | None = None
     ) -> Array:
-        """"""
+        """Configure a config block with error checking and formatting.
+
+        Parameters
+        ----------
+        name : str
+            Name of the array block.
+        values : list[str | int | float]
+            Values to put in the array.
+        comments : list[str] | None, default=None
+            Comments to add to the array values.
+        comments_name : str | None, default=None
+            Name of the comments.
+
+        Returns
+        -------
+        Array
+
+        """
         check_type("name", name, str)
         if not isinstance(values, Iterable) or isinstance(values, str):
             msg = (

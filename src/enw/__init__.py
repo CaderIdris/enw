@@ -1,9 +1,21 @@
 """Init module for enw."""
 
-from . import block, custom, types
+from . import (
+    block,
+    config,
+    custom,
+    generate,
+    main,
+    types,
+    utils,
+)
 
 __all__ = [
     "block",
+    "config",
     "custom",
-    "types"
+    "generate",
+    "main",
+    "types",
+    "utils"
 ]

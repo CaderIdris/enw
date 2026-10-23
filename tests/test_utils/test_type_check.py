@@ -12,8 +12,7 @@ from enw.utils import (
     check_output_string_pp,
     check_type,
     parse_time_string,
-    check_source_strength,
-    get_timedelta
+    check_source_strength
 )
 
 pytestmark = [
