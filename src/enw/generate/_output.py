@@ -26,7 +26,7 @@ def site(config: EnwConfig) -> str:
 
     for v in config["OutputRequirements"]["Global"].values():
         if "t_grid" not in v:
-            v["t_grid"] = "TGrid"
+            v["t_grid"] = "TGridRun"
 
     global_output_requirements = block.Fields.setup(
         rows=config["OutputRequirements"]["Global"]
