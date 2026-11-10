@@ -56,7 +56,7 @@ def site(config: EnwConfig) -> dict[str, str]:
                 for k, v in species_uses.items()
             }
             sources = sources | {
-                f"{species_name}_{location}_{step}": {
+                f"{species_name}_{location}_{step:0{num_digits_steps}}": {
                     "shape": "Cuboid",
                     "set_of_locations": "Receptor Locations",
                     "location": location,
@@ -69,7 +69,9 @@ def site(config: EnwConfig) -> dict[str, str]:
                     "dy": 0,
                     "dz": 20,
                     "angle": 0,
-                    "source_strength": f"{species_name} 1.0 g/s",
+                    "source_strength": (
+                        f"{species_name}_{step:0{num_digits_steps}} 1.0 g/s"
+                    ),
                     "plume_rise": False,
                     "temperature": 0,
                     "volume_flow_rate": 0,
