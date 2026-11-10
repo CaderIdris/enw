@@ -176,13 +176,31 @@ def build_site(config: EnwConfig, output: Path) -> None:
             temporal_file
         )
         splits = gen.run.site(config)
-        for split_date, split_contents in splits.items():
+        for (
+            index, (split_date, split_contents)
+        ) in enumerate(splits.items(), start=1):
             write_to_tar(
                 tar,
                 f"Input Files/Splits/{split_date}.txt",
                 split_contents
             )
-        for met in ("MK4", "MK11"):
+            input_file_list = [
+                "./Input Files/Configuration/Run.txt",
+                "./Input Files/Configuration/Spatial.txt",
+                "./Input Files/Configuration/Output.txt",
+                "./Input Files/Configuration/Temporal.txt",
+                "./Input Files/Met/MK4.txt",
+                "./Input Files/Met/MK11.txt",
+                "./Input Files/Met/MoreMet.txt",
+                f"./Input Files/Splits/{split_date}.txt"
+            ]
+            input_contents = gen.input_files.input_files(input_file_list)
+            write_to_tar(
+                tar,
+                f"Input Files/{index}.txt",
+                input_contents
+            )
+        for met in ("MK4", "MK11", "MoreMet"):
             write_to_tar(
                 tar,
                 f"Input Files/Met/{met}.txt",
