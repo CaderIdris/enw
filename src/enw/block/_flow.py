@@ -12,7 +12,85 @@ if TYPE_CHECKING:
 
 @dataclass(kw_only=True)
 class NWPFlowModuleInstances(NAMEIIIHeaderInputBlock):
-    """"""
+    """Configuration for the NWP Flow Module Instances block for NAME III.
+
+    Te `NWP Flow Module Instances` block contains the following columns:
+    ??? information "Columns"
+        **Name**
+
+        The name fo the NWP flow module instance.
+
+        _Accepted Values_
+
+        The name of any NWP flow module instance.
+
+        ** Met Module**
+
+        The met module to use.
+
+        _Accepted Values_
+
+        Any valid met module.
+
+        **Met**
+
+        Name of the met module instance to use.
+
+        _Accepted Values_
+
+        Any valid met module instance.
+
+        **Domain**
+
+        Name of the flow domain.
+
+        _Accepted Values_
+
+        Any valid domain.
+
+        **Ancillary Met Module Instances**
+
+        Ancillary met modules instances associated with the flow module
+        instance.
+
+        _Accepted Values_
+
+        Any valid ancillary met module instances.
+
+        **Radar Met Module Instances**
+
+        Radar met module instances associated with flow module instance.
+
+        _Accepted Values_
+
+        Any valid radar met module instances.
+
+        **Update on Demand?**
+
+        Updated the module on demand?
+
+        _Accepted Values_
+
+        "Yes" or "No".
+
+        **Urban Canopy?**
+
+        Simulate the effects of an urban canopy?
+
+        _Accepted Values_
+
+        "Yes" or "No".
+
+        **Varying Free Trop Turb?**
+
+        Use varying free tropospheric turbulence parametrization?
+
+        _Accepted Values_
+
+        "Yes" or "No".
+
+    """
+
     rows: list[NWPFlowModuleInstancesRow]
     used_keys: dict[str, bool]
 
@@ -25,7 +103,19 @@ class NWPFlowModuleInstances(NAMEIIIHeaderInputBlock):
         *,
         rows: dict[str, dict[str, str]]
     ) -> NWPFlowModuleInstances:
-        """"""
+        """Set up the flow module instances block.
+
+        Parameters
+        ----------
+        rows : dict[str, dict[str, str]]
+            Rows of NWP flow module instances information.
+
+        Returns
+        -------
+        NWPFlowModuleInstances
+            NWP Flow Module Instances block containing all rows.
+
+        """
         converted_rows: list[NWPFlowModuleInstancesRow] = [
             NWPFlowModuleInstancesRow.setup(name=name, **row) #type: ignore[ty:invalid-argument-type]
             for name, row in rows.items()
@@ -86,7 +176,7 @@ class NWPFlowModuleInstances(NAMEIIIHeaderInputBlock):
 
 @dataclass(kw_only=True)
 class NWPFlowModuleInstancesRow:
-    """"""
+
     name: str
     met_module: str
     met: str
@@ -111,7 +201,38 @@ class NWPFlowModuleInstancesRow:
         urban_canopy: None = None,
         varying_free_trop_turb: None = None,
     ) -> NWPFlowModuleInstancesRow:
-        """"""
+        """Configure a row of NWP Flow Module Instances with error checking.
+
+        Parameters
+        ----------
+        name : str
+            Name of the flow module instance.
+        met_module : str
+            Name of the met module.
+        met : str
+            Name of the met module instance.
+        domain : str
+            Name of the domain.
+        update_on_demand : bool
+            Update the module on demand?
+        ancillary_met_module_instances : None, default=None
+            Ancillary met module instances associated with flow module
+            instance. ==Not currently implemented==.
+        radar_met_module_instances : None, default=None
+            Radar met module instances associated with flow module instance.
+            ==Not currently implemented==.
+        urban_canopy : None, default=None
+            Simulate urban canopy effects?
+            ==Not currently implemented==.
+        varying_free_trop_turb : None, default=None
+            Use varying free tropospheric turbulence parametrization?
+            ==Not currently implemented==.
+
+        Returns
+        -------
+        NWPFlowModuleInstancesRow
+
+        """
         _base_types = (
             ("name", name, str),
             ("met_module", met_module, str),
@@ -164,7 +285,29 @@ class NWPFlowModuleInstancesRow:
 
 @dataclass(kw_only=True)
 class FlowOrder(NAMEIIIHeaderInputBlock):
-    """"""
+    """Configuration for the Flow Order block for NAME III.
+
+    The `Flow Order` block contains the following columns:
+
+    ??? information "Columns"
+        **Flow Module**
+
+        Name of a flow module.
+
+        _Accepted Values_
+
+        Any valid flow module.
+
+        **Flow**
+
+        Name of a flow module instance.
+
+        _Accepted Values_
+
+        Any valid flow module instance.
+
+    """
+
     name: str
     rows: list[FlowOrderRow]
 
@@ -178,7 +321,21 @@ class FlowOrder(NAMEIIIHeaderInputBlock):
         name: str,
         rows: dict[str, str]
     ) -> FlowOrder:
-        """"""
+        """Set up the flow order block.
+
+        Parameters
+        ----------
+        name : str
+            Name of the block.
+        rows : dict[str, dict[str, str]]
+            Rows of flow order block.
+
+        Returns
+        -------
+        FlowOrder
+            NWP Flow Module Instances block containing all rows.
+
+        """
         converted_rows: list[FlowOrderRow] = [
             FlowOrderRow.setup(
                 flow=k,
@@ -235,7 +392,6 @@ class FlowOrder(NAMEIIIHeaderInputBlock):
 
 @dataclass(kw_only=True)
 class FlowOrderRow:
-    """"""
     flow_module: str
     flow: str
 
@@ -246,7 +402,20 @@ class FlowOrderRow:
         flow_module: str,
         flow: str
     ) -> FlowOrderRow:
-        """"""
+        """Configure a row of Flow Order with error checking.
+
+        Parameters
+        ----------
+        flow_module : str
+            Name of a flow module.
+        flow : str
+            Name of a flow module instance.
+
+        Returns
+        -------
+        FlowOrderRow
+
+        """
         _base_types = (
             ("flow_module", flow_module, str),
             ("flow", flow, str),
@@ -264,7 +433,41 @@ class FlowOrderRow:
 
 @dataclass(kw_only=True)
 class FlowAttributes(NAMEIIIHeaderInputBlock):
-    """"""
+    """Configure the Flow Attributes block for NAME III.
+
+    ??? information "Columns"
+        **Name**
+
+        Name of the flow attribute.
+
+        _Accepted Values_
+
+        - Update
+        - Convert
+        - Flow
+        - Cloud
+        - Rain
+        - Surface
+        - Soil
+        - Plant
+
+        **Flow Order**
+
+        Name of priority order for the attribute.
+
+        _Accepted Values_
+
+        - Update
+        - Convert
+        - Flow
+        - Cloud
+        - Rain
+        - Surface
+        - Soil
+        - Plant
+
+    """
+
     rows: list[FlowAttributesRow]
     used_keys: dict[str, bool]
 
@@ -277,7 +480,20 @@ class FlowAttributes(NAMEIIIHeaderInputBlock):
         *,
         rows: dict[str, str]
     ) -> FlowAttributes:
-        """"""
+        """Set up the flow order block.
+
+        Parameters
+        ----------
+        name : str
+            Name of the block.
+        rows : dict[str, str]
+            Rows of flow attributes block.
+
+        Returns
+        -------
+        FlowAttributes
+
+        """
         converted_rows: list[FlowAttributesRow] = [
             FlowAttributesRow.setup(name=k, flow_order=v)
             for k, v in rows.items()
@@ -337,7 +553,6 @@ class FlowAttributes(NAMEIIIHeaderInputBlock):
 
 @dataclass(kw_only=True)
 class FlowAttributesRow(NAMEIIIHeaderInputBlock):
-    """"""
     name: FlowAttributeOpts
     flow_order: FlowAttributeOpts
 
@@ -348,7 +563,20 @@ class FlowAttributesRow(NAMEIIIHeaderInputBlock):
         name: str,
         flow_order: str
     ) -> FlowAttributesRow:
-        """"""
+        """Configure a row of Flow Attributes with error checking.
+
+        Parameters
+        ----------
+        name : str
+            Name of a flow attribute.
+        flow_order : str
+            Priority order of the attribute.
+
+        Returns
+        -------
+        FlowAttributesRow
+
+        """
         _literals =  (
             (
                 "name",
