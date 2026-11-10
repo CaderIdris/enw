@@ -25,8 +25,6 @@ def site(config: EnwConfig) -> str:
     time_step_td = get_timedelta(config["Main"]["time_step"])
     max_age_td = get_timedelta(config["Main"]["max_age"])
 
-    #BUG: Calculating t_num wrong! Use max_age + duration of day!
-
     num_steps = (duration + max_age_td) // time_step_td
     grids = {
         "TGridEnd": {
