@@ -53,18 +53,18 @@ class HorizontalCoords(NAMEIIIHeaderInputBlock):
 
     The `Horizontal Coordinate Systems` block currently contains a single
     column:
+    ??? information "Columns"
+        **Name**
 
-    **Name**
+        The name of the grid.
 
-    The name of the grid.
+        _Accepted Values_
 
-    _Accepted Values_
-
-    - "Lat-Long"
-    - "EMEP 50km Grid"
-    - "EMEP 150km Grid"
-    - "UK National Grid (m)"
-    - "UK National Grid (100m)"
+        - "Lat-Long"
+        - "EMEP 50km Grid"
+        - "EMEP 150km Grid"
+        - "UK National Grid (m)"
+        - "UK National Grid (100m)"
 
     !!! warning
         If required, the ability to use custom coordinate systems can be added
@@ -157,17 +157,17 @@ class VerticalCoords(NAMEIIIHeaderInputBlock):
 
     The `Vertical Coordinate Systems` block currently contains a single
     column:
+    ??? information "Columns"
+        **Name**
 
-    **Name**
+        The name of the grid.
 
-    The name of the grid.
+        _Accepted Values_
 
-    _Accepted Values_
-
-    - "m agl"
-    - "m asl"
-    - "FL"
-    - "Pa"
+        - "m agl"
+        - "m asl"
+        - "FL"
+        - "Pa"
 
     !!! warning
         If required, the ability to use custom coordinate systems can be added
@@ -250,39 +250,39 @@ class Locations(NAMEIIIHeaderInputBlock):
     """Configuration for the Locations block for NAME III.
 
     The `Locations` block contains the following columns:
+    ??? information "Columns"
+        **Name**
 
-    **Name**
+        The name of the location.
 
-    The name of the location.
+        _Accepted Values_
 
-    _Accepted Values_
+        Any valid string.
 
-    Any valid string.
+        **H-Coord**
 
-    **H-Coord**
+        Coordinate system to be used for locations.
 
-    Coordinate system to be used for locations.
+        _Accepted Values_
 
-    _Accepted Values_
+        Any horizontal coordinate system specified in the `Horizontal
+        Coordinate Systems` block.
 
-    Any horizontal coordinate system specified in the `Horizontal Coordinate
-    Systems` block.
+        **X**
 
-    **X**
+        X coordinate representation of the location.
 
-    X coordinate representation of the location.
+        _Accepted Values_
 
-    _Accepted Values_
+        Any float value lying within the x axis of the domain.
 
-    Any float value lying within the x axis of the domain.
+        **Y**
 
-    **Y**
+        Y coordinate representation of the location.
 
-    Y coordinate representation of the location.
+        _Accepted Values_
 
-    _Accepted Values_
-
-    Any float value lying within the y axis of the domain.
+        Any float value lying within the y axis of the domain.
 
     """
 
@@ -1457,6 +1457,10 @@ class DomainRow:
             Name of the location which represents the centre of the domain.
 
             Corresponds to **Location of centre**.
+
+        Returns
+        -------
+        DomainRow
 
         """
         #INFO: Check name
