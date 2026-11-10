@@ -869,14 +869,14 @@ def check_horizontal_grid_options(
         ),
         "x": (
             ("min", float | int),
-            ("max", float | int),
+            ("max", float | int | NoneType),
             ("num", int | NoneType),
             ("step", float | int | NoneType),
             ("unbounded", bool | NoneType)
         ),
         "y": (
             ("min", float | int),
-            ("max", float | int),
+            ("max", float | int | NoneType),
             ("num", int | NoneType),
             ("step", float | int | NoneType),
             ("unbounded", bool | NoneType)
