@@ -656,9 +656,6 @@ class Restart(NAMEIIIHeaderInputBlock):
 class MultipleCase(NAMEIIIHeaderInputBlock):
     """Configuration for the Multiple Case Options block for NAME III.
 
-    This is a **named block**.
-    A name can be given to it using the `name` keyword argument.
-
     The `Multiple Case Options:` block contains the following columns:
 
     **Dispersion Options Ensemble Size**
@@ -682,7 +679,6 @@ class MultipleCase(NAMEIIIHeaderInputBlock):
         this within the config will result in an error.
     """
 
-    name: str | None
     dispersion_options_ensemble_size: int
     met_ensemble_size: int
 
@@ -693,7 +689,6 @@ class MultipleCase(NAMEIIIHeaderInputBlock):
     def setup(
         cls,
         *,
-        name: str | None = None,
         dispersion_options_ensemble_size: int,
         met_ensemble_size: int
     ) -> MultipleCase:
@@ -701,16 +696,12 @@ class MultipleCase(NAMEIIIHeaderInputBlock):
 
         Parameters
         ----------
-        name : str | None
-            Name of the block.
         dispersion_options_ensemble_size : int
             The number of sets of dispersion options in the ensemble.
         met_ensemble_size : int
             The number of met cases in the ensemble.
 
         """
-        if name is not None:
-            check_type("name", name, str)
         check_type(
             "dispersion_options_ensemble_size",
             dispersion_options_ensemble_size,
@@ -727,7 +718,6 @@ class MultipleCase(NAMEIIIHeaderInputBlock):
         )
         check_pos_int("met_ensemble_size", met_ensemble_size)
         return cls(
-            name=name,
             dispersion_options_ensemble_size=dispersion_options_ensemble_size,
             met_ensemble_size=met_ensemble_size
         )
@@ -750,7 +740,6 @@ class MultipleCase(NAMEIIIHeaderInputBlock):
         """
         template = self._environment.get_template("multiplecase.jinja")
         return template.render(
-            name=self.name,
             dispersion_options_ensemble_size=(
                 self.dispersion_options_ensemble_size
             ),
