@@ -37,7 +37,7 @@ class InputFiles(NAMEIIIHeaderInputBlock):
 
     """
 
-    files: tuple[Path, ...]
+    files: tuple[str, ...]
 
     def __post_init__(self) -> None:
         super().__init__()
@@ -59,7 +59,7 @@ class InputFiles(NAMEIIIHeaderInputBlock):
         for i, f in enumerate(files):
             check_path_like(f"Input Files (Index {i})", f)
         return cls(
-            files=tuple(Path(f) for f in files)
+            files=tuple(files)
         )
 
     def __str__(self) -> str:
