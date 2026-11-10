@@ -27,7 +27,214 @@ if TYPE_CHECKING:
 
 @dataclass(kw_only=True)
 class NWPMetDefinitions(NAMEIIIHeaderInputBlock):
-    """"""
+    """Configuration for the NWP Met Definitions block for NAME III.
+
+    The `NWP et Definitions` block contains the following columns:
+    ??? information "Columns"
+        **Name**
+
+        Name of the met definition.
+
+        _Accepted Values_
+
+        Any valid met definition.
+
+        **Binary Format**
+
+        Binary format of the met data.
+
+        _Accepted Values_
+
+        - BIG_ENDIAN
+        - NATIVE
+
+        **File Type**
+
+        File format.
+
+        _Accepted Values_
+
+        - Name II
+        - PP
+        - GRIB
+        - NetCDF
+
+        **dT**
+
+        Time interval of met data.
+
+        _Accepted Values_
+
+        Valid time interval.
+
+        **T0**
+
+        Reference time for met data.
+
+        _Accepted Values_
+
+        Valid datetime.
+
+        **Day Per File**
+
+        One met file per day or per time interval.
+
+        _Accepted Values_
+
+        "Yes" or "No".
+
+        **Prefix**
+
+        Prefix to met files.
+
+        _Accepted Values_
+
+        Valid prefix.
+
+        **Suffix**
+
+        Suffix to met files.
+
+        _Accepted Values_
+
+        Valid suffix.
+
+        **Next Heat Flux**
+
+        Should interpolation in time not be performed for heat flux and
+        stress. Appropriate if fluxes are time averaged quantities.
+
+        _Accepted Values_
+
+        "Yes" or "No".
+
+        **Next Precipitation**
+
+        Should interpolation in time not be performed for precipitation.
+        Appropriate if fluxes are time averaged quantities.
+
+        _Accepted Values_
+
+        "Yes" or "No".
+
+        **Next Cloud**
+
+        Should interpolation in time not be performed for cloud.
+        Appropriate if fluxes are time averaged quantities.
+
+        _Accepted Values_
+
+        "Yes" or "No".
+
+        **Mesoscale SigU**
+
+        Default value of the standard deviation of the horizontal velocity for
+        unresolved mesoscale motions.
+
+        _Accepted Values_
+
+        Float value.
+
+        **Mesoscale TauU**
+
+        Default value of the horizontal Lagrangian timescale for unresolved
+        mesoscale motions.
+
+        _Accepted Values_
+
+        Float value.
+
+        **Met File Structure Definition**
+
+        Name of the met file structure definition that gives the format of the
+        met data.
+
+        _Accepted Values_
+
+        Any valid structure definition.
+
+        **Z-Coord - W**
+
+        Vertical coordinate, where W is rate of change.
+
+        _Accepted Values_
+
+        Any specified vertical coordinate system.
+
+        **Z-Coord - Cloud Height**
+
+        Vertical coordinate system used for cloud heights/
+
+        _Accepted Values_
+
+        Any specified vertical coordinate system.
+
+        **Z-Grid**
+
+        Name of the main vertical grid.
+
+        _Accepted Values_
+
+        Any specified vertical grid.
+
+        **Z-Grid - UV**
+
+        Name of the main vertical grid for U and V.
+
+        _Accepted Values_
+
+        Any specified vertical grid.
+
+        **Z-Grid - W**
+
+        Name of the main vertical grid for W.
+
+        _Accepted Values_
+
+        Any specified vertical grid.
+
+        **Z-Grid - P**
+
+        Name of the main vertical grid for pressure.
+
+        _Accepted Values_
+
+        Any specified vertical grid.
+
+        **H-Grid**
+
+        Name of main horizontal grid.
+
+        _Accepted Values_
+
+        Any specified horizontal grid.
+
+        **H-Grid - U**
+
+        Name of horizontal grid for U.
+
+        _Accepted Values_
+
+        Any specified horizontal grid.
+
+        **H-Grid - V**
+
+        Name of horizontal grid for V.
+
+        _Accepted Values_
+
+        Any specified horizontal grid.
+
+        **Topography File**
+
+        Name of a topography file.
+
+        _Accepted Values_
+
+        Any valid topography file.
+
+    """
+
     rows: list[NWPMetDefinitionsRow]
     used_keys: dict[str, bool]
 
@@ -40,7 +247,19 @@ class NWPMetDefinitions(NAMEIIIHeaderInputBlock):
         *,
         rows: dict[str, dict[str, str | bool | float | int]]
     ) -> NWPMetDefinitions:
-        """"""
+        """Set up the met definitions block.
+
+        Parameters
+        ----------
+        rows : list[dict[str, str | dict[str, str | float | int | bool]]]
+            Rows of met definitions information.
+
+        Returns
+        -------
+        NWPMetDefinitions
+            NWPMetDefinitions block containing all rows.
+
+        """
         converted_rows: list[NWPMetDefinitionsRow] = [
             NWPMetDefinitionsRow.setup(name=name, **row) #type: ignore[ty:invalid-argument-type]
             for name, row in rows.items()
@@ -100,7 +319,6 @@ class NWPMetDefinitions(NAMEIIIHeaderInputBlock):
 
 @dataclass(kw_only=True)
 class NWPMetDefinitionsRow:
-    """"""
 
     name: str
     binary_format: BinaryFormatOpts
@@ -156,7 +374,116 @@ class NWPMetDefinitionsRow:
         topography_file: str,
         min_time: None = None
     ) -> NWPMetDefinitionsRow:
-        """"""
+        """Configure a NWP met definitions row with error checking.
+
+        Parameters
+        ----------
+        name : str
+            Name of the NWP met definition.
+
+            Corresponds to ==Name==.
+        binary_format : str
+            Binary format of the met data.
+
+            Corresponds to ==Binary Format==.
+        file_type : str
+            File format.
+
+            Corresponds to ==File Type==.
+        time_interval : str
+            Time interval of the met data.
+
+            Corresponds to ==dT==.
+        day_per_file : bool
+            One met file per day or per time interval.
+
+            Corresponds to ==Day Per File==.
+        prefix : str
+            Prefix to met files.
+
+            Correponds to ==Prefix==.
+        suffix : str
+            Suffix to met files.
+
+            Correponds to ==Suffix==.
+        next_heat_flux : bool
+            Don't perform interpolation in time for heat flux and stress.
+
+            Corresponds to ==Next Heat Flux==.
+        next_precipitation : bool
+            Don't perform interpolation in time for precipitation.
+
+            Corresponds to ==Next Precipitation==.
+        next_cloud : bool
+            Don't perform interpolation in time for cloud.
+
+            Corresponds to ==Next Cloud==.
+        mesoscale_sigu : float
+            Default value of the standard deviation of horizontal velocity for
+            unresolved mesoscale motions.
+
+            Corresponds to ==Mesoscale SigU==.
+        mesoscale_tauu : float
+            Default value of the horizontal Lagrangian timescale for
+            unresolved mesoscale motions.
+
+            Corresponds to ==Mesoscale TauU==.
+        met_file_structure_definition : str
+            Name of the met file structure definition that gives the format of
+            the met data.
+
+            Corresponds to ==Met File Structure Definition==.
+        z_coord_w : str
+            Vertical coordinate system where W is the rate of change.
+
+            Corresponds to ==Z-Coord - W==.
+        z_coord_cloud_height : str
+            Vertical coordinate system for cloud heights.
+
+            Corresponds to ==Z-Coord - Cloud Height==.
+        z_grid : str
+            Name of main vertical grid.
+
+            Corresponds to ==Z-Grid==.
+        z_grid_u_v : str
+            Name of vertical grid for U and V.
+
+            Corresponds to ==Z-Grid - UV==.
+        z_grid_w : str
+            Name of vertical grid for W.
+
+            Corresponds to ==Z-Grid - W==.
+        z_grid_p : str
+            Name of vertical grid for pressure.
+
+            Corresponds to ==Z-Grid - P==.
+        h_grid : str
+            Name of main horizontal grid.
+
+            Corresponds to ==H-Grid==.
+        h_grid_u : str
+            Name of horizontal grid for U.
+
+            Corresponds to ==H-Grid - U==.
+        h_grid_v : str
+            Name of horizontal grid for V.
+
+            Corresponds to ==H-Grid - V==.
+        topography_file : str
+            Name of the topography file.
+
+            Corresponds to ==Topography File==.
+        min_time : None, default=None
+            Reference time for met data.
+
+            Corresponds to ==T0==.
+
+        Returns
+        -------
+        NWPMetDefinitionsRow
+            Single row for the NWP Met Definitions block.
+
+        """
         _base_types = (
             ("name", name, str),
             ("prefix", prefix, str),
@@ -368,7 +695,6 @@ class NWPMetModuleInstances(NAMEIIIHeaderInputBlock):
 
 @dataclass(kw_only=True)
 class NWPMetModuleInstancesRow:
-    """"""
     name: str
     min_bl_depth: float
     max_bl_depth: float
@@ -577,7 +903,6 @@ nwpmetfilestructuredefinitions.jinja"
 
 @dataclass(kw_only=True)
 class NWPMetFileStructureDefinitionsRow:
-    """"""
     field_name: str
     lowest_level: int
     highest_level: int | Literal["Top"]
