@@ -912,13 +912,8 @@ def check_horizontal_grid_options(
                         0.5 * cast("float", hgrid_config[sub]["step"])
                     )
                 )
-                hgrid_config[sub]["max"] = (
-                    cast("float", hgrid_config[sub]["max"]) + (
-                        0.5 * cast("float", hgrid_config[sub]["step"])
-                    )
-                )
-                if "num" in hgrid_config[sub]:
-                    hgrid_config[sub].pop("num")
+                if "max" in hgrid_config[sub]:
+                    hgrid_config[sub].pop("max")
 
             if "unbounded" in hgrid_config[sub]:
                 hgrid_config[sub].pop("unbounded")
