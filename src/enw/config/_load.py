@@ -337,6 +337,9 @@ def load_config_temp(
     mk11_path = files("enw.files.temp").joinpath("Mk11.txt")
     with as_file(mk11_path) as mk11, mk11.open("r") as file:
         config["MK11"] = file.read()
+    more_met_path = files("enw.files.temp").joinpath("MoreMet.txt")
+    with as_file(more_met_path) as more_met, more_met.open("r") as file:
+        config["MoreMet"] = file.read()
 
     return config
 
