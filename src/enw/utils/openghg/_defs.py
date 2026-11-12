@@ -126,7 +126,7 @@ def get_domain_info(
         latitudes = list(latitude_file.readlines())
         vals["y_min"] = float(latitudes[0])
         vals["y_max"] = float(latitudes[-1])
-        vals["y_num"] = len(latitudes)
+        vals["y_count"] = len(latitudes)
     vals["y_step"] = float(all_info["latitude_increment"])
 
     lons = openghg_defs_data / all_info["longitude_file"]
@@ -134,7 +134,7 @@ def get_domain_info(
         longitudes = list(longitude_file.readlines())
         vals["x_min"] = float(longitudes[0])
         vals["x_max"] = float(longitudes[-1])
-        vals["x_num"] = len(longitudes)
+        vals["x_count"] = len(longitudes)
     vals["x_step"] = float(all_info["longitude_increment"])
 
     return {
@@ -142,14 +142,14 @@ def get_domain_info(
         "x": {
             "min": vals["x_min"],
             "max": vals["x_max"],
-            "num": vals["x_num"],
+            "count": vals["x_count"],
             "step": vals["x_step"],
             "unbounded": False
         },
         "y": {
             "min": vals["y_min"],
             "max": vals["y_max"],
-            "num": vals["y_num"],
+            "count": vals["y_count"],
             "step": vals["y_step"],
             "unbounded": False
         },

@@ -63,6 +63,8 @@ def site(config: EnwConfig) -> dict[str, str]:
         species_step = {}
         species_uses_step = {}
         sources = {}
+        or_fields = {}
+
 
         for step in range(num_steps):
             start_time = time + (time_step_td * step)
@@ -104,6 +106,26 @@ def site(config: EnwConfig) -> dict[str, str]:
                 for location in config["Locations"]
                 for species_name in species
             }
+            or_fields = or_fields | {
+                f"F_{species_name}_{location}_{step:0{num_digits_steps}}": (
+                    config["OutputRequirements"]["Run"] |
+                    {
+                        "source": (
+                            f"{species_name}_{location}_{step:0{num_digits_steps}}"
+                        ),
+                        "species": (
+                            f"{species_name}_{step:0{num_digits_steps}}"
+                        ),
+                        "h_grid": next(iter(config["HorizontalGrid"])),
+                        "z_grid": "VGrid1",
+                        "t_grid": "TGridRun",
+                        "output_group": location
+                    }
+                )
+                for location in config["Locations"]
+                for species_name in species
+            }
+
         _species = block.Species.setup(rows=species_step)
         _species_uses = block.SpeciesUses.setup(rows=species_uses_step)
         _sources = block.Sources.setup(rows=sources)

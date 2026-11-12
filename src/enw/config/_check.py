@@ -860,8 +860,8 @@ def check_horizontal_grid_options(
     """
     expected_keys: dict[str, set[str]] = {
         "root": {"name", "hcoord", "x", "y"},
-        "x": {"min", "max", "num", "step"},
-        "y": {"min", "max", "num", "step"},
+        "x": {"min", "max", "count", "step"},
+        "y": {"min", "max", "count", "step"},
     }
     vals: dict[str, tuple[tuple[str, type | UnionType], ...]] = {
         "root": (
@@ -870,14 +870,14 @@ def check_horizontal_grid_options(
         "x": (
             ("min", float | int),
             ("max", float | int | NoneType),
-            ("num", int | NoneType),
+            ("count", int | NoneType),
             ("step", float | int | NoneType),
             ("unbounded", bool | NoneType)
         ),
         "y": (
             ("min", float | int),
             ("max", float | int | NoneType),
-            ("num", int | NoneType),
+            ("count", int | NoneType),
             ("step", float | int | NoneType),
             ("unbounded", bool | NoneType)
         ),

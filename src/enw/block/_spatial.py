@@ -10,6 +10,7 @@ Covers:
 - Domains: `Domains`
 
 """
+from enw.config._check import check_keys
 from dataclasses import dataclass
 from typing import cast, TYPE_CHECKING
 
@@ -1544,8 +1545,16 @@ class DomainRow:
             end_time=t_vals["end_time"],
             duration=t_vals["duration"],
             max_travel_time=t_vals["max_travel_time"],
-            **{f"x_{k}": v for k, v in x_typed.items()}, # type: ignore[ty:invalid-argument-type]
-            **{f"y_{k}": v for k, v in y_typed.items()},
+            **{
+                f"x_{k}": v
+                for k, v in x_typed.items()
+                if k not in ("count",)
+            }, # type: ignore[ty:invalid-argument-type]
+            **{
+                f"y_{k}": v
+                for k, v in y_typed.items()
+                if k not in ("count",)
+            },
             **{f"z_{k}": v for k, v in z_typed.items()},
             hcoord=hcoord,
             zcoord=zcoord,
@@ -1581,9 +1590,11 @@ class DomainRow:
             "unbounded",
             "min",
             "max",
+            "count",
             "centre",
             "range"
         }
+        check_keys(set(vals.keys()), expected_keys, f"Domain.{name}")
         #INFO: Check max 1 value in vals if unbounded
         if vals.get("unbounded", False) and len(vals) > 1:
             msg = f"Specific values provided for {name} when unbounded."

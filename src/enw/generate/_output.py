@@ -31,7 +31,7 @@ def site(config: EnwConfig) -> str:
     global_output_requirements = block.Fields.setup(
         rows=config["OutputRequirements"]["Global"]
     )
-    #TODO: Finish pls
+
     pp_info = block.PPInfo.setup(
         rows=config["PPInfo"]
     )
