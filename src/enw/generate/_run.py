@@ -41,9 +41,29 @@ def site(config: EnwConfig) -> dict[str, str]:
 
     for split in range(num_splits):
         time = config["Main"]["start_time"] + (split_by_td * split)
+        end_time = time + split_by_td
+        time_step_td = get_timedelta(config["Main"]["time_step"])
+        max_age_td = get_timedelta(config["Main"]["max_age"])
+        num_steps = (split_by_td + max_age_td) // time_step_td
+
+        grids = {
+            "TGridEnd": {
+                "t_num": 1,
+                "t_spacing": config["Main"]["time_step"],
+                "t_min": dt_to_name_string(end_time)
+            },
+            "TGridRun": {
+                "t_num": num_steps,
+                "t_spacing": config["Main"]["time_step"],
+                "t_min": dt_to_name_string(time)
+            }
+        }
+        temporal_grids = block.TemporalGrids.setup(rows=grids)
+
         species_step = {}
         species_uses_step = {}
         sources = {}
+
         for step in range(num_steps):
             start_time = time + (time_step_td * step)
             end_time = time + (time_step_td * (step - 1))
@@ -88,6 +108,7 @@ def site(config: EnwConfig) -> dict[str, str]:
         _species_uses = block.SpeciesUses.setup(rows=species_uses_step)
         _sources = block.Sources.setup(rows=sources)
         splits[time.strftime("%Y%m%d%H%M%S")] = "\n\n".join([
+            str(temporal_grids),
             str(_species),
             str(_species_uses),
             str(_sources)

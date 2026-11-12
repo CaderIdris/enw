@@ -168,13 +168,7 @@ def build_site(config: EnwConfig, output: Path) -> None:
             "Input Files/Configuration/Output.txt",
             output_file
         )
-        #INFO: Temporal input file
-        temporal_file = gen.time.site(config)
-        write_to_tar(
-            tar,
-            "Input Files/Configuration/Temporal.txt",
-            temporal_file
-        )
+        #INFO: Generate splits
         splits = gen.run.site(config)
         for (
             index, (split_date, split_contents)
@@ -188,7 +182,6 @@ def build_site(config: EnwConfig, output: Path) -> None:
                 "./Input Files/Configuration/Run.txt",
                 "./Input Files/Configuration/Spatial.txt",
                 "./Input Files/Configuration/Output.txt",
-                "./Input Files/Configuration/Temporal.txt",
                 "./Input Files/Met/MK4.txt",
                 "./Input Files/Met/MK11.txt",
                 "./Input Files/Met/MoreMet.txt",
