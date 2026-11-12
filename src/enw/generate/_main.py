@@ -33,11 +33,19 @@ def base(config: EnwConfig) -> str:
         **config["OpenMP"]
     )
 
+    temp_restart_options = "\n".join((
+        "Restart File Options:",
+        "# Cases Between Writes,Time Between Writes,Delete Old Files?,"
+        "Write On Suspend?,",
+        ",,,,"
+    ))
+
     return "\n\n".join([
         str(main),
         str(restart_file),
         str(multiple_case_file),
-        str(openmp)
+        str(openmp),
+        temp_restart_options
     ])
 
 
