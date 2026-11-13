@@ -322,6 +322,10 @@ def insert_surface_vars(
         - The surface pressure.
     - Temperature (K)
         - The surface temperature.
+    - Latitude (°N)
+        - The latitude of the device
+    - Longitude (°E)
+        - The longitude of the device
     - Azimuth (°)
         - The angle of the sunlight relative to the surface.
     - appSZA
@@ -355,6 +359,8 @@ def insert_surface_vars(
     vals = []
     site_hash = get_hash(site)
     device_hash = get_hash(device)
+    latitude = float(nc.variables["latitude"][0])
+    longitude = float(nc.variables["longitude"][0])
     for i, time in enumerate(nc.variables["time"][:]):
         surface_hash = get_hash(f"{site_hash}{device_hash}{int(time)}")
         pressure = nc.variables["gndP"][i].ravel().data[0]
@@ -370,6 +376,8 @@ def insert_surface_vars(
                 int(time),
                 pressure,
                 temp,
+                latitude,
+                longitude,
                 azimuth,
                 app_sza,
                 qual_flag,
