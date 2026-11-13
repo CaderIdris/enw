@@ -493,7 +493,7 @@ class FieldRow:
     sync: Switch
     across: AcrossString | None
     separate_file: SeparateFileString | None
-    output_format: OutputFormatStringF
+    output_format: OutputFormatStringF | None
     output_route: OutputRouteStringF
     output_group: str
     decay_deposition: NotImplementedType | None = None #Switch
@@ -524,9 +524,9 @@ class FieldRow:
         t_grid: str,
         t_av_or_int: str,
         sync: bool,
-        output_format: str,
         output_route: str,
         output_group: str,
+        output_format: str | None = None,
         species: str | None = None,
         source: str | None = None,
         h_grid: str | None = None,
@@ -805,13 +805,17 @@ class FieldRow:
             )
             formatted_separate_file = SeparateFileString(separate_file)
         #INFO: Check output_format
-        check_type(f"{name}.output_format", output_format, str)
-        check_output_string_fields(
-            f"{name}.output_format",
-            output_format,
-            "output_format"
+        if output_format is not None:
+            check_type(f"{name}.output_format", output_format, str)
+            check_output_string_fields(
+                f"{name}.output_format",
+                output_format,
+                "output_format"
+            )
+        formatted_output_format = (
+            OutputFormatStringF(output_format)
+            if output_format is not None else None
         )
-        formatted_output_format = OutputFormatStringF(output_format)
         #INFO: Check output_route
         check_type(f"{name}.output_route", output_route, str)
         check_output_string_fields(

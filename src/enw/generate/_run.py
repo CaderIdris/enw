@@ -107,8 +107,11 @@ def site(config: EnwConfig) -> dict[str, str]:
                 for species_name in species
             }
             or_fields = or_fields | {
-                f"F_{species_name}_{location}_{step:0{num_digits_steps}}": (
-                    config["OutputRequirements"]["Run"] |
+                (
+                    f"{or_name}_{species_name}_{location}_"
+                    f"{step:0{num_digits_steps}}"
+                ): (
+                    or_row |
                     {
                         "source": (
                             f"{species_name}_{location}_{step:0{num_digits_steps}}"
@@ -124,13 +127,19 @@ def site(config: EnwConfig) -> dict[str, str]:
                 )
                 for location in config["Locations"]
                 for species_name in species
+                for or_name, or_row in (
+                    config["OutputRequirements"]["Run"].items()
+                )
             }
 
         _species = block.Species.setup(rows=species_step)
         _species_uses = block.SpeciesUses.setup(rows=species_uses_step)
         _sources = block.Sources.setup(rows=sources)
+        print(or_fields)
+        _fields = block.Fields.setup(rows=or_fields)
         splits[time.strftime("%Y%m%d%H%M%S")] = "\n\n".join([
             str(temporal_grids),
+            str(_fields),
             str(_species),
             str(_species_uses),
             str(_sources)
