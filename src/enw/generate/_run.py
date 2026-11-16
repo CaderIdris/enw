@@ -57,7 +57,7 @@ def site(config: EnwConfig) -> dict[str, str]:
             "TGridRun": {
                 "t_num": num_tgrid_steps,
                 "t_spacing": config["Main"]["time_step"],
-                "t_min": dt_to_name_string(time)
+                "t_min": dt_to_name_string(end_time)
             }
         }
         temporal_grids = block.TemporalGrids.setup(rows=grids)
