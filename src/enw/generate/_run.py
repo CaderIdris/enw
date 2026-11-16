@@ -44,13 +44,15 @@ def site(config: EnwConfig) -> dict[str, str]:
         end_time = time + split_by_td
         time_step_td = get_timedelta(config["Main"]["time_step"])
         max_age_td = get_timedelta(config["Main"]["max_age"])
-        num_tgrid_steps = (split_by_td + max_age_td) // time_step_td
+        num_tgrid_steps = ((split_by_td + max_age_td) // time_step_td) + 1
+
+        earliest = time - time_step_td - max_age_td
 
         grids = {
             "TGridEnd": {
                 "t_num": 1,
                 "t_spacing": config["Main"]["time_step"],
-                "t_min": dt_to_name_string(end_time)
+                "t_min": earliest
             },
             "TGridRun": {
                 "t_num": num_tgrid_steps,
@@ -67,8 +69,8 @@ def site(config: EnwConfig) -> dict[str, str]:
 
 
         for step in range(num_steps):
-            start_time = time + (time_step_td * step)
-            end_time = time + (time_step_td * (step - 1))
+            start_time = time + (time_step_td * (step + 1))
+            end_time = time + (time_step_td * step)
             species_step = species_step | {
                 f"{k}_{step:0{num_digits_steps}}": v
                 for k, v in species.items()
@@ -135,7 +137,6 @@ def site(config: EnwConfig) -> dict[str, str]:
         _species = block.Species.setup(rows=species_step)
         _species_uses = block.SpeciesUses.setup(rows=species_uses_step)
         _sources = block.Sources.setup(rows=sources)
-        print(or_fields)
         _fields = block.Fields.setup(rows=or_fields)
         splits[time.strftime("%Y%m%d%H%M%S")] = "\n\n".join([
             str(temporal_grids),
