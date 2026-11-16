@@ -688,6 +688,16 @@ def check_domain_options(
                 )
         for sub in ["x", "y"]:
             if "step" in cast("dict[str, object]", dom_config[sub]):
+                dom_config[sub]["min"] = (
+                    cast("float", dom_config[sub]["min"]) - (
+                        0.5 * cast("float", dom_config[sub]["step"])
+                    )
+                )
+                dom_config[sub]["max"] = (
+                    cast("float", dom_config[sub]["max"]) + (
+                        0.5 * cast("float", dom_config[sub]["step"])
+                    )
+                )
                 cast("dict[str, object]", dom_config[sub]).pop("step")
             if "num" in cast("dict[str, object]", dom_config[sub]):
                 cast("dict[str, object]", dom_config[sub]).pop("num")
@@ -907,11 +917,6 @@ def check_horizontal_grid_options(
                     expected_type
                 )
             if "step" in hgrid_config[sub]:
-                hgrid_config[sub]["min"] = (
-                    cast("float", hgrid_config[sub]["min"]) - (
-                        0.5 * cast("float", hgrid_config[sub]["step"])
-                    )
-                )
                 if "max" in hgrid_config[sub]:
                     hgrid_config[sub].pop("max")
 
