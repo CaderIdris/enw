@@ -46,13 +46,13 @@ def site(config: EnwConfig) -> dict[str, str]:
         max_age_td = get_timedelta(config["Main"]["max_age"])
         num_tgrid_steps = ((split_by_td + max_age_td) // time_step_td) + 1
 
-        earliest = time - time_step_td - max_age_td
+        earliest = time - max_age_td
 
         grids = {
             "TGridEnd": {
                 "t_num": 1,
                 "t_spacing": config["Main"]["time_step"],
-                "t_min": earliest
+                "t_min": dt_to_name_string(earliest)
             },
             "TGridRun": {
                 "t_num": num_tgrid_steps,
@@ -123,7 +123,7 @@ def site(config: EnwConfig) -> dict[str, str]:
                         ),
                         "h_grid": next(iter(config["HorizontalGrid"])),
                         "z_grid": "VGrid1",
-                        "t_grid": "TGridRun",
+                        "t_grid": "TGridEnd",
                         "output_group": location
                     }
                 )
