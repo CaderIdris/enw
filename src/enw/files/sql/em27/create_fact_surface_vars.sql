@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS fact_surface_vars (
 	temperature REAL NOT NULL,
 	latitude REAL NOT NULL,
 	longitude REAL NOT NULL,
+	altitude REAL NOT NULL,
 	azimuth REAL NOT NULL,
 	appSZA REAL NOT NULL,
 	qual_flag INT NOT NULL CHECK (qual_flag IN (0, 1)),
