@@ -18,8 +18,8 @@ pytestmark = [
 @pytest.fixture
 def file_list() -> list[str]:
     return [
-        "relative/file.txt",
-        "samedir.txt",
+        "./relative/file.txt",
+        "./samedir.txt",
         "/absolute/file.txt"
     ]
 
@@ -28,8 +28,8 @@ def input_files_expected_block() -> str:
     return "\n".join([
         "Input Files:",
         "File Names",
-        "relative/file.txt",
-        "samedir.txt",
+        "./relative/file.txt",
+        "./samedir.txt",
         "/absolute/file.txt"
     ])
 
@@ -37,8 +37,8 @@ def input_files_expected_block() -> str:
 def input_files_expected_repr() -> str:
     return "\n".join([
         "[Input Files]",
-        "\trelative/file.txt",
-        "\tsamedir.txt",
+        "\t./relative/file.txt",
+        "\t./samedir.txt",
         "\t/absolute/file.txt"
     ])
 
@@ -49,9 +49,9 @@ def test_init_input_files(
     """Does the InputFiles class initialise?"""
     tests = {}
     expected_vals = (
-        Path("relative/file.txt"),
-        Path("samedir.txt"),
-        Path("/absolute/file.txt")
+        "./relative/file.txt",
+        "./samedir.txt",
+        "/absolute/file.txt"
     )
 
     input_files = InputFiles.setup(
