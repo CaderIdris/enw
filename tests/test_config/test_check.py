@@ -1102,7 +1102,7 @@ def test_hgrid_options_bad_str(
     [
         {"min": "BAD"},
         {"max": "BAD"},
-        {"num": "BAD"},
+        {"count": "BAD"},
         {"step": "BAD"},
         {"unbounded": "BAD"}
     ]
