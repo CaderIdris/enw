@@ -53,6 +53,10 @@ def from_fs(
         Species(') to get averaging kernels for.
     locations : list[str] | None, default=None
         The locations to process.
+    start_date : dt.datetime, default=dt.datetime.min
+        Earliest date to search files from.
+    end_date : dt.datetime, default=dt.datetime.max
+        Latest date to search files until.
 
     """
     _globbed =  path.glob("**/*.nc")

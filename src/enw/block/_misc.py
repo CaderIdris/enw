@@ -6,7 +6,6 @@ Covers:
 """
 from collections.abc import Iterable
 from dataclasses import dataclass
-from pathlib import Path
 
 from enw.utils import check_path_like, check_type
 

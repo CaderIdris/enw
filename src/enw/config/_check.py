@@ -916,8 +916,7 @@ def check_horizontal_grid_options(
                     hgrid_config[sub].get(val),
                     expected_type
                 )
-            if "step" in hgrid_config[sub]:
-                if "max" in hgrid_config[sub]:
+            if "step" in hgrid_config[sub] and "max" in hgrid_config[sub]:
                     hgrid_config[sub].pop("max")
 
             if "unbounded" in hgrid_config[sub]:

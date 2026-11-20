@@ -35,8 +35,10 @@ def base(config: EnwConfig) -> str:
 
     temp_restart_options = "\n".join((
         "Restart File Options:",
-        "# Cases Between Writes,Time Between Writes,Delete Old Files?,"
-        "Write On Suspend?,",
+        (
+            "# Cases Between Writes,Time Between Writes,Delete Old Files?,"
+            "Write On Suspend?,"
+        ),
         ",,,,"
     ))
 
