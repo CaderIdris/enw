@@ -499,7 +499,6 @@ def test_restart_repr(
 @pytest.fixture
 def multiple_case_config() -> MultipleCaseConfig:
     return {
-        "name": "Test",
         "dispersion_options_ensemble_size": 1,
         "met_ensemble_size": 1
     }
@@ -507,7 +506,7 @@ def multiple_case_config() -> MultipleCaseConfig:
 @pytest.fixture
 def multiple_case_expected_block() -> str:
     return "\n".join([
-        "Multiple Case Options: Test",
+        "Multiple Case Options:",
         "Dispersion Options Ensemble Size,Met Ensemble Size",
         "1,1"
     ])
@@ -516,7 +515,6 @@ def multiple_case_expected_block() -> str:
 def multiple_case_expected_repr() -> str:
     return "\n".join([
         "[Multiple Case Options]",
-        "\tname                               : Test",
         "\tdispersion_options_ensemble_size   : 1",
         "\tmet_ensemble_size                  : 1"
     ])
@@ -528,7 +526,6 @@ def test_multiple_case_init(
     """Does the MultipleCase class initialise?"""
     tests = {}
     expected_vals = {
-        "name": "Test",
         "dispersion_options_ensemble_size": 1,
         "met_ensemble_size": 1
     }
@@ -599,7 +596,6 @@ def test_multiple_case_repr(
 @pytest.mark.parametrize(
     "bad_type",
     [
-        ("name", 1),
         ("dispersion_options_ensemble_size", "1"),
         ("met_ensemble_size", "1")
     ]
