@@ -50,6 +50,11 @@ def make_netcdf(site_pth: Path, name: str) -> Path:
     """Path for the DuckDB databases."""
     pth = site_pth / f"{name}.nc"
     varis = {}
+    root_varis = [
+        "obs_height",
+        "latitude",
+        "longitude"
+    ]
     time_varis = [
         "time",
         "gndP",
@@ -72,6 +77,10 @@ def make_netcdf(site_pth: Path, name: str) -> Path:
     with Dataset(pth, "w") as nc:
         nc.createDimension("time", 5)
         nc.createDimension("altitude", 4)
+        nc.createDimension("level", None)
+        for v in root_varis:
+            varis[v] = nc.createVariable(v, "f8", ("level",))
+            varis[v][0] = 0.1
         for v in time_varis:
             varis[v] = nc.createVariable(v, "f8", ("time",))
         for v in altitude_varis:

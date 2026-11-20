@@ -1,3 +1,4 @@
+import datetime as dt
 import logging
 from typing import Literal, TYPE_CHECKING
 
@@ -29,6 +30,9 @@ def from_fs(
     path: Path,
     conn: Connection,
     species: ValidSpecies | list[ValidSpecies],
+    locations: list[str] | None = None,
+    start_date: dt.datetime = dt.datetime.min,
+    end_date: dt.datetime = dt.datetime.max
 ) -> None:
     r"""Build the database from a filesystem.
 
@@ -47,6 +51,8 @@ def from_fs(
         Connection to the sqlite3 database.
     species : ValidSpecies | list[ValidSpecies]
         Species(') to get averaging kernels for.
+    locations : list[str] | None, default=None
+        The locations to process.
 
     """
     _globbed =  path.glob("**/*.nc")
@@ -70,7 +76,31 @@ def from_fs(
     create_tables(conn)
 
     p_files = select_all_meta_processed_files(conn)
-    files = [f for f in _globbed if f.name not in p_files]
+    files = []
+    for f in _globbed:
+        if f.name in p_files:
+            _logger.debug("Skipping %s. Reason: Already processed", f.name)
+            continue
+        if locations is not None and f.parts[-2] not in locations:
+            _logger.debug(
+                "Skipping %s. Reason: Not processing files from %s",
+                f.name,
+                f.parts[-2]
+            )
+            continue
+        date_str = f.name[-9:-3]
+        file_date = dt.datetime.strptime(date_str, "%y%m%d")
+        if start_date > file_date > end_date:
+            _logger.debug(
+                "Skipping %s. Reason: Outside date range %s - %s",
+                f.name,
+                f.parts[-2],
+                start_date.strftime("%Y-%m-%d"),
+                end_date.strftime("%Y-%m-%d")
+            )
+            continue
+        files.append(f)
+
     for file_num, file in enumerate(files, start=1):
         site_name = file.parts[-2]
         device_name = file.parts[-1].split("_")[2]
