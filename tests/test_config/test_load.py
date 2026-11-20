@@ -233,7 +233,7 @@ def test_load_config( #noqa: C901
     ]
     h_keys = [
         "min",
-        "max",
+        "count",
         "step",
     ]
     for hgrid, hgrid_config in test_config.get("HorizontalGrid", {}).items():
@@ -740,14 +740,14 @@ def test_load_openghg_single_vals_good(
                 "x": {
                     "min": -77.9000015258789,
                     "max": -76.8453140258789,
-                    "num": 4,
+                    "count": 4,
                     "step": 0.2,
                     "unbounded": False
                 },
                 "y": {
                     "min": 56.093746185302734,
                     "max": 57.499996185302734,
-                    "num": 7,
+                    "count": 7,
                     "step": 0.1,
                     "unbounded": False
                 },
@@ -828,14 +828,14 @@ def test_load_openghg_multiple_vals_good(
                 "x": {
                     "min": -77.9000015258789,
                     "max": -76.8453140258789,
-                    "num": 4,
+                    "count": 4,
                     "step": 0.2,
                     "unbounded": False
                 },
                 "y": {
                     "min": 56.093746185302734,
                     "max": 57.499996185302734,
-                    "num": 7,
+                    "count": 7,
                     "step": 0.1,
                     "unbounded": False
                 },
@@ -855,14 +855,14 @@ def test_load_openghg_multiple_vals_good(
                 "x": {
                     "min": -67.9000015258789,
                     "max": -66.8453140258789,
-                    "num": 4,
+                    "count": 4,
                     "step": 0.2,
                     "unbounded": False
                 },
                 "y": {
                     "min": 66.093746185302734,
                     "max": 67.499996185302734,
-                    "num": 7,
+                    "count": 7,
                     "step": 0.1,
                     "unbounded": False
                 },
@@ -990,14 +990,14 @@ def test_load_openghg_subsets_vals_good(
             "x": {
                 "min": -77.9000015258789,
                 "max": -76.8453140258789,
-                "num": 4,
+                "count": 4,
                 "step": 0.2,
                 "unbounded": False
             },
             "y": {
                 "min": 56.093746185302734,
                 "max": 57.499996185302734,
-                "num": 7,
+                "count": 7,
                 "step": 0.1,
                 "unbounded": False
             },
