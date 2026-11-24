@@ -13,17 +13,35 @@ if TYPE_CHECKING:
     from enw.types import EnwConfig
 
 
-class Subcommands(enum.StrEnum):
+class Subcommand(enum.StrEnum):
     """All valid subcommands."""
 
     build = "BUILD"
 
-class BuildTypes(enum.StrEnum):
+class BuildType(enum.StrEnum):
     """All valid build types."""
 
     site = "SITE"
     satellite = "SATELLITE"
     gemma = "GEMMA"
+
+def determine_build_type(config: EnwConfig) -> BuildType:
+    """Determine which type of NAME run it is.
+
+    Parameters
+    ----------
+    config : EnwConfig
+        The configuration of the run.
+
+    Returns
+    -------
+    BuildType
+        Which type of NAME run it is.
+
+    """
+    if "GEMMA" in config:
+        return BuildType.gemma
+    return BuildType.site
 
 def parse_default_args() -> argparse.Namespace:
     """Parse command line arguments.
@@ -51,7 +69,7 @@ def parse_default_args() -> argparse.Namespace:
         "build",
         help="Create NAME Input header files from a config file."
     )
-    build_subparser.set_defaults(func=Subcommands.build)
+    build_subparser.set_defaults(func=Subcommand.build)
     build_subparser.add_argument(
         "config",
         type=Path,
@@ -80,7 +98,7 @@ def enw() -> None:
     args = parse_default_args()
 
     match args.func:
-        case Subcommands.build:
+        case Subcommand.build:
             build(
                 config_file=args.config,
                 output=args.output
@@ -124,13 +142,13 @@ def build(config_file: Path, output: Path) -> None:
 
     """
     config = load_config(config_file)
-    build_type = BuildTypes.site
+    build_type = BuildType.site
     match build_type:
-        case BuildTypes.site:
+        case BuildType.site:
             build_site(config, output)
-        case BuildTypes.satellite:
+        case BuildType.satellite:
             raise NotImplementedError()
-        case BuildTypes.gemma:
+        case BuildType.gemma:
             raise NotImplementedError()
 
 
