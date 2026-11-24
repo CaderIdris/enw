@@ -217,3 +217,38 @@ def build_site(config: EnwConfig, output: Path) -> None:
                 f"Input Files/Met/{met}.txt",
                 config[met]
             )
+
+def build_gemma(config: EnwConfig, output: Path) -> None:
+    """Create input header files for gemma runs.
+
+    Parameters
+    ----------
+    config : EnwConfig
+        Parsed and error checked config file.
+    output : Path
+        Where to save the header files.
+
+    """
+    tar_path = output / f"{config["Main"]["name"]}.tar.gz"
+    with tarfile.open(tar_path, "w:gz") as tar:
+        #INFO: Run input file
+        run_file = gen.main.base(config)
+        write_to_tar(
+            tar,
+            "Input Files/Configuration/Run.txt",
+            run_file
+        )
+        #INFO: Spatial input file
+        spatial_file = gen.spatial.gemma(config)
+        write_to_tar(
+            tar,
+            "Input Files/Configuration/Spatial.txt",
+            spatial_file
+        )
+        #INFO: Output input file (isn't that a mouthful)
+        output_file = gen.output.site(config)
+        write_to_tar(
+            tar,
+            "Input Files/Configuration/Output.txt",
+            output_file
+        )

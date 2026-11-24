@@ -56,3 +56,46 @@ def site(config: EnwConfig) -> str:
     ])
 
 
+def gemma(config: EnwConfig) -> str:
+    """Generate spatial blocks for gemma runs.
+
+    Parameters
+    ----------
+    config : EnwConfig
+        Complete config for Enw, including spatial blocks.
+
+    Returns
+    -------
+    str
+        NAME input header file with all spatial blocks.
+
+    """
+    horizontal = block.HorizontalCoords.setup(
+        names=config["CoordinateSystems"]["horizontal"]
+    )
+    vertical = block.VerticalCoords.setup(
+        names=config["CoordinateSystems"]["vertical"]
+    )
+
+    hgrids = block.HorizontalGrids.setup(
+        **config["HorizontalGrid"]["EUROPE"]
+    )
+
+    vgrids = block.VerticalGrids.setup(
+        name="VGrid1",
+        **config["VerticalGrid"]
+    )
+
+    domains = block.Domains.setup(
+        rows=config["Domains"]
+    )
+
+    return "\n\n".join([
+        str(horizontal),
+        str(vertical),
+        str(hgrids),
+        str(vgrids),
+        str(domains)
+    ])
+
+
