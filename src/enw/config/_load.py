@@ -130,6 +130,11 @@ def load_config_spatial(
             )
         )
     )
+    #TODO: Need to improve this later, it'll get v messy with satellites etc
+    if "GEMMA" not in raw_config and "Locations" not in raw_config:
+        msg = "Location not present for site run."
+        raise ValueError(msg)
+
     if not openghg_presets.get("Domains") and "Domains" not in raw_config:
         msg = "Mandatory section 'Domains' not found in config."
         raise ValueError(msg)

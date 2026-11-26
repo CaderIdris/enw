@@ -319,7 +319,7 @@ class SpatialConfig(TypedDict):
     """Configuration schema of spatial configuration options."""
 
     CoordinateSystems: CoordinateSystemsConfig
-    Locations: dict[str, LocationConfig]
+    Locations: dict[str, LocationConfig] | None
     HorizontalGrid: HorizontalGridsConfig
     VerticalGrid: VerticalGridsConfig
     Domain: dict[str, DomainConfig]

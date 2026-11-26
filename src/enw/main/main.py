@@ -3,10 +3,12 @@ import argparse
 import enum
 import io
 from pathlib import Path
+import sqlite3 as sql
 import tarfile
 from typing import TYPE_CHECKING
 
 from enw.config import load_config
+from enw.custom import em27 as gemma
 import enw.generate as gen
 
 if TYPE_CHECKING:
@@ -218,6 +220,17 @@ def build_site(config: EnwConfig, output: Path) -> None:
                 config[met]
             )
 
+
+TEMP_GEMMA_SQL_PATH = Path("/Users/idris/temp/enw_gemma")
+TEMP_GEMMA_NETCDF_PATH = Path(
+    "/Users/idris/Misc/Data/SN203/New/netcdf_data_v4/"
+)
+TEMP_GEMMA_SITE_NAME = [
+    "cardiff"
+]
+TEMP_GEMMA_SPECIES = "CH4"
+
+
 def build_gemma(config: EnwConfig, output: Path) -> None:
     """Create input header files for gemma runs.
 
@@ -229,6 +242,31 @@ def build_gemma(config: EnwConfig, output: Path) -> None:
         Where to save the header files.
 
     """
+    config["GEMMA"] = {
+        "Paths": {
+            "SQL": TEMP_GEMMA_SQL_PATH,
+            "NetCDF": TEMP_GEMMA_NETCDF_PATH
+        },
+        "Sites": TEMP_GEMMA_SITE_NAME,
+        "Species": TEMP_GEMMA_SPECIES
+    }
+    config["GEMMA"]["Paths"]["SQL"].mkdir(exist_ok=True, parents=True)
+    if not config["GEMMA"]["Paths"]["SQL"].exists():
+        msg = "Provided path to NetCDF files does not exists."
+        raise ValueError(msg)
+
+    sql_path = config["GEMMA"]["Paths"]["SQL"] / "gemma.sql"
+    conn = sql.connect(sql_path)
+
+    gemma.from_fs(
+        config["GEMMA"]["Paths"]["NetCDF"],
+        conn,
+        config["GEMMA"]["Species"],
+        config["GEMMA"]["Sites"],
+        config["Main"]["start_time"],
+        config["Main"]["end_time"]
+    )
+
     tar_path = output / f"{config["Main"]["name"]}.tar.gz"
     with tarfile.open(tar_path, "w:gz") as tar:
         #INFO: Run input file
@@ -252,3 +290,5 @@ def build_gemma(config: EnwConfig, output: Path) -> None:
             "Input Files/Configuration/Output.txt",
             output_file
         )
+        #INFO: Generate splits
+        splits = gen.run.gemma(config)
