@@ -38,7 +38,7 @@ def configure_db(conn: sql.Connection) -> None:
         None
 
     """
-    logger.info("Executing configure_db.sql")
+    logger.debug("Executing configure_db.sql")
     cur = conn.cursor()
     with files(
         "enw.files.sql.em27"
@@ -97,7 +97,7 @@ def create_tables(conn: sql.Connection) -> None:
     )
     cur = conn.cursor()
     for file in sql_create_files:
-        logger.info("Executing %s", file)
+        logger.debug("Executing %s", file)
         with (
             files("enw.files.sql.em27").joinpath(file).open("r")
         ) as sql_file:
