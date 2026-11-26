@@ -21,6 +21,7 @@ from ._type_check import (
 )
 
 from . import _misc
+from ._logger import logger
 from . import openghg
 
 __all__ = [
@@ -38,6 +39,7 @@ __all__ = [
     "check_type",
     "dt_to_name_string",
     "get_timedelta",
+    "logger",
     "make_datetime",
     "make_switch",
     "make_time_interval",

@@ -4,6 +4,7 @@ import json
 from typing import cast, TYPE_CHECKING, Literal
 
 from enw.utils._misc import get_hash
+from enw.utils import logger
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -37,6 +38,7 @@ def configure_db(conn: sql.Connection) -> None:
         None
 
     """
+    logger.info("Executing configure_db.sql")
     cur = conn.cursor()
     with files(
         "enw.files.sql.em27"
@@ -95,6 +97,7 @@ def create_tables(conn: sql.Connection) -> None:
     )
     cur = conn.cursor()
     for file in sql_create_files:
+        logger.info("Executing %s", file)
         with (
             files("enw.files.sql.em27").joinpath(file).open("r")
         ) as sql_file:
@@ -128,6 +131,7 @@ def insert_device(device: str, conn: sql.Connection) -> int | None:
         files("enw.files.sql.em27").joinpath("insert_dim_device.sql").open("r")
     ) as sql_file:
         device_insert_stmt = sql_file.read()
+    logger.debug("Inserting device: %s", device)
     device_hash = get_hash(device)
     result = conn.execute(
         device_insert_stmt,
@@ -164,6 +168,7 @@ def insert_site(site: str, conn: sql.Connection) -> int | None:
         files("enw.files.sql.em27").joinpath("insert_dim_site.sql").open("r")
     ) as sql_file:
         site_insert_stmt = sql_file.read()
+    logger.debug("Inserting site: %s", site)
     site_hash = get_hash(site)
     result = conn.execute(
         site_insert_stmt,
@@ -229,6 +234,12 @@ def insert_heights(
             pressure_b.ravel().data[0],
             pressure_t.ravel().data[0],
         ))
+    logger.debug(
+        "Inserting %s rows into dim_height for site %s, device %s",
+        len(vals),
+        site,
+        device
+    )
     result = conn.executemany(height_insert_stmt, vals)
     conn.commit()
     return result.lastrowid
@@ -300,9 +311,15 @@ def insert_height_vars(
             vals.append(
                 (height_var_hash, height_hash, int(time), species, ak, ak_alt)
             )
-        result = conn.executemany(pressure_insert_stmt, vals)
-        last_rowid = result.lastrowid
-        conn.commit()
+    logger.debug(
+        "Inserting %s rows into fact_height_vars for site %s, device %s",
+        len(vals),
+        site,
+        device
+    )
+    result = conn.executemany(pressure_insert_stmt, vals)
+    last_rowid = result.lastrowid
+    conn.commit()
     return last_rowid
 
 
@@ -390,6 +407,12 @@ def insert_surface_vars(
                 qual_flag,
             )
         )
+    logger.debug(
+        "Inserting %s rows into fact_surface_vars for site %s, device %s",
+        len(vals),
+        site,
+        device
+    )
     result = conn.executemany(surface_insert_stmt, vals)
     conn.commit()
     return result.lastrowid
@@ -422,6 +445,7 @@ def insert_meta_files(file_path: Path, conn: sql.Connection) -> int | None:
         .open("r")
     ) as sql_file:
         meta_insert_stmt = sql_file.read()
+    logger.debug("Inserting meta_file: %s", file_path.name)
     result = conn.execute(
         meta_insert_stmt,
         (
@@ -462,7 +486,7 @@ def select_all_meta_processed_files(conn: sql.Connection) -> set[str]:
     result = cursor.execute(select_stmt)
     p_files: set[str] = {f[0] for f in result.fetchall()}
     cursor.close()
-
+    logger.debug("Returned %s processed files", len(p_files))
     return p_files
 
 
