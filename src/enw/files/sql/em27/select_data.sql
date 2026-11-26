@@ -4,7 +4,7 @@ WITH data AS (
 		f_height.m_time,
 		f_height.species,
 		f_height.averaging_kernel,
-		d_height.height,
+		(d_height.height_b + ((d_height.height_t - d_height.height_b) / 2)) * 1000 AS height,
 		d_height.pressure_b,
 		d_height.pressure_t,
 		d_site.site_name,
@@ -40,15 +40,13 @@ WITH data AS (
 	WHERE
 		f_surface.qual_flag = 1
 	AND 
-		f_surface.altitude + ( d_height.height * 1000 ) <= :height_limit
+		f_surface.altitude + height <= :height_limit
 	AND
 		UNIXEPOCH(:start_time) <= f_height.m_time
 	AND
 		UNIXEPOCH(:end_time) > f_height.m_time
 	AND
 		f_height.species = :species
-	AND
-		d_site.site_name IN (SELECT value FROM json_each(:sites))
 ),
 grouped AS 
 (
@@ -72,6 +70,8 @@ SELECT
 	d.device_name,
 	d.site_name,
 	d.altitude + ( d.height * 1000 ) AS height,
+	d.altitude,
+	d.height * 1000  AS height2,
 	d.pressure_b,
 	d.pressure_t,
 	d.latitude,
