@@ -40,11 +40,15 @@ WITH data AS (
 	WHERE
 		f_surface.qual_flag = 1
 	AND 
-		d_height.height * 1000 <= :height_limit
+		f_surface.altitude + ( d_height.height * 1000 ) <= :height_limit
 	AND
 		UNIXEPOCH(:start_time) <= f_height.m_time
 	AND
 		UNIXEPOCH(:end_time) > f_height.m_time
+	AND
+		f_height.species = :species
+	AND
+		d_site.site_name IN (SELECT value FROM json_each(:sites))
 ),
 grouped AS 
 (
@@ -67,7 +71,7 @@ SELECT
 	d.species,
 	d.device_name,
 	d.site_name,
-	d.height * 1000 AS height,
+	d.altitude + ( d.height * 1000 ) AS height,
 	d.pressure_b,
 	d.pressure_t,
 	d.latitude,

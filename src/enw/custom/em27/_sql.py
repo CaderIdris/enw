@@ -1,12 +1,13 @@
 import datetime as dt
 from importlib.resources import files
-from typing import cast, TYPE_CHECKING
+import json
+from typing import cast, TYPE_CHECKING, Literal
 
 from enw.utils._misc import get_hash
 
 if TYPE_CHECKING:
     from pathlib import Path
-    from sqlite3 import Connection
+    import sqlite3 as sql
     from typing import Literal
 
     from netCDF4 import Dataset
@@ -18,7 +19,7 @@ _av_kernels: dict[str, tuple[str, str | None]] = {
 }
 "Standard and alternative names for the averaging kernels."
 
-def configure_db(conn: Connection) -> None:
+def configure_db(conn: sql.Connection) -> None:
     """Configure the database.
 
     Runs the `configure_db.sql` script.
@@ -28,7 +29,7 @@ def configure_db(conn: Connection) -> None:
 
     Parameters
     ----------
-    conn : Connection
+    conn : sql.Connection
         Connection to the sqlite db.
 
     Returns
@@ -45,7 +46,7 @@ def configure_db(conn: Connection) -> None:
     cur.close()
 
 
-def create_tables(conn: Connection) -> None:
+def create_tables(conn: sql.Connection) -> None:
     """Create all em27 tables in sqlite.
 
     Runs the following sql statements:
@@ -76,7 +77,7 @@ def create_tables(conn: Connection) -> None:
 
     Parameters
     ----------
-    conn : Connection
+    conn : sql.Connection
         Connection to the sqlite db.
 
     Returns
@@ -102,7 +103,7 @@ def create_tables(conn: Connection) -> None:
     cur.close()
 
 
-def insert_device(device: str, conn: Connection) -> int | None:
+def insert_device(device: str, conn: sql.Connection) -> int | None:
     """Insert a device into dim_device.
 
     Runs the `insert_dim_device.sql` script.
@@ -114,7 +115,7 @@ def insert_device(device: str, conn: Connection) -> int | None:
     ----------
     device : str
         The device to add to the dim_device table.
-    conn : Connection
+    conn : sql.Connection
         Connection to the sqlite db.
 
     Returns
@@ -136,7 +137,7 @@ def insert_device(device: str, conn: Connection) -> int | None:
     return result.lastrowid
 
 
-def insert_site(site: str, conn: Connection) -> int | None:
+def insert_site(site: str, conn: sql.Connection) -> int | None:
     """Insert a site into dim_site.
 
     Runs the `insert_dim_site.sql` script.
@@ -150,7 +151,7 @@ def insert_site(site: str, conn: Connection) -> int | None:
         The site the site is located at.
     site : str
         The site to add to the dim_site table.
-    conn : Connection
+    conn : sql.Connection
         Connection to the sqlite db.
 
     Returns
@@ -176,7 +177,7 @@ def insert_heights(
     nc: Dataset,
     site: str,
     device: str,
-    conn: Connection,
+    conn: sql.Connection,
 ) -> int | None:
     """Insert height data into dim_height.
 
@@ -193,7 +194,7 @@ def insert_heights(
         The site the sensor is located at.
     device : str
         The device the EM27 data represents.
-    conn : Connection
+    conn : sql.Connection
         Connection to the sqlite db.
 
     Returns
@@ -211,18 +212,20 @@ def insert_heights(
     vals = []
     site_hash = get_hash(site)
     device_hash = get_hash(device)
-    for (height, pressure_b, pressure_t) in zip(
+    for (height_b, height_t, pressure_b, pressure_t) in zip(
         nc.variables["height_grid"][:-1],
+        nc.variables["height_grid"][1:],
         nc.variables["pressure_grid"][:-1],
         nc.variables["pressure_grid"][1:],
         strict=True
     ):
-        height_hash = get_hash(f"{site_hash}{device_hash}{height}")
+        height_hash = get_hash(f"{site_hash}{device_hash}{height_b}")
         vals.append((
             height_hash,
             site_hash,
             device_hash,
-            height.ravel().data[0],
+            height_b.ravel().data[0],
+            height_t.ravel().data[0],
             pressure_b.ravel().data[0],
             pressure_t.ravel().data[0],
         ))
@@ -235,7 +238,7 @@ def insert_height_vars(
     site: str,
     device: str,
     species: Literal["CH4", "CO2", "CO"],
-    conn: Connection,
+    conn: sql.Connection,
 ) -> int | None:
     """Insert height data into fact_height_vars.
 
@@ -264,7 +267,7 @@ def insert_height_vars(
         The device the EM27 data represents.
     species : Literal["CH4", "CO2", "CO"]
         The species to get the averaging kernels for.
-    conn : Connection
+    conn : sql.Connection
         Connection to the sqlite db.
 
     Returns
@@ -284,8 +287,8 @@ def insert_height_vars(
     device_hash = get_hash(device)
     last_rowid = None
     for i, time in enumerate(nc.variables["time"][:]):
-        for j, height in enumerate(nc.variables["height_grid"][:-1]):
-            height_hash = get_hash(f"{site_hash}{device_hash}{height}")
+        for j, height_b in enumerate(nc.variables["height_grid"][:-1]):
+            height_hash = get_hash(f"{site_hash}{device_hash}{height_b}")
             height_var_hash = get_hash(f"{height_hash}{int(time)}{species}")
             ak = nc.variables[_av_kernels[species][0]][i,j].ravel().data[0]
             if _av_kernels[species][1] is not None:
@@ -307,7 +310,7 @@ def insert_surface_vars(
     nc: Dataset,
     site: str,
     device: str,
-    conn: Connection,
+    conn: sql.Connection,
 ) -> int | None:
     """Insert surface data into fact_surface_vars.
 
@@ -343,7 +346,7 @@ def insert_surface_vars(
         The site the sensor is located at.
     device : str
         The device the EM27 data represents.
-    conn : Connection
+    conn : sql.Connection
         Connection to the sqlite db.
 
     Returns
@@ -392,7 +395,7 @@ def insert_surface_vars(
     return result.lastrowid
 
 
-def insert_meta_files(file_path: Path, conn: Connection) -> int | None:
+def insert_meta_files(file_path: Path, conn: sql.Connection) -> int | None:
     """Insert a record of a processed file into meta_processed_files.
 
     Runs the `insert_meta_processed_files.sql` script.
@@ -404,7 +407,7 @@ def insert_meta_files(file_path: Path, conn: Connection) -> int | None:
     ----------
     file_path : Path
         The path to the file.
-    conn : Connection
+    conn : sql.Connection
         Connection to the sqlite db.
 
     Returns
@@ -430,7 +433,7 @@ def insert_meta_files(file_path: Path, conn: Connection) -> int | None:
     return result.lastrowid
 
 
-def select_all_meta_processed_files(conn: Connection) -> set[str]:
+def select_all_meta_processed_files(conn: sql.Connection) -> set[str]:
     """Select all processed files logged in the db.
 
     Runs the `select_all_meta_processed_files.sql` script.
@@ -440,7 +443,7 @@ def select_all_meta_processed_files(conn: Connection) -> set[str]:
 
     Parameters
     ----------
-    conn : Connection
+    conn : sql.Connection
         Connection to the sqlite db.
 
     Returns
@@ -461,3 +464,42 @@ def select_all_meta_processed_files(conn: Connection) -> set[str]:
     cursor.close()
 
     return p_files
+
+
+def _dict_factory(cursor: sql.Cursor, row: sql.Row) -> dict[str, object]:
+    fields = [column[0] for column in cursor.description]
+    return dict(zip(fields, row, strict=True))
+
+
+def select_data(
+    conn: sql.Connection,
+    start_time: dt.datetime,
+    end_time: dt.datetime,
+    height_limit: int | float,
+    time_agg: dt.timedelta,
+    sites: list[str],
+    species: Literal["CO2", "CH4", "CO"]
+) -> list[dict[str, str | float | None]]:
+    """"""
+    num_seconds = time_agg.total_seconds()
+
+    conn.row_factory = _dict_factory
+
+    with (
+        files("enw.files.sql.em27").joinpath("select_data.sql").open("r")
+    ) as sql_file:
+        select_stmt = sql_file.read()
+
+    cursor = conn.cursor()
+    result = cursor.execute(
+        select_stmt,
+        {
+            "start_time": start_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "end_time": end_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "height_limit": height_limit,
+            "num_seconds": num_seconds,
+            "species": species,
+            "sites": json.dumps(sites)
+        }
+    )
+    return result.fetchall()

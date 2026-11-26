@@ -14,7 +14,8 @@ from ._sql import (
     insert_site,
     insert_surface_vars,
     insert_meta_files,
-    select_all_meta_processed_files
+    select_all_meta_processed_files,
+    select_data
 )
 
 from ._funcs import (
@@ -31,5 +32,6 @@ __all__ = [
     "insert_meta_files",
     "insert_site",
     "insert_surface_vars",
-    "select_all_meta_processed_files"
+    "select_all_meta_processed_files",
+    "select_data"
 ]
