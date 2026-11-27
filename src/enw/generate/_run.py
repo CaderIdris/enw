@@ -1,7 +1,9 @@
 """Generate run blocks."""
+import datetime as dt
 from typing import TYPE_CHECKING
 
 import enw.block as block
+from enw.custom.em27 import select_data
 from enw.utils import get_timedelta, dt_to_name_string
 
 if TYPE_CHECKING:
@@ -184,6 +186,7 @@ def gemma(config: EnwConfig, conn: sql.Connection) -> dict[str, str]:
         time = config["Main"]["start_time"] + (split_by_td * split)
         end_time = time + split_by_td
         max_age_td = get_timedelta(config["Main"]["max_age"])
+        agg_td = get_timedelta(config["Main"]["time_step"])
         num_tgrid_steps = ((split_by_td + max_age_td) // time_step_td) + 1
 
         earliest = time - max_age_td
@@ -207,26 +210,46 @@ def gemma(config: EnwConfig, conn: sql.Connection) -> dict[str, str]:
         sources = {}
         or_fields = {}
 
+        steps = select_data(
+            conn,
+            start_time=time,
+            end_time=end_time,
+            height_limit=config["GEMMA"]["Height"],
+            time_agg=agg_td,
+            sites=config["GEMMA"]["Sites"],
+            species=config["GEMMA"]["Species"]
+        )
+        if not steps:
+            continue
 
-        for step in range(num_steps):
-            start_time = time + (time_step_td * (step + 1))
-            end_time = time + (time_step_td * step)
+        for step, step_info in enumerate(steps):
+            end_time = dt.datetime.strptime(
+                step_info["datetime"],
+                "%Y-%m-%d %H:%M:%S"
+            )
+            start_time = end_time + agg_td
+
+            location = step_info["site_name"]
+            height = step_info["height"]
+            height_str = str(height).replace(".", "")
+            _species = step_info["species"]
+
             species_step = species_step | {
-                f"{k}_{step:0{num_digits_steps}}": v
+                f"{k}_{_species}_{height_str}_{step:0{num_digits_steps}}": v
                 for k, v in species.items()
             }
             species_uses_step = species_uses_step | {
-                f"{k}_{step:0{num_digits_steps}}": v
+                f"{k}_{_species}_{height_str}_{step:0{num_digits_steps}}": v
                 for k, v in species_uses.items()
             }
             sources = sources | {
                 f"{species_name}_{location}_{step:0{num_digits_steps}}": {
                     "shape": "Cuboid",
-                    "set_of_locations": "Receptor Locations",
-                    "location": location,
+                    "x": step_info["longitude"],
+                    "y": step_info["latitude"],
                     "h_coord": config["CoordinateSystems"]["horizontal"][0],
                     "z_coord": config["CoordinateSystems"]["vertical"][0],
-                    "z": float(config["Locations"][location]["inlet_height"]),
+                    "z": height,
                     "dh_metres": True,
                     "dz_metres": True,
                     "dx": 0,
@@ -234,7 +257,9 @@ def gemma(config: EnwConfig, conn: sql.Connection) -> dict[str, str]:
                     "dz": 20,
                     "angle": 0,
                     "source_strength": (
-                        f"{species_name}_{step:0{num_digits_steps}} 1.0 g/s"
+                        f"{species_name}_{_species}_{height_str}"
+                        f"_{step:0{num_digits_steps}}" 
+                        f" {step_info["source_strength"]} g/s"
                     ),
                     "plume_rise": False,
                     "temperature": 0,
@@ -245,7 +270,6 @@ def gemma(config: EnwConfig, conn: sql.Connection) -> dict[str, str]:
                     "start_time": dt_to_name_string(start_time),
                     "stop_time": dt_to_name_string(end_time)
                 }
-                for location in config["Locations"]
                 for species_name in species
             }
             or_fields = or_fields | {
@@ -256,10 +280,10 @@ def gemma(config: EnwConfig, conn: sql.Connection) -> dict[str, str]:
                     or_row |
                     {
                         "source": (
-                            f"{species_name}_{location}_{step:0{num_digits_steps}}"
+                            f"{species_name}_{_species}_{height_str}_{step:0{num_digits_steps}}"
                         ),
                         "species": (
-                            f"{species_name}_{step:0{num_digits_steps}}"
+                            f"{species_name}_{_species}_{height_str}_{step:0{num_digits_steps}}"
                         ),
                         "h_grid": next(iter(config["HorizontalGrid"])),
                         "z_grid": "VGrid1",
@@ -267,7 +291,6 @@ def gemma(config: EnwConfig, conn: sql.Connection) -> dict[str, str]:
                         "output_group": location
                     }
                 )
-                for location in config["Locations"]
                 for species_name in species
                 for or_name, or_row in (
                     config["OutputRequirements"]["Run"].items()

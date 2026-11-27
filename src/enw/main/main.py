@@ -144,14 +144,14 @@ def build(config_file: Path, output: Path) -> None:
 
     """
     config = load_config(config_file)
-    build_type = BuildType.site
+    build_type = determine_build_type(config)
     match build_type:
         case BuildType.site:
             build_site(config, output)
         case BuildType.satellite:
             raise NotImplementedError()
         case BuildType.gemma:
-            raise NotImplementedError()
+            build_gemma(config, output)
 
 
 def build_site(config: EnwConfig, output: Path) -> None:
@@ -248,7 +248,8 @@ def build_gemma(config: EnwConfig, output: Path) -> None:
             "NetCDF": TEMP_GEMMA_NETCDF_PATH
         },
         "Sites": TEMP_GEMMA_SITE_NAME,
-        "Species": TEMP_GEMMA_SPECIES
+        "Species": TEMP_GEMMA_SPECIES,
+        "Height": 2000
     }
     config["GEMMA"]["Paths"]["SQL"].mkdir(exist_ok=True, parents=True)
     if not config["GEMMA"]["Paths"]["SQL"].exists():
@@ -291,4 +292,33 @@ def build_gemma(config: EnwConfig, output: Path) -> None:
             output_file
         )
         #INFO: Generate splits
-        splits = gen.run.gemma(config)
+        splits = gen.run.gemma(config, conn)
+        for (
+            index, (split_date, split_contents)
+        ) in enumerate(splits.items(), start=1):
+            write_to_tar(
+                tar,
+                f"Input Files/Splits/{split_date}.txt",
+                split_contents
+            )
+            input_file_list = [
+                "./Input Files/Configuration/Run.txt",
+                "./Input Files/Configuration/Spatial.txt",
+                "./Input Files/Configuration/Output.txt",
+                "./Input Files/Met/MK4.txt",
+                "./Input Files/Met/MK11.txt",
+                "./Input Files/Met/MoreMet.txt",
+                f"./Input Files/Splits/{split_date}.txt"
+            ]
+            input_contents = gen.input_files.input_files(input_file_list)
+            write_to_tar(
+                tar,
+                f"Input Files/{index}.txt",
+                input_contents
+            )
+        for met in ("MK4", "MK11", "MoreMet"):
+            write_to_tar(
+                tar,
+                f"Input Files/Met/{met}.txt",
+                config[met]
+            )

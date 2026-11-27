@@ -346,6 +346,8 @@ def load_config_temp(
     with as_file(more_met_path) as more_met, more_met.open("r") as file:
         config["MoreMet"] = file.read()
 
+    config["GEMMA"] = {}
+
     return config
 
 

@@ -3,6 +3,7 @@
 Covers:
 
 """
+from types import NoneType
 from dataclasses import dataclass
 from typing import cast, TYPE_CHECKING, Literal
 
@@ -851,8 +852,8 @@ class SourcesRow:
 
     name: str
     shape: SourceShapeOpts
-    set_of_locations: str
-    location: str
+    set_of_locations: str | None
+    location: str | None
     h_coord: HorizontalCoordSystems
     z_coord: VerticalCoordSystems
     z: float
@@ -871,10 +872,10 @@ class SourcesRow:
     top_hat: Switch
     start_time: DateTime
     stop_time: DateTime
+    x: float | None
+    y: float | None
     h_grid: NotImplementedType | None = None
     z_grid: NotImplementedType | None = None
-    x: NotImplementedType | None = None
-    y: NotImplementedType | None = None
     uniform_area: NotImplementedType | None = None
     no_reflect: NotImplementedType | None = None
     time_dependency: NotImplementedType | None = None
@@ -891,8 +892,6 @@ class SourcesRow:
         *,
         name: str,
         shape: str,
-        set_of_locations: str,
-        location: str,
         h_coord: str,
         z_coord: str,
         z: float,
@@ -911,10 +910,12 @@ class SourcesRow:
         top_hat: bool,
         start_time: str,
         stop_time: str,
+        set_of_locations: str | None = None,
+        location: str | None = None,
+        x: float | None = None,
+        y: float | None = None,
         h_grid: None = None,
         z_grid: None = None,
-        x: None = None,
-        y: None = None,
         uniform_area: None = None,
         no_reflect: None = None,
         time_dependency: None = None,
@@ -936,12 +937,6 @@ class SourcesRow:
             The shape of the source.
             Corresponds to **Shape**
             Can be "Cuboid", "Elipsoid" or "Cylindroid".
-        set_of_locations : str
-            Name of a Locations block.
-            Corresponds to **Set of Locations**.
-        location : str
-            Specific location within the Locations block.
-            Corresponds to **Location**.
         h_coord : str
             Horizontal coordinate system to use.
             Corresponds to **H-Coord**.
@@ -997,18 +992,24 @@ class SourcesRow:
         stop_time : str
             The end time of the release.
             Corresponds to **Stop Time**.
+        set_of_locations : str | None, default=None
+            Name of a Locations block.
+            Corresponds to **Set of Locations**.
+        location : str | None, default=None
+            Specific location within the Locations block.
+            Corresponds to **Location**.
+        x : float | None, default=None
+            X coordinate
+            Corresponds to **X**.
+        y : float | None, default=None
+            Y coordinate
+            Corresponds to **Y**.
         h_grid : None, default=None
             **Not implemented**
             Corresponds to **H-Grid**.
         z_grid : None, default=None
             **Not implemented**
             Corresponds to **Z-Grid**.
-        x : None, default=None
-            **Not implemented**
-            Corresponds to **X**.
-        y : None, default=None
-            **Not implemented**
-            Corresponds to **Y**.
         uniform_area : None, default=None
             **Not implemented**
             Corresponds to **Uniform Area?**.
@@ -1045,9 +1046,14 @@ class SourcesRow:
         check_literal("shape", shape, "SourceShapeOpts", SourceShapeOpts)
         shape_formatted = cast("SourceShapeOpts", shape)
         #INFO: Check set_of_locations
-        check_type("set_of_locations", set_of_locations, str)
+        check_type("set_of_locations", set_of_locations, str | NoneType)
         #INFO: Check location
-        check_type("location", location, str)
+        check_type("location", location, str | NoneType)
+        #INFO: Check x
+        check_type("x", x, float | NoneType)
+        #INFO: Check y
+        check_type("y", y, float | NoneType)
+        #TODO: Check if either location/set or x/y
         #INFO: Check h_coord
         check_literal(
             "h_coord",
@@ -1115,8 +1121,6 @@ class SourcesRow:
         _unimplemented = (
             ("h_grid", h_grid),
             ("z_grid", z_grid),
-            ("x", x),
-            ("y", y),
             ("uniform_area", uniform_area),
             ("no_reflect", no_reflect),
             ("time_dependency", time_dependency),
@@ -1156,7 +1160,9 @@ class SourcesRow:
             max_age=max_age_formatted,
             top_hat=top_hat_formatted,
             start_time=start_time_formatted,
-            stop_time=stop_time_formatted
+            stop_time=stop_time_formatted,
+            x=x,
+            y=y
         )
 
 

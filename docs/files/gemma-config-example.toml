@@ -1,0 +1,14 @@
+[Main]
+start_time = 2025-06-01 00:00:00
+end_time = 2025-07-01 00:00:00
+time_step = "01:00"
+use_ukv = true
+
+[Output]
+folder = "some/random/path"
+
+["OpenGHG Presets"."Domains"."EUROPE"]
+
+["Species"."Inert"]
+
+["GEMMA"]

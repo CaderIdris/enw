@@ -69,9 +69,8 @@ SELECT
 	d.species,
 	d.device_name,
 	d.site_name,
-	d.altitude + ( d.height * 1000 ) AS height,
+	ROUND(d.altitude + d.height, 1) AS height,
 	d.altitude,
-	d.height * 1000  AS height2,
 	d.pressure_b,
 	d.pressure_t,
 	d.latitude,
@@ -79,7 +78,7 @@ SELECT
 	d.altitude,
 	AVG(d.azimuth) AS azimuth,
 	AVG(d.appSZA) AS appSZA,
-	AVG((d.Wp * d.averaging_kernel) / grouped.SUM_product) AS source_strength
+	ROUND(AVG((d.Wp * d.averaging_kernel) / grouped.SUM_product), 3) AS source_strength
 FROM 
 	data as d
 LEFT JOIN
